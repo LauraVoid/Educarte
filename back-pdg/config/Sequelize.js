@@ -1,6 +1,4 @@
 const { Sequelize } = require("sequelize");
-const InstitutionModel = require("../model/Institution");
-const CourseModel = require("../model/Course");
 
 const sequelize = new Sequelize(
   process.env.DATABASE,
@@ -14,14 +12,8 @@ const sequelize = new Sequelize(
   }
 );
 
-const Institution = InstitutionModel(sequelize, Sequelize);
-const Course = CourseModel(sequelize, Sequelize);
-
 sequelize.sync({ force: false }).then(() => {
   console.log("Tablas sincronizadas");
 });
 
-module.exports = {
-  Institution,
-  Course,
-};
+module.exports = sequelize;

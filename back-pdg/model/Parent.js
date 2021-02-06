@@ -1,14 +1,22 @@
-const { Sequelize } = require("sequelize");
+const { Sequelize, SequelizeScopeError } = require("sequelize");
 const sequelize = require("../config/Sequelize");
 
-module.exports = sequelize.define("Institution", {
+module.exports = sequelize.define("Parent", {
   id: {
     type: Sequelize.SMALLINT,
     primaryKey: true,
     autoIncrement: true,
-    field: "institutionId",
+    field: "parentId",
   },
   name: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  lastname: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  idDocument: {
     type: Sequelize.STRING,
     allowNull: false,
   },
@@ -17,6 +25,10 @@ module.exports = sequelize.define("Institution", {
     allowNull: false,
   },
   password: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  phone: {
     type: Sequelize.STRING,
     allowNull: false,
   },

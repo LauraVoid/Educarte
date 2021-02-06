@@ -1,23 +1,30 @@
-const { Sequelize } = require("sequelize");
+const { Sequelize, SequelizeScopeError } = require("sequelize");
 const sequelize = require("../config/Sequelize");
 
-module.exports = sequelize.define("Institution", {
+module.exports = sequelize.define("Content", {
   id: {
     type: Sequelize.SMALLINT,
     primaryKey: true,
     autoIncrement: true,
-    field: "institutionId",
   },
-  name: {
+  title: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  email: {
+  category: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  password: {
+  description: {
     type: Sequelize.STRING,
     allowNull: false,
+  },
+  link: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  image: {
+    type: Sequelize.STRING,
+    allowNull: true,
   },
 });

@@ -1,23 +1,26 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../config/Sequelize");
 
-module.exports = sequelize.define("Institution", {
+module.exports = sequelize.define("Message", {
   id: {
     type: Sequelize.SMALLINT,
     primaryKey: true,
     autoIncrement: true,
-    field: "institutionId",
   },
-  name: {
+  title: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  email: {
+  date: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  password: {
+  message: {
     type: Sequelize.STRING,
+    allowNull: false,
+  },
+  receiver: {
+    type: Sequelize.SMALLINT,
     allowNull: false,
   },
 });

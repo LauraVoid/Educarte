@@ -1,22 +1,18 @@
 const { Sequelize } = require("sequelize");
 const sequelize = require("../config/Sequelize");
 
-module.exports = sequelize.define("Institution", {
+module.exports = sequelize.define("Role", {
   id: {
     type: Sequelize.SMALLINT,
     primaryKey: true,
     autoIncrement: true,
-    field: "institutionId",
+    field: "roleId",
   },
   name: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  email: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  password: {
+  description: {
     type: Sequelize.STRING,
     allowNull: false,
   },
