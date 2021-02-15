@@ -2,15 +2,16 @@ const { Sequelize } = require("sequelize");
 const db = require("../model/index");
 const config = require("../config/auth-config");
 const Op = Sequelize.Op;
-const User = db.user;
+const Teacher = db.user;
 const Role = db.role;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
 exports.signup = (req, res) => {
     // Save User to Database
+    // Add Student.create!!
     if(req.body.is === "student"){
-        User.create({
+      Teacher.create({
             username: req.body.username,
             email: req.body.name,
             lastname: req.body.lastname,
@@ -47,9 +48,11 @@ exports.signup = (req, res) => {
             });
 
     }else if(req.body.is === "teacher"){
-        User.create({
-            username: req.body.username,
+      console.log("re.body", req.body.is)
+      Teacher.create({
+            
             email: req.body.name,
+            name: req.body.name,
             lastname: req.body.lastname,
             idDocument: req.body.idDocument,
             phone: req.body.phone,
@@ -57,25 +60,24 @@ exports.signup = (req, res) => {
             roleId: req.body.roleId,
             password: bcrypt.hashSync(req.body.password, 8)
           })
-            .then(user => {
-              if (req.body.roles) {
-                Role.findAll({
-                  where: {
-                    name: {
-                      [Op.or]: req.body.roles
-                    }
-                  }
-                }).then(roles => {
-                  user.setRoles(roles).then(() => {
-                    res.send({ message: "User was registered successfully!" });
-                  });
-                });
-              } else {
+            .then(user => {              
                 // user role = 1
-                user.setRoles([1]).then(() => {
-                  res.send({ message: "User was registered successfully!" });
-                });
-              }
+               var result = getRoleUser(req.body.roleId)
+               Role.findByPk(value).then(()=>{
+                 
+               })
+               console.log(result )
+                if( result){
+                  user.roleId = result.then(()=>{
+                    res.send({ message: "User was registered successfully! with"+ user.roleId});
+                  })
+                  // user.setRoles(result).then(() => {
+                  //   res.send({ message: "User was registered successfully! with"});
+                  // });
+                }     
+                   
+                
+              
             })
             .catch(err => {
               res.status(500).send({ message: err.message });
@@ -84,11 +86,16 @@ exports.signup = (req, res) => {
     }
     
   };
+  async function getRoleUser(value){
+    const result = Role.findByPk(value)
+    
+    return result;
+  }
   
   exports.signin = (req, res) => {
-    User.findOne({
+    Teacher.findOne({
       where: {
-        username: req.body.username
+        email: req.body.email
       }
     })
       .then(user => {

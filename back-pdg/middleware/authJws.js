@@ -85,6 +85,6 @@ const authJwt = {
   verifyToken: verifyToken,
   isAdmin: isAdmin,
   isModerator: isModerator,
-  isModeratorOrAdmin: isModeratorOrAdmin
+ // isModeratorOrAdmin: isModeratorOrAdmin
 };
 module.exports = authJwt;

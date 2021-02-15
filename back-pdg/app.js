@@ -9,6 +9,7 @@ require("dotenv").config();
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var authRouter = require("./routes/auth")
 
 var app = express();
 
@@ -29,10 +30,22 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
+ });
 
+
+app.use((req, res, next) => {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+	res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
+	next();
+});
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/auth",authRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

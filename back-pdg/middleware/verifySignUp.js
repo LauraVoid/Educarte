@@ -1,13 +1,14 @@
 const db = require("../model/index");
 const ROLES = db.ROLES;
 const User = db.user;
+const Role = require("../model/Role")
 
 
 checkDuplicateUsernameOrEmail = (req, res, next) => {
     // Username
     User.findOne({
       where: {
-        username: req.body.username
+        email: req.body.email
       }
     }).then(user => {
       if (user) {
@@ -36,10 +37,15 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
   };
   
   checkRolesExisted = (req, res, next) => {
-    if (req.body.roles) {     
-        if (!ROLES.includes(req.body.roles)) {
+    if (req.body.roleId) {    
+       var result = Role.findOne({
+        where:{
+          roleId:req.body.roleId
+        }
+      })
+        if (! result) {
           res.status(400).send({
-            message: "Failed! Role does not exist = " + req.body.roles[i]
+            message: "Failed! Role does not exist = " + req.body.role
           });
           return;
         }
