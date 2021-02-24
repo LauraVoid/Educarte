@@ -10,6 +10,8 @@ require("dotenv").config();
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var authRouter = require("./routes/auth")
+var instRouter = require("./routes/institution")
+var courseRouter = require("./routes/course")
 
 var app = express();
 
@@ -19,7 +21,7 @@ var app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:3000"
 };
 
 app.use(logger("dev"));
@@ -30,8 +32,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+app.listen(8000, function () {
+  console.log('Example app listening on port 8000!');
  });
 
 
@@ -46,6 +48,8 @@ app.use((req, res, next) => {
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/auth",authRouter)
+app.use("/inst",instRouter)
+app.use("/course",courseRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

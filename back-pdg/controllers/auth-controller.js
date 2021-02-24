@@ -32,15 +32,15 @@ exports.signup = (req, res) => {
                     }
                   }
                 }).then(roles => {
+                  //addRoles
                   user.setRoles(roles).then(() => {
                     res.send({ message: "User was registered successfully!" });
                   });
                 });
               } else {
                 // user role = 1
-                user.setRoles([1]).then(() => {
-                  res.send({ message: "User was registered successfully!" });
-                });
+                res.send({ message: "User was registered successfully! " });
+
               }
             })
             .catch(err => {
@@ -60,23 +60,10 @@ exports.signup = (req, res) => {
             roleId: req.body.roleId,
             password: bcrypt.hashSync(req.body.password, 8)
           })
-            .then(user => {              
-                // user role = 1
-               var result = getRoleUser(req.body.roleId)
-               Role.findByPk(value).then(()=>{
-                 
-               })
-               console.log(result )
-                if( result){
-                  user.roleId = result.then(()=>{
-                    res.send({ message: "User was registered successfully! with"+ user.roleId});
-                  })
-                  // user.setRoles(result).then(() => {
-                  //   res.send({ message: "User was registered successfully! with"});
-                  // });
-                }     
-                   
-                
+            .then(user => {
+                  // user role = 1
+                  res.send({ message: "User was registered successfully! bienvenido" });
+  
               
             })
             .catch(err => {
@@ -86,11 +73,7 @@ exports.signup = (req, res) => {
     }
     
   };
-  async function getRoleUser(value){
-    const result = Role.findByPk(value)
-    
-    return result;
-  }
+ 
   
   exports.signin = (req, res) => {
     Teacher.findOne({

@@ -1,0 +1,19 @@
+.rectangle {
+    height: 400px;
+    /* width: 500px; */
+    width: 800px;    
+    padding: 20px;         
+    top: 15%;
+    background-color:#1CC8EE;
+    border-radius: 10px;
+    
+  }
+  .Grid-main-blue{
+    background-color:#1CC8EE;
+    
+    border-radius: 10px;
+  }
+  .Grid-main-purple{
+    background-color:#C474EA;    
+    border-radius: 10px;
+  }
