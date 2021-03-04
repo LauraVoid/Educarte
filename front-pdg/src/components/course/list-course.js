@@ -8,8 +8,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import Course from './course'
 import axios from "axios";
+import EyeButton from '@material-ui/icons/Visibility';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Create';
+import IconButton from '@material-ui/core/IconButton';
 import './style/create-course.css';
 
 export default class ListCourse extends Component {
@@ -17,22 +20,21 @@ export default class ListCourse extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            coursesView: false
+            coursesView: false,
+            courses:[]
             
         };
     }
-    renderCourses = () => {
-        if(!this.state.coursesView){
+    componentDidMount(){
+        
             axios.get('http://localhost:8000/course/')
             .then((res) => {
                 if (res.status === 200) {
-                    let courses = res.data
-                    let itemCourse = courses.map(course => <Course key={course.id} course={course}></Course>)
-                    console.log(itemCourse)
+                    let result = res.data
                     this.setState({
-                        coursesView:true
-                    })
-                    return itemCourse;
+                        coursesView:true,
+                        courses: result,
+                    })                   
 
                 }
                 else console.log(res.status);
@@ -40,9 +42,10 @@ export default class ListCourse extends Component {
             .catch((err) => console.log(err))
 
 
-        }
-     
+        
+
     }
+    
     render() {
             return (
                 <div>
@@ -70,7 +73,39 @@ export default class ListCourse extends Component {
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
-                                                {this.renderCourses()}
+                                              {this.state.courses.map((value, index) =>{
+                                                   return(
+                                                    <TableRow key={value.id}>
+                                                    <TableCell >{value.id}</TableCell>
+                                                    <TableCell component="th" scope="row">
+                                                        {value.name}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <IconButton>
+                                                            <EyeButton />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <IconButton>
+                                                            <EyeButton />
+                                                        </IconButton>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                
+                                                        <IconButton>
+                                                            <EditIcon />
+                                                        </IconButton>
+                                                        <IconButton>
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                
+                                                    </TableCell>
+                                
+                                
+                                                </TableRow>
+                                                   ) 
+                                              }                                                                                                                                                
+                                               )}
                                             </TableBody>
                                         </Table>
                                     </TableContainer>

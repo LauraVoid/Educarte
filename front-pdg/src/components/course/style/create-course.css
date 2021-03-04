@@ -39,3 +39,20 @@
   min-width: 650;
     /* minWidth: 650, */
 }
+
+/* const useStyles = makeStyles({
+  root: {
+      minWidth: 275,
+  },
+  bullet: {
+      display: 'inline-block',
+      margin: '0 2px',
+      transform: 'scale(0.8)',
+  },
+  title: {
+      fontSize: 24,
+  },
+  pos: {
+      marginBottom: 12,
+  },
+}); */
