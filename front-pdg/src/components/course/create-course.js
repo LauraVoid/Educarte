@@ -17,36 +17,55 @@ export default class CreateCourse extends Component {
 
     constructor(props) {
         super(props);
-        const studentsNew =[{
-            name:"nuevo estu"
-        }]
+        // const studentsNew =[{
+        //     name:"nuevo estu"
+        // }]
         this.state = {
             courseName: "",
             courseError:false,
             teacherError:false,
             teacherCourse: {},
+            listTeachers:[],
             students: [],
-            studentsNew,
+            studentsNew:[],
             messageError:""
 
         };
         this.handleChange = this.handleChange.bind(this);
     }
     componentDidMount(){
-        //get teachers
-        // axios.get('http://localhost:8000/course/')
-        // .then((res) => {
-        //     if (res.status === 200) {
-        //         let result = res.data
-        //         this.setState({
-        //             coursesView:true,
-        //             courses: result,
-        //         })                   
+        //get teachers student
+        axios.get('teacher/')
+        .then((res) => {
+            if (res.status === 200) {
+               // console.log(res.data)
+                let result =res.data; 
+                
+                this.setState({                    
+                    listTeachers: result,
+                })                   
 
-        //     }
-        //     else console.log(res.status);
-        // })
-        // .catch((err) => console.log(err))
+            }
+            else console.log(res.status);
+        })
+        .catch((err) => console.log(err))
+
+        axios.get('student/')
+        .then((res) => {
+            if (res.status === 200) {
+                //console.log(res.data)
+                let result =res.data; 
+                
+                this.setState({                    
+                    students: result,
+                })                   
+
+            }
+            else console.log(res.status);
+        })
+        .catch((err) => console.log(err))
+
+        
 
 
     
@@ -153,23 +172,19 @@ export default class CreateCourse extends Component {
                                             <Grid item xs={12}>
                                                 <Autocomplete
                                                     id="combo-box-demo"
-                                                    options={ [
-                                                        { id:1, name: 'The Shawshank Redemption' },
-                                                        { id:2,name: 'The Godfather' },
-                                                        { id:3,name: 'Dark Knight' },
-                                                    ]}
+                                                    options={this.state.listTeachers}
                                                     name="teacherCourse"
                                                     clearOnEscape
-                                                    getOptionSelected={(option, value) => option.id === value.id}
-                                                        // this.setState({teacherCourse: e.target.value})
+                                                    getOptionLabel={(option) => option !=="" ? option.name:option}
+                                                    
                                                     // error={this.state.teacherCourse === ""} 
-                                                    // onSelect={(e)=> this.setState({teacherCourse: e.target.value})}
+                                                    onChange={(event, newVal)=> this.setState({teacherCourse: newVal})}
                                                     //onChange={this.isDisabled}
                                                     // style={{ width: 300 }}
                                                     renderInput={(params) => (
                                                         <TextField {...params} label="Docente encargado" variant="outlined"
-                                                        onSelect={(e)=> this.setState({teacherCourse: e.target.value})} 
-                                                        value={this.state.teacherCourse}/>
+                                                        // onSelect={(e)=> console.log(e.target)} 
+                                                        value={this.state.teacherCourse || ""}/>
                                                         
                                                     )
                                                     }
@@ -209,10 +224,12 @@ export default class CreateCourse extends Component {
                                             <Grid item xs={12}>
                                                 <Autocomplete
                                                     id="combo-box-demo"
-                                                    options={teachers}
-                                                    getOptionLabel={(option) => option.name}                                                   
+                                                    options={this.state.students}
+                                                    getOptionLabel={(option) => option !=="" ? option.name:option}                                                   
                                                     onChange={(event, newValue) => {
-                                                        this.handleChangeTable(newValue);
+                                                        let list = this.state.studentsNew
+                                                        list.push(newValue)
+                                                        this.setState({studentsNew: list})
                                                       }}
                                                     // style={{ width: 300 }}
                                                     renderInput={(params) => <TextField {...params} label="Estudiantes del curso" variant="outlined" />}
