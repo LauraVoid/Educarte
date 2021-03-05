@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import axios from "axios";
+import axios from '../../utils/axios';
 import EyeButton from '@material-ui/icons/Visibility';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Create';
@@ -27,7 +27,7 @@ export default class ListCourse extends Component {
     }
     componentDidMount(){
         
-            axios.get('http://localhost:8000/course/')
+            axios.get('course/')
             .then((res) => {
                 if (res.status === 200) {
                     let result = res.data
