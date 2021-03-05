@@ -12,6 +12,8 @@ var usersRouter = require("./routes/users");
 var authRouter = require("./routes/auth")
 var instRouter = require("./routes/institution")
 var courseRouter = require("./routes/course")
+var teacherRouter = require("./routes/teacher")
+var studentRouter = require("./routes/student")
 
 var app = express();
 
@@ -50,6 +52,8 @@ app.use("/users", usersRouter);
 app.use("/auth",authRouter)
 app.use("/inst",instRouter)
 app.use("/course",courseRouter)
+app.use("/teacher",teacherRouter)
+app.use("/student",studentRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
