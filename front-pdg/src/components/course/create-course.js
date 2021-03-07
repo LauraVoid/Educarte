@@ -82,7 +82,8 @@ export default class CreateCourse extends Component {
     }
     handleSubmit(event){
 
-        console.log(this.state)
+        // console.log(this.state)
+        
         // if(!this.state.teacherError && !this.state.courseError){
         //     axios.post()
         // }
@@ -132,12 +133,7 @@ export default class CreateCourse extends Component {
         
     }
     render() {
-        const teachers = [
-            { id:1, name: 'The Shawshank Redemption' },
-            { id:2,name: 'The Godfather' },
-            { id:3,name: 'Dark Knight' },
-        ]        
-
+        
 
         return (
             <div>
@@ -152,7 +148,7 @@ export default class CreateCourse extends Component {
                                         <Typography className="title" color="textSecondary" gutterBottom>
                                             Datos del curso
                                 </Typography>
-                                        <form className="root" noValidate autoComplete="off" onSubmit={this.handleSubmit} >
+                                        <form className="root" noValidate autoComplete="off"  >
                                             {/* onSubmit={handleSubmit} */}
                                             <Grid item xs={12}>
                                                 <TextField id="standard-basic" label="Nombre del curso" fullWidth
@@ -199,7 +195,9 @@ export default class CreateCourse extends Component {
 
                                             <Grid item xs={12}>
                                                 <Button variant="contained" color="primary"
-                                                disabled={this.state.courseError || this.state.teacherError}>
+                                                onClick={this.handleSubmit}
+                                                //disabled={this.state.courseError || this.state.teacherError}
+                                                >
                                                     Guardar curso
                                         </Button>
 
@@ -225,14 +223,17 @@ export default class CreateCourse extends Component {
                                                 <Autocomplete
                                                     id="combo-box-demo"
                                                     options={this.state.students}
-                                                    getOptionLabel={(option) => option !=="" ? option.name:option}                                                   
+                                                    disableClearable
+                                                    getOptionLabel={(option) => option !=="" ? option.name +" "+ option.lastname :option}                                                   
                                                     onChange={(event, newValue) => {
                                                         let list = this.state.studentsNew
                                                         list.push(newValue)
                                                         this.setState({studentsNew: list})
                                                       }}
                                                     // style={{ width: 300 }}
-                                                    renderInput={(params) => <TextField {...params} label="Estudiantes del curso" variant="outlined" />}
+                                                    renderInput={(params) =>
+                                                         <TextField {...params} label="Estudiantes del curso" variant="outlined" 
+                                                         value={this.state.studentsNew || ""}/>}
                                                 />
                                             </Grid>
                                         </form>
@@ -241,7 +242,7 @@ export default class CreateCourse extends Component {
                                         {this.state.studentsNew.map((value, index) =>{
                                                    return(
                                                     <ListItem key={index} >
-                                                    <ListItemText primary={value.name} />
+                                                    <ListItemText primary={value.name+ " " +value.lastname} />
                                                 </ListItem>
                                                  
                                                    ) 
