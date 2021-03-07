@@ -10,18 +10,16 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import "./style/create-course.css";
+//import { useHistory } from "react-router-dom";
 import axios from "../../utils/axios";
 
 export default class CreateCourse extends Component {
   constructor(props) {
     super(props);
-    // const studentsNew =[{
-    //     name:"nuevo estu"
-    // }]
+
     this.state = {
       courseName: "",
-      courseError: false,
-      teacherError: false,
+      dataError: false,    
       teacherCourse: {},
       listTeachers: [],
       students: [],
@@ -29,14 +27,13 @@ export default class CreateCourse extends Component {
       messageError: "",
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentDidMount() {
-    //get teachers student
     axios
       .get("teacher/")
       .then((res) => {
         if (res.status === 200) {
-          // console.log(res.data)
           let result = res.data;
 
           this.setState({
@@ -50,7 +47,6 @@ export default class CreateCourse extends Component {
       .get("student/")
       .then((res) => {
         if (res.status === 200) {
-          //console.log(res.data)
           let result = res.data;
 
           this.setState({
@@ -67,92 +63,59 @@ export default class CreateCourse extends Component {
     this.setState({ studentsNew: allStu });
     console.log(this.state);
   }
-  handleSubmit(event) {
-    console.log(this.state);
-    // if(!this.state.teacherError && !this.state.courseError){
-    //     axios.post()
-    // }
-  }
-  handleChange(event) {
-    event.persist();
-    this.setState({
-      courseName: event.target.value,
-    });
 
-
-    if (this.state.courseName === "") {
-      this.setState({
-        courseError: true,
-        messageError: this.state.messageError + "Ingresar un nombre de curso",
-      });
-    } else {
-      this.setState({
-        courseError: false,
-      });
-    }
-    if (
-      this.state.teacherCourse === "" ||
-      this.state.teacherCourse === undefined
-    ) {
-      this.setState({
-        teacherError: true,
-        messageError: this.state.messageError + "Ingresar profesor de curso",
-      });
-    } else {
-      this.setState({
-        teacherError: false,
-      });
-    }
-}
+ 
     handleSubmit(event){
+        //revisar errores
 
-        // console.log(this.state)
-        
-        // if(!this.state.teacherError && !this.state.courseError){
-        //     axios.post()
-        // }
 
-        
+        let data = {
+            name: this.state.courseName,
+            institutionId: 2
 
-    }
-    handleChange(event){
-        event.persist();
-        this.setState({
-            courseName:event.target.value
-
+        }
+        axios.post("/course",data).then((res) =>{
+            if(res.status >=200 && res.status <300){
+                console.log("curso creado con exito")
+            }else{
+                console.log("Hubo un error", res.data)
+            }
         })
+
+
         
-        if (this.state.courseName === "") {
+
+    }
+    handleChange(event, value){
+        event.persist();
+        
+        if (this.state.courseName !== "" && this.state.teacherCourse !== "" && this.state.teacherCourse !== undefined) {
             this.setState({
-                courseError: true,
-                messageError: this.state.messageError +"Ingresar un nombre de curso",
+                dataError: false,
+                messageError: "",
             });
-           
-        }else{
-            this.setState({
-                courseError: false,
                
-            });
-            
         }
-        if(this.state.teacherCourse === "" || this.state.teacherCourse === undefined){
-            this.setState({
-                teacherError: true,
-                messageError: this.state.messageError +"Ingresar profesor de curso",
-            });
-        
-        }else{
-            this.setState({
-                teacherError: false,
-               
-            });
-            
-        }
-        
         
     }
-    isDisabled(event){
-        console.log(event)
+        
+        
+    
+    isDisabled(){
+
+        console.log("entro")
+        if (this.state.courseName !== "" && this.state.teacherCourse !== "" && this.state.teacherCourse !== undefined) {
+            this.setState({
+                dataError: false,
+                messageError: "",
+            });
+            return true;
+               
+        }else{
+            return false;
+        }
+        
+       
 
         
     }
@@ -180,8 +143,9 @@ export default class CreateCourse extends Component {
                                                 name="courseName"
                                                 type="text"
                                                 value={this.state.courseName || ""} 
-                                                error={this.state.courseName === ""}                                                
-                                                helperText={this.state.courseName === " " ? 'No valido' : ''} />
+                                               // error={this.isDisabled ? true:false}                                                
+                                                //helperText={this.state.courseName === " " ? 'No valido' : ''} 
+                                                />
                                             </Grid>
                                             <Grid item xs={12} md={12}>
                                                 <br></br>
@@ -191,14 +155,15 @@ export default class CreateCourse extends Component {
 
                                             <Grid item xs={12}>
                                                 <Autocomplete
-                                                    id="combo-box-demo"
+                                                    id="teacherCourse"
                                                     options={this.state.listTeachers}
                                                     name="teacherCourse"
                                                     clearOnEscape
                                                     getOptionLabel={(option) => option !=="" ? option.name:option}
                                                     
                                                     // error={this.state.teacherCourse === ""} 
-                                                    onChange={(event, newVal)=> this.setState({teacherCourse: newVal})}
+                                                    //onChange={(event, newVal)=> this.handleChange(event,newVal)}
+                                                   onChange={(event, newVal)=> this.setState({teacherCourse: newVal})}
                                                     //onChange={this.isDisabled}
                                                     // style={{ width: 300 }}
                                                     renderInput={(params) => (
@@ -220,7 +185,7 @@ export default class CreateCourse extends Component {
                                             <Grid item xs={12}>
                                                 <Button variant="contained" color="primary"
                                                 onClick={this.handleSubmit}
-                                                //disabled={this.state.courseError || this.state.teacherError}
+                                                disabled={this.state.dataError}
                                                 >
                                                     Guardar curso
                                         </Button>

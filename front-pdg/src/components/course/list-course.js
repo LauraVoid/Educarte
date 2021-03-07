@@ -24,6 +24,7 @@ export default class ListCourse extends Component {
             courses:[]
             
         };
+       //this.deleteCourse = this.deleteCourse.bind(this);
     }
     componentDidMount(){
         
@@ -43,6 +44,21 @@ export default class ListCourse extends Component {
 
 
         
+
+    }
+    deleteCourse(value){
+
+        //this.state.coursesView
+        console.log(value)
+        axios.delete('course/', { data: { id: value }})
+        .then((res) => {
+            if (res.status === 200) {
+                console.log("eliminado con exito")                   
+
+            }
+            else console.log(res.status);
+        })
+        .catch((err) => console.log(err))
 
     }
     
@@ -92,12 +108,12 @@ export default class ListCourse extends Component {
                                                     </TableCell>
                                                     <TableCell align="right">
                                 
-                                                        <IconButton>
+                                                        <IconButton >
                                                             <EditIcon />
                                                         </IconButton>
-                                                        <IconButton>
-                                                            <DeleteIcon />
-                                                        </IconButton>
+                                                        <Button  onClick={this.deleteCourse(value.id)}>
+                                                            <DeleteIcon  />
+                                                        </Button>
                                 
                                                     </TableCell>
                                 

@@ -9,7 +9,8 @@ exports.index = async function (req, res, next) {
   };
   exports.create = async function (req, res, next) {
     await Course.create({
-        name: req.body.name,        
+        name: req.body.name,
+        institutionId: req.body.institutionId        
     }).then(() => res.send("The course was created"))
     .catch(function(err){
         if(req.body.name === undefined){
