@@ -1,85 +1,109 @@
-import { Grid } from '@material-ui/core'
-import React, { Component } from 'react'
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import './style/create-course.css'
-import axios from '../../utils/axios';
-
+import { Grid } from "@material-ui/core";
+import React, { Component } from "react";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import "./style/create-course.css";
+import axios from "../../utils/axios";
 
 export default class CreateCourse extends Component {
+  constructor(props) {
+    super(props);
+    // const studentsNew =[{
+    //     name:"nuevo estu"
+    // }]
+    this.state = {
+      courseName: "",
+      courseError: false,
+      teacherError: false,
+      teacherCourse: {},
+      listTeachers: [],
+      students: [],
+      studentsNew: [],
+      messageError: "",
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
+  componentDidMount() {
+    //get teachers student
+    axios
+      .get("teacher/")
+      .then((res) => {
+        if (res.status === 200) {
+          // console.log(res.data)
+          let result = res.data;
 
-    constructor(props) {
-        super(props);
-        // const studentsNew =[{
-        //     name:"nuevo estu"
-        // }]
-        this.state = {
-            courseName: "",
-            courseError:false,
-            teacherError:false,
-            teacherCourse: {},
-            listTeachers:[],
-            students: [],
-            studentsNew:[],
-            messageError:""
+          this.setState({
+            listTeachers: result,
+          });
+        } else console.log(res.status);
+      })
+      .catch((err) => console.log(err));
 
-        };
-        this.handleChange = this.handleChange.bind(this);
+    axios
+      .get("student/")
+      .then((res) => {
+        if (res.status === 200) {
+          //console.log(res.data)
+          let result = res.data;
+
+          this.setState({
+            students: result,
+          });
+        } else console.log(res.status);
+      })
+      .catch((err) => console.log(err));
+  }
+  handleChangeTable(event) {
+    console.log(event);
+
+    let allStu = this.state.studentsNew.push({ name: "neww" });
+    this.setState({ studentsNew: allStu });
+    console.log(this.state);
+  }
+  handleSubmit(event) {
+    console.log(this.state);
+    // if(!this.state.teacherError && !this.state.courseError){
+    //     axios.post()
+    // }
+  }
+  handleChange(event) {
+    event.persist();
+    this.setState({
+      courseName: event.target.value,
+    });
+
+
+    if (this.state.courseName === "") {
+      this.setState({
+        courseError: true,
+        messageError: this.state.messageError + "Ingresar un nombre de curso",
+      });
+    } else {
+      this.setState({
+        courseError: false,
+      });
     }
-    componentDidMount(){
-        //get teachers student
-        axios.get('teacher/')
-        .then((res) => {
-            if (res.status === 200) {
-               // console.log(res.data)
-                let result =res.data; 
-                
-                this.setState({                    
-                    listTeachers: result,
-                })                   
-
-            }
-            else console.log(res.status);
-        })
-        .catch((err) => console.log(err))
-
-        axios.get('student/')
-        .then((res) => {
-            if (res.status === 200) {
-                //console.log(res.data)
-                let result =res.data; 
-                
-                this.setState({                    
-                    students: result,
-                })                   
-
-            }
-            else console.log(res.status);
-        })
-        .catch((err) => console.log(err))
-
-        
-
-
-    
-
+    if (
+      this.state.teacherCourse === "" ||
+      this.state.teacherCourse === undefined
+    ) {
+      this.setState({
+        teacherError: true,
+        messageError: this.state.messageError + "Ingresar profesor de curso",
+      });
+    } else {
+      this.setState({
+        teacherError: false,
+      });
+    }
 }
-    handleChangeTable(event) {
-        console.log(event)
-
-        let allStu = this.state.studentsNew.push({name: "neww"})
-        this.setState({ studentsNew: allStu});
-        console.log(this.state)
-        
-        
-    }
     handleSubmit(event){
 
         // console.log(this.state)
@@ -255,31 +279,15 @@ export default class CreateCourse extends Component {
                                                     </ListItem>
                                                 )
                                             })} */}
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-
-                                        </List>
-
-
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-
-
-                        </Grid>
-
-                    </div >
-
-
-
-
-                </div>
-
-            </div>
-        )
-    }
 }
-
-
-
-
-
