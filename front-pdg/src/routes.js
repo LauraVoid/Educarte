@@ -6,10 +6,9 @@ import Login from "./components/Index/Login";
 import Createcourse from "./components/course/create-course";
 import ListCourse from "./components/course/list-course";
 import RouteWithLayout from "./components/configRouter/RouteWithLayout";
-import { Minimal as MinimalLayout } from "./layouts";
+import Minimal from "./layouts/Minimal";
 import Home from "./pages/Home/Home";
 import store from "./store/store";
-
 export default (
   <Provider store={store}>
     <BrowserRouter basename="/">
@@ -19,7 +18,7 @@ export default (
         <Route path="/courses" component={ListCourse} />
         <RouteWithLayout
           path="/home"
-          layout={MinimalLayout}
+          layout={Minimal}
           component={Home}
           public={true}
         />
