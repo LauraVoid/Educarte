@@ -79,6 +79,7 @@ export default class CreateCourse extends Component {
       courseName: event.target.value,
     });
 
+
     if (this.state.courseName === "") {
       this.setState({
         courseError: true,
@@ -102,157 +103,176 @@ export default class CreateCourse extends Component {
         teacherError: false,
       });
     }
-  }
-  isDisabled(event) {
-    console.log(event);
-  }
-  render() {
-    /*  const teachers = [
-            { id:1, name: 'The Shawshank Redemption' },
-            { id:2,name: 'The Godfather' },
-            { id:3,name: 'Dark Knight' },
-        ]  */
+}
+    handleSubmit(event){
 
-    return (
-      <div>
-        <div style={{ padding: 20 }}>
-          <h1>Crear un curso</h1>
+        // console.log(this.state)
+        
+        // if(!this.state.teacherError && !this.state.courseError){
+        //     axios.post()
+        // }
 
-          <div style={{ padding: 40 }}>
-            <Grid container spacing={5} className="Grid-main-blue">
-              <Grid item xs={6}>
-                <Card>
-                  <CardContent>
-                    <Typography
-                      className="title"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Datos del curso
-                    </Typography>
-                    <form
-                      className="root"
-                      noValidate
-                      autoComplete="off"
-                      onSubmit={this.handleSubmit}
-                    >
-                      {/* onSubmit={handleSubmit} */}
-                      <Grid item xs={12}>
-                        <TextField
-                          id="standard-basic"
-                          label="Nombre del curso"
-                          fullWidth
-                          onChange={(e) =>
-                            this.setState({ courseName: e.target.value })
-                          }
-                          name="courseName"
-                          type="text"
-                          value={this.state.courseName || ""}
-                          error={this.state.courseName === ""}
-                          helperText={
-                            this.state.courseName === " " ? "No valido" : ""
-                          }
-                        />
-                      </Grid>
-                      <Grid item xs={12} md={12}>
-                        <br></br>
-                        <br></br>
-                      </Grid>
+        
 
-                      <Grid item xs={12}>
-                        <Autocomplete
-                          id="combo-box-demo"
-                          options={this.state.listTeachers}
-                          name="teacherCourse"
-                          clearOnEscape
-                          getOptionLabel={(option) =>
-                            option !== "" ? option.name : option
-                          }
-                          // error={this.state.teacherCourse === ""}
-                          onChange={(event, newVal) =>
-                            this.setState({ teacherCourse: newVal })
-                          }
-                          //onChange={this.isDisabled}
-                          // style={{ width: 300 }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Docente encargado"
-                              variant="outlined"
-                              // onSelect={(e)=> console.log(e.target)}
-                              value={this.state.teacherCourse || ""}
-                            />
-                          )}
-                        />
-                      </Grid>
+    }
+    handleChange(event){
+        event.persist();
+        this.setState({
+            courseName:event.target.value
 
-                      <Grid item xs={12} md={12}>
-                        <br></br>
-                        <br></br>
-                      </Grid>
+        })
+        
+        if (this.state.courseName === "") {
+            this.setState({
+                courseError: true,
+                messageError: this.state.messageError +"Ingresar un nombre de curso",
+            });
+           
+        }else{
+            this.setState({
+                courseError: false,
+               
+            });
+            
+        }
+        if(this.state.teacherCourse === "" || this.state.teacherCourse === undefined){
+            this.setState({
+                teacherError: true,
+                messageError: this.state.messageError +"Ingresar profesor de curso",
+            });
+        
+        }else{
+            this.setState({
+                teacherError: false,
+               
+            });
+            
+        }
+        
+        
+    }
+    isDisabled(event){
+        console.log(event)
 
-                      <Grid item xs={12}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          disabled={
-                            this.state.courseError || this.state.teacherError
-                          }
-                        >
-                          Guardar curso
-                        </Button>
-                      </Grid>
-                    </form>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={6}>
-                <Card>
-                  <CardContent>
-                    <Typography
-                      className="title"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Estudiantes del curso
-                    </Typography>
-                    <form className="root" noValidate autoComplete="off">
-                      <Grid item xs={12}>
-                        <Autocomplete
-                          id="combo-box-demo"
-                          options={this.state.students}
-                          getOptionLabel={(option) =>
-                            option !== "" ? option.name : option
-                          }
-                          onChange={(event, newValue) => {
-                            let list = this.state.studentsNew;
-                            list.push(newValue);
-                            this.setState({ studentsNew: list });
-                          }}
-                          // style={{ width: 300 }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Estudiantes del curso"
-                              variant="outlined"
-                            />
-                          )}
-                        />
-                      </Grid>
-                    </form>
+        
+    }
+    render() {
+        
 
-                    <List
-                      component="nav"
-                      aria-label="secondary mailbox folders"
-                    >
-                      {this.state.studentsNew.map((value, index) => {
-                        return (
-                          <ListItem key={index}>
-                            <ListItemText primary={value.name} />
-                          </ListItem>
-                        );
-                      })}
-                      {/* {this.state.studentsNew.map((value, index) => {
+        return (
+            <div>
+                <div style={{ padding: 20 }}>
+                    <h1>Crear un curso</h1>
+
+                    <div style={{ padding: 40 }}>
+                        <Grid container spacing={5} className="Grid-main-blue">
+                            <Grid item xs={6}>
+                                <Card>
+                                    <CardContent>
+                                        <Typography className="title" color="textSecondary" gutterBottom>
+                                            Datos del curso
+                                </Typography>
+                                        <form className="root" noValidate autoComplete="off"  >
+                                            {/* onSubmit={handleSubmit} */}
+                                            <Grid item xs={12}>
+                                                <TextField id="standard-basic" label="Nombre del curso" fullWidth
+                                                onChange={(e)=> this.setState({ courseName:e.target.value})}
+                                                name="courseName"
+                                                type="text"
+                                                value={this.state.courseName || ""} 
+                                                error={this.state.courseName === ""}                                                
+                                                helperText={this.state.courseName === " " ? 'No valido' : ''} />
+                                            </Grid>
+                                            <Grid item xs={12} md={12}>
+                                                <br></br>
+                                                <br></br>
+
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Autocomplete
+                                                    id="combo-box-demo"
+                                                    options={this.state.listTeachers}
+                                                    name="teacherCourse"
+                                                    clearOnEscape
+                                                    getOptionLabel={(option) => option !=="" ? option.name:option}
+                                                    
+                                                    // error={this.state.teacherCourse === ""} 
+                                                    onChange={(event, newVal)=> this.setState({teacherCourse: newVal})}
+                                                    //onChange={this.isDisabled}
+                                                    // style={{ width: 300 }}
+                                                    renderInput={(params) => (
+                                                        <TextField {...params} label="Docente encargado" variant="outlined"
+                                                        // onSelect={(e)=> console.log(e.target)} 
+                                                        value={this.state.teacherCourse || ""}/>
+                                                        
+                                                    )
+                                                    }
+                                                />
+                                            </Grid>
+
+                                            <Grid item xs={12} md={12}>
+                                                <br></br>
+                                                <br></br>
+
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Button variant="contained" color="primary"
+                                                onClick={this.handleSubmit}
+                                                //disabled={this.state.courseError || this.state.teacherError}
+                                                >
+                                                    Guardar curso
+                                        </Button>
+
+                                            </Grid>
+
+
+
+                                        </form>
+
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Card>
+                                    <CardContent>
+                                        <Typography className="title" color="textSecondary" gutterBottom>
+                                            Estudiantes del curso
+                            </Typography>
+                                        <form className="root" noValidate autoComplete="off" >
+
+
+                                            <Grid item xs={12}>
+                                                <Autocomplete
+                                                    id="combo-box-demo"
+                                                    options={this.state.students}
+                                                    disableClearable
+                                                    getOptionLabel={(option) => option !=="" ? option.name +" "+ option.lastname :option}                                                   
+                                                    onChange={(event, newValue) => {
+                                                        let list = this.state.studentsNew
+                                                        list.push(newValue)
+                                                        this.setState({studentsNew: list})
+                                                      }}
+                                                    // style={{ width: 300 }}
+                                                    renderInput={(params) =>
+                                                         <TextField {...params} label="Estudiantes del curso" variant="outlined" 
+                                                         value={this.state.studentsNew || ""}/>}
+                                                />
+                                            </Grid>
+                                        </form>
+
+                                        <List component="nav" aria-label="secondary mailbox folders">
+                                        {this.state.studentsNew.map((value, index) =>{
+                                                   return(
+                                                    <ListItem key={index} >
+                                                    <ListItemText primary={value.name+ " " +value.lastname} />
+                                                </ListItem>
+                                                 
+                                                   ) 
+                                              }                                                                                                                                                
+                                               )}
+                                            {/* {this.state.studentsNew.map((value, index) => {
                                                 return (
                                                     <ListItem button>
                                                         <ListItemText primary={value.name} />
@@ -269,4 +289,5 @@ export default class CreateCourse extends Component {
       </div>
     );
   }
+
 }
