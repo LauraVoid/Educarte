@@ -319,7 +319,7 @@ const ListCourse = () => {
 
 
     return (
-        <div className={classes.root}>
+        <div className="background1">
             <div style={{ padding: 20 }}>
                 <h1>Gestionar cursos</h1>
 

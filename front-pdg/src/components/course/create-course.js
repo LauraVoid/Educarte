@@ -108,6 +108,7 @@ const CreateCourse = () => {
   const [students, setStudents] = useState([]);
   const [teachers, setTeachers] = useState([]);
 
+  const [studentsList, setStudentsList] = useState([]);
   const [teacherCourse, setTeacherCourse] = useState([]);
   const [studentsCourse, setStudentsCourse] = useState([]);
  
@@ -153,6 +154,18 @@ const CreateCourse = () => {
    getTeachers();
    getStudents();
   }, [teachers]);
+
+  useEffect(()=>{
+    var list =[];
+    studentsCourse.forEach(function(student){
+      var item = {name: student.name+ " " +student.lastname, id: student.id}
+      list.push(item)
+     
+    })
+    setStudentsList(list)
+    console.log(studentsList)
+
+  },[studentsCourse])
 
 
   useEffect(() => {
@@ -246,7 +259,7 @@ const CreateCourse = () => {
       : false;
 
   return (
-    <div className={classes.root}>
+    <div className="background">
       <Grid container className={classes.grid}>
         <Grid
          
@@ -354,7 +367,8 @@ const CreateCourse = () => {
                               let arry = studentsCourse 
                               arry.push(newVal)
                               setStudentsCourse(arry)
-                              console.log("TYPE",typeof studentsCourse)
+                              
+                           
                             }
 
                             } 
@@ -367,17 +381,26 @@ const CreateCourse = () => {
                       </form>
 
                       <List component="nav" aria-label="secondary mailbox folders">
-                        {studentsCourse.forEach(function(student){
+                        {studentsList.map((value) => {
+                          
+                                   return (
+                                    <ListItem key={value.id} >
+                                    <ListItemText primary={value.name} />
+                                      </ListItem>
+                                        )
+                         })}
+                        {/* {studentsCourse.forEach(function(student){
+                          var item = {name: student.name+ " " +student.lastname, id: student.id}
                           return(
-                            <ListItem key={student.id} >
-                            <ListItemText primary={student.name+ " " +student.lastname} />
+                            <ListItem key={item.id} >
+                            <ListItemText primary={item.name} />
                         </ListItem>
                          
                            ) 
-                        })}
-                        {/* {this.state.studentsNew.map((value, index) => {
+                        })} */}
+                        {/* {studenList.map((value) => {
                                                 return (
-                                                    <ListItem button>
+                                                    <ListItem key={value.id.id} >
                                                         <ListItemText primary={value.name} />
                                                     </ListItem>
                                                 )
