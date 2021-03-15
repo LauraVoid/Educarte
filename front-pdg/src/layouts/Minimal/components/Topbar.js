@@ -80,7 +80,7 @@ const Topbar = (props) => {
       open={Boolean(anchorEl)}
       onClose={handleClose}
     >
-      <MenuItem onClick={handleClose}>
+      <MenuItem onClick={handleClose} component={RouterLink} to="/login">
         <ListItemIcon>
           <AccountCircleIcon fontSize="small" />
         </ListItemIcon>
@@ -110,7 +110,7 @@ const Topbar = (props) => {
         color="inherit"
       >
         <Toolbar variant="dense">
-          <RouterLink to="/home">
+          <RouterLink to="/">
             <img height="55px" alt="logo" src={logo192} />
           </RouterLink>
           <div className={classes.grow}>
@@ -141,6 +141,8 @@ const Topbar = (props) => {
                 className={classes.menuOption}
                 variant="text"
                 color="inherit"
+                component={RouterLink}
+                to="/login"
               >
                 Ingresar
               </Button>
