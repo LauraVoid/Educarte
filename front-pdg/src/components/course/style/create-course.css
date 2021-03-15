@@ -40,6 +40,20 @@
   background-color: white;
     /* minWidth: 650, */
 }
+.background{
+  background-image: url('../../../img/backgrounds/B1.png');
+  background-position: center;
+  height: 625px;
+  background-repeat: no-repeat;
+background-size: cover;
+}
+.background1{
+  background-image: url('../../../img/backgrounds/B2.png');
+  background-position: center;
+  height: 625px;
+  background-repeat: no-repeat;
+background-size: cover;
+}
 
 /* const useStyles = makeStyles({
   root: {
