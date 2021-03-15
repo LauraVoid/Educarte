@@ -15,7 +15,7 @@ const RouteWithLayout = (props) => {
     <Route
       {...rest}
       render={(matchProps) =>
-        !props.public ? (
+        !props.public && false ? (
           <Layout>
             {" "}
             <Component {...matchProps} /> <Redirect to="/login" />
@@ -38,7 +38,6 @@ const RouteWithLayout = (props) => {
 RouteWithLayout.propTypes = {
   component: PropTypes.any.isRequired,
   public: PropTypes.bool,
-  persId: PropTypes.string,
   persPoliticsaccepted: PropTypes.string,
   path: PropTypes.string,
 };

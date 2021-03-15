@@ -5,11 +5,13 @@ import { Provider } from "react-redux";
 import Login from "./components/Index/Login";
 import Createcourse from "./components/course/create-course";
 import ListCourse from "./components/course/list-course";
-import Feedback from './components/teacher/feedback'
+import Feedback from "./components/teacher/feedback";
 import RouteWithLayout from "./components/configRouter/RouteWithLayout";
 import Minimal from "./layouts/Minimal/Minimal";
 import Home from "./pages/Home/Home";
+import CreateStudent from "./pages/user/add-student";
 import store from "./store/store";
+
 export default (
   <Provider store={store}>
     <BrowserRouter basename="/">
@@ -18,11 +20,11 @@ export default (
         <Route path="/feedback" component={Feedback} />
         <Route path="/createcourse" component={Createcourse} />
         <Route path="/courses" component={ListCourse} />
+        <RouteWithLayout exact path="/" layout={Minimal} component={Home} />
         <RouteWithLayout
-          path="/"
+          path="/createstudent"
           layout={Minimal}
-          component={Home}
-          public={true}
+          component={CreateStudent}
         />
       </Switch>
     </BrowserRouter>
