@@ -15,6 +15,18 @@ const theme = createMuiTheme({
     background: {
       default: "#fff",
     },
+    inherit: {
+      main: "#ffff",
+    },
+  },
+  typography: {
+    h5: {
+      color: "white",
+    },
+    h4: {
+      color: "#EE1C25",
+    },
+    fontFamily: "Comic Sans MS",
   },
 });
 

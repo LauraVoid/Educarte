@@ -107,7 +107,7 @@ const Topbar = (props) => {
         {...rest}
         className={clsx(classes.root, className)}
         position="fixed"
-        color="white"
+        color="inherit"
       >
         <Toolbar variant="dense">
           <RouterLink to="/home">

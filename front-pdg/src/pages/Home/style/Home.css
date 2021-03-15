@@ -1,0 +1,14 @@
+.img-banner {
+  width: 100%;
+}
+
+.list-educarte {
+  font-size: 17px;
+  list-style: none;
+  font-family: "Comic Sans MS";
+}
+
+.list-li-educarte {
+  padding-left: 1em;
+  text-indent: -1.2em;
+}
