@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import { Grid, TextField, Typography, Button } from "@material-ui/core/";
+import SaveIcon from "@material-ui/icons/Save";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,10 +16,16 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "2em",
   },
   componentsItems: {
-    margin: "2%",
+    marginLeft: "10%",
+    marginBottom: "10%",
   },
   buttonSave: {
     marginLeft: "45%",
+    marginBottom: "2%",
+  },
+  centrado: {
+    textAlign: "center",
+    justifyItems: "center",
     marginBottom: "2%",
   },
 }));
@@ -37,26 +44,34 @@ const CreateStudent = () => {
             >
               Datos del estudiante:
             </Typography>
-            <TextField
-              className={classes.componentsItems}
-              id="standard-basic"
-              label="Nombres"
-            />
-            <TextField
-              className={classes.componentsItems}
-              id="standard-basic"
-              label="Apellidos"
-            />
-            <TextField
-              className={classes.componentsItems}
-              id="standard-basic"
-              label="Fecha de nacimiento"
-            />
-            <TextField
-              className={classes.componentsItems}
-              id="standard-basic"
-              label="Registro de nacimiento"
-            />
+            <Grid item xs={12} className={classes.centrado}>
+              <TextField
+                className={classes.componentsItems}
+                id="standard-basic"
+                label="Nombres"
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.centrado}>
+              <TextField
+                className={classes.componentsItems}
+                id="standard-basic"
+                label="Apellidos"
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.centrado}>
+              <TextField
+                className={classes.componentsItems}
+                id="standard-basic"
+                label="Fecha de nacimiento"
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.centrado}>
+              <TextField
+                className={classes.componentsItems}
+                id="standard-basic"
+                label="Registro de nacimiento"
+              />
+            </Grid>
           </form>
         </Grid>
         <Grid item sm={6}>
@@ -68,39 +83,52 @@ const CreateStudent = () => {
             >
               Datos del acudiente:
             </Typography>
-            <TextField
-              className={classes.componentsItems}
-              id="standard-basic"
-              label="Nombres"
-            />
-            <TextField
-              className={classes.componentsItems}
-              id="standard-basic"
-              label="Apellidos"
-            />
-            <TextField
-              className={classes.componentsItems}
-              id="standard-basic"
-              label="Número de identificación"
-            />
-            <TextField
-              className={classes.componentsItems}
-              id="standard-basic"
-              label="Correo electrónico"
-            />
+            <Grid item xs={12} className={classes.centrado}>
+              <TextField
+                className={classes.componentsItems}
+                id="standard-basic"
+                label="Nombres"
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.centrado}>
+              <TextField
+                className={classes.componentsItems}
+                id="standard-basic"
+                label="Apellidos"
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.centrado}>
+              <TextField
+                className={classes.componentsItems}
+                id="standard-basic"
+                label="Número de identificación"
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.centrado}>
+              <TextField
+                className={classes.componentsItems}
+                id="standard-basic"
+                label="Correo electrónico"
+              />
+            </Grid>
+            <Grid item xs={12} className={classes.centrado}>
+              <TextField
+                className={classes.componentsItems}
+                id="standard-basic"
+                label="Número teléfonico"
+              />
+            </Grid>
           </form>
         </Grid>
-        <Grid container>
-          <Grid item xs={12}>
-            <Button
-              className={classes.buttonSave}
-              variant="contained"
-              color="primary"
-              size="large"
-            >
-              Guardar
-            </Button>
-          </Grid>
+        <Grid item xs={12} className={classes.centrado}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            endIcon={<SaveIcon></SaveIcon>}
+          >
+            Guardar
+          </Button>
         </Grid>
       </Grid>
     </div>
