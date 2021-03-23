@@ -135,11 +135,21 @@ Message.belongsTo(Teacher, {
 
 //Role many Teacher
 Role.hasMany(Teacher, {
-  foreignKey: "roleId",
+  onDelete: "CASCADE",
+  foreignKey: {
+    allowNull: false,
+    name:"roleId" 
+  }
 });
+
 Teacher.belongsTo(Role, {
-  foreignKey: "roleId",
+  onDelete: "CASCADE",
+  foreignKey: {
+    allowNull: false,
+    name:"roleId" 
+  }
 });
+
 
 //Role many Student
 Role.hasMany(Student, {

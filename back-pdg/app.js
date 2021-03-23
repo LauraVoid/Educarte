@@ -17,8 +17,8 @@ var studentRouter = require("./routes/student")
 
 var app = express();
 
-//require("./config/Sequelize");
-//require("./model/Asociations");
+// require("./config/Sequelize");
+require("./model/Asociations");
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");

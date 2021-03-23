@@ -3,55 +3,41 @@ const db = require("../model/index");
 const config = require("../config/auth-config");
 const Op = Sequelize.Op;
 const Teacher = db.user;
+const Student = db.student;
 const Role = db.role;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
-exports.signup = (req, res) => {
-    // Save User to Database
-    // Add Student.create!!
+exports.signup = async  (req, res) => {
+    
     if(req.body.is === "student"){
-      Teacher.create({
-            username: req.body.username,
-            email: req.body.name,
-            lastname: req.body.lastname,
-            idDocument: req.body.idDocument,
-            dateBirthday: req.body.dateBirthday,
-            institutionId: req.body.institutionId,
-            courseId: req.body.courseId,
-            parentId: req.body.parentId,
-            roleId: req.body.roleId,
-            password: bcrypt.hashSync(req.body.password, 8)
-          })
-            .then(user => {
-              if (req.body.roles) {
-                Role.findAll({
-                  where: {
-                    name: {
-                      [Op.or]: req.body.roles
-                    }
-                  }
-                }).then(roles => {
-                  //addRoles
-                  user.setRoles(roles).then(() => {
-                    res.send({ message: "User was registered successfully!" });
-                  });
-                });
-              } else {
-                // user role = 1
-                res.send({ message: "User was registered successfully! " });
+      // Add Student.create!!
+      Student.create({
+        username: req.body.username,
+        lastname: req.body.lastname,
+        idDocument: req.body.idDocument,
+        dateBirthday: req.body.dateBirthday,
+        institutionId: req.body.institutionId,
+        courseId: req.body.courseId,
+        parentId: req.body.parentId,
+        roleId: req.body.roleId,
+        password: bcrypt.hashSync(req.body.password, 8)
+      })
+      .then(user => {              
+        // user role = 1
+        res.status(200).send({ message: "User was registered successfully!" });
 
-              }
-            })
-            .catch(err => {
-              res.status(500).send({ message: err.message });
-            });
-
+    
+  })
+  .catch(err => {
+    res.status(500).send({ message: err.message });
+  });
+      
     }else if(req.body.is === "teacher"){
-      console.log("re.body", req.body.is)
-      Teacher.create({
+      
+      await Teacher.create({
             
-            email: req.body.name,
+            email: req.body.email,
             name: req.body.name,
             lastname: req.body.lastname,
             idDocument: req.body.idDocument,
@@ -61,8 +47,9 @@ exports.signup = (req, res) => {
             password: bcrypt.hashSync(req.body.password, 8)
           })
             .then(user => {
+              
                   // user role = 1
-                  res.send({ message: "User was registered successfully! bienvenido" });
+                  res.status(200).send({ message: "User was registered successfully!" });
   
               
             })
