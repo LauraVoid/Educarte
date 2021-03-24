@@ -237,7 +237,7 @@ const FeedbackStudent = () => {
                                     alignItems="center"
                                     style={ {margin:30}}>
 
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} sm={6}>
                                             <TextField id="standard-basic" label="Título"
                                                 onChange={handleChange}
                                                 
@@ -254,16 +254,17 @@ const FeedbackStudent = () => {
                                             />
                                         </Grid>
 
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} sm={6}>
                                             <TextField 
                                                 id="date"
                                                 label="Fecha"
+                                                
                                                 onChange={handleChange}
                                                 className={classes.textField}
                                                 name="date"
                                                 error={hasError("date")}
                                                 type="date"
-                                                value={feedbackState.values.date || ""}
+                                                value={feedbackState.values.date || " "}
                                                 helperText={
                                                     hasError("date")
                                                         ? "Debes ingresar una fecha"
@@ -278,7 +279,7 @@ const FeedbackStudent = () => {
                                             <br></br>
 
                                         </Grid>
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} sm={6}>
                                             <Box component="fieldset" mb={3} borderColor="transparent">
                                                 <Typography component="legend">Desempeño</Typography>
                                                 <Rating
@@ -291,7 +292,7 @@ const FeedbackStudent = () => {
                                             </Box>
                                         </Grid>
 
-                                        <Grid item xs={6}>
+                                        <Grid item xs={12} sm={6}>
                                             <TextField
                                                 id="outlined-multiline-static"
                                                 label="Mensaje"
@@ -313,7 +314,7 @@ const FeedbackStudent = () => {
 
 
 
-                                        <Grid item xs={12}>
+                                        <Grid item xs={12} sm={6}>
                                             <Button variant="contained" color="primary"
                                             style={{ margin: 20 }}
                                             >
