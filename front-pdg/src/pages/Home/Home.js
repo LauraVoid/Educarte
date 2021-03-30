@@ -18,13 +18,13 @@ import {
 import bannerHome from "../../img/banners/banner.png";
 import kidsImg from "../../img/home/img-kids.png";
 import teacher from "../../img/home/access-teacher.png";
-import communication from "../../img/home/communication.png";
 import students from "../../img/home/students-mixto.png";
 import info from "../../img/home/info.png";
 import parent from "../../img/home/padres.png";
 import content from "../../img/home/title1.png";
 import kindcontent from "../../img/home/kindcontent.png";
 import BeenhereIcon from "@material-ui/icons/Beenhere";
+import communication from "../../img/home/communication.png";
 
 import "./style/Home.css";
 
