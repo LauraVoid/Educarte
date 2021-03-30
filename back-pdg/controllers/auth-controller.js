@@ -108,7 +108,7 @@ exports.signup = async  (req, res) => {
     }else if(req.body.is === "student"){
       Student.findOne({
         where: {
-          username: req.body.username
+          username: req.body.email
         }
       })
         .then(user => {
@@ -136,6 +136,43 @@ exports.signup = async  (req, res) => {
             id: user.id,
             username: user.username,
             roles: user.roleId,
+            accessToken: token
+          });  
+        })
+        .catch(err => {
+          res.status(500).send({ message: err.message });
+        });
+    }
+    else if(req.body.is === "institution"){
+      Student.findOne({
+        where: {
+          email: req.body.email
+        }
+      })
+        .then(user => {
+          if (!user) {
+            return res.status(404).send({ message: "Institution Not found." });
+          }
+    
+          var passwordIsValid = bcrypt.compareSync(
+            req.body.password,
+            user.password
+          );
+    
+          if (!passwordIsValid) {
+            return res.status(401).send({
+              accessToken: null,
+              message: "Invalid Password!"
+            });
+          }
+    
+          var token = jwt.sign({ id: user.id }, config.secret, {
+            expiresIn: 86400 // 24 hours
+          });
+  
+          res.status(200).send({
+            id: user.id,
+            email: user.email,
             accessToken: token
           });  
         })

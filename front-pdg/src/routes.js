@@ -11,7 +11,9 @@ import Minimal from "./layouts/Minimal/Minimal";
 import Home from "./pages/Home/Home";
 import CreateStudent from "./pages/user/add-student";
 import MainTeacher from "./components/teacher/main"
+import MainInstitution from "./components/Institution/main"
 import store from "./store/store";
+
 
 export default (
   <Provider store={store}>
@@ -20,6 +22,7 @@ export default (
         <Route path="/login" component={Login} />
         <Route path="/feedback" component={Feedback} />
         <Route path="/teacher" component={MainTeacher} />
+        <Route path="/institution" component={MainInstitution} />
         <Route path="/createcourse" component={Createcourse} />
         <Route path="/courses" component={ListCourse} />
         <RouteWithLayout exact path="/" layout={Minimal} component={Home} />

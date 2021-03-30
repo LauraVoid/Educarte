@@ -1,0 +1,19 @@
+.background{
+    background-image: url('../../../img/backgrounds/B4.png');
+    background-position: center;
+    height: 625px;
+    background-repeat: no-repeat;
+  background-size: cover;
+  }
+
+  .Grid-main-green{
+    
+    background-color:#26FF97;    
+    border-radius: 10px;
+  }
+
+.background-form{
+    background-color:white;    
+    border-radius: 10px;
+
+}
