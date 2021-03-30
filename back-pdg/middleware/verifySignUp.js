@@ -1,25 +1,30 @@
 const db = require("../model/index");
 const ROLES = db.ROLES;
 const User = db.user;
+const Student = db.student;
 const Role = require("../model/Role")
 
 
 checkDuplicateUsernameOrEmail = (req, res, next) => {
     // Username
-    User.findOne({
-      where: {
-        email: req.body.email
-      }
-    }).then(user => {
-      if (user) {
-        res.status(400).send({
-          message: "Failed! username is already in use!"
-        });
-        return;
-      }
-  
-      // Email
-      User.findOne({
+    if(req.body.is === "student"){
+      Student.findOne({
+        where: {
+          username: req.body.username
+        }
+      }).then(user => {
+        if (user) {
+          res.status(400).send({
+            message: "Failed! username is already in use!"
+          });
+          return;
+        }
+        next();
+      });
+      
+    }else{
+       // Email
+       User.findOne({
         where: {
           email: req.body.email
         }
@@ -33,7 +38,12 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
   
         next();
       });
-    });
+
+    }
+    
+  
+     
+    
   };
   
   checkRolesExisted = (req, res, next) => {
@@ -43,9 +53,9 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
           roleId:req.body.roleId
         }
       })
-        if (! result) {
+        if (!result) {
           res.status(400).send({
-            message: "Failed! Role does not exist = " + req.body.role
+            message: "Failed! Role does not exist = "
           });
           return;
         }

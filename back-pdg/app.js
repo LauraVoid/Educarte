@@ -17,8 +17,8 @@ var studentRouter = require("./routes/student")
 
 var app = express();
 
-//require("./config/Sequelize");
-//require("./model/Asociations");
+// require("./config/Sequelize");
+require("./model/Asociations");
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
@@ -41,7 +41,7 @@ app.listen(8000, function () {
 
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
-	res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+	res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method, x-access-token');
 	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
 	res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
 	next();

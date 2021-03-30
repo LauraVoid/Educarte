@@ -1,6 +1,7 @@
 import { red } from "@material-ui/core/colors";
 import { createMuiTheme } from "@material-ui/core";
 
+
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -26,7 +27,7 @@ const theme = createMuiTheme({
     h4: {
       color: "#EE1C25",
     },
-    fontFamily: "Comic Sans MS",
+    
   },
 });
 

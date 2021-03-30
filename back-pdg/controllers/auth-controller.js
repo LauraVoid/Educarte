@@ -3,55 +3,44 @@ const db = require("../model/index");
 const config = require("../config/auth-config");
 const Op = Sequelize.Op;
 const Teacher = db.user;
+const Student = db.student;
 const Role = db.role;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
-exports.signup = (req, res) => {
-    // Save User to Database
-    // Add Student.create!!
+exports.signup = async  (req, res) => {
+    
     if(req.body.is === "student"){
-      Teacher.create({
-            username: req.body.username,
-            email: req.body.name,
-            lastname: req.body.lastname,
-            idDocument: req.body.idDocument,
-            dateBirthday: req.body.dateBirthday,
-            institutionId: req.body.institutionId,
-            courseId: req.body.courseId,
-            parentId: req.body.parentId,
-            roleId: req.body.roleId,
-            password: bcrypt.hashSync(req.body.password, 8)
-          })
-            .then(user => {
-              if (req.body.roles) {
-                Role.findAll({
-                  where: {
-                    name: {
-                      [Op.or]: req.body.roles
-                    }
-                  }
-                }).then(roles => {
-                  //addRoles
-                  user.setRoles(roles).then(() => {
-                    res.send({ message: "User was registered successfully!" });
-                  });
-                });
-              } else {
-                // user role = 1
-                res.send({ message: "User was registered successfully! " });
+      // Add Student.create!!
+      console.log("ESTUDIANTE")
+    await Student.create({
 
-              }
-            })
-            .catch(err => {
-              res.status(500).send({ message: err.message });
-            });
+        name: req.body.name,
+        username: req.body.username,
+        lastname: req.body.lastname,
+        idDocument: req.body.idDocument,
+        dateBirthday: req.body.dateBirthday,
+        institutionId: req.body.institutionId,
+        courseId: req.body.courseId,
+        parentId: req.body.parentId,
+        roleId: req.body.roleId,
+        password: bcrypt.hashSync(req.body.password, 8)
+      })
+      .then(user => {              
+        // user role = 1
+        res.status(200).send({ message: "User was registered successfully!" });
 
+    
+  })
+  .catch(err => {
+    res.status(500).send({ message: err.message });
+  });
+      
     }else if(req.body.is === "teacher"){
-      console.log("re.body", req.body.is)
-      Teacher.create({
+      
+      await Teacher.create({
             
-            email: req.body.name,
+            email: req.body.email,
             name: req.body.name,
             lastname: req.body.lastname,
             idDocument: req.body.idDocument,
@@ -61,8 +50,9 @@ exports.signup = (req, res) => {
             password: bcrypt.hashSync(req.body.password, 8)
           })
             .then(user => {
+              
                   // user role = 1
-                  res.send({ message: "User was registered successfully! bienvenido" });
+                  res.status(200).send({ message: "User was registered successfully!" });
   
               
             })
@@ -76,47 +66,82 @@ exports.signup = (req, res) => {
  
   
   exports.signin = (req, res) => {
-    Teacher.findOne({
-      where: {
-        email: req.body.email
-      }
-    })
-      .then(user => {
-        if (!user) {
-          return res.status(404).send({ message: "User Not found." });
+
+    if(req.body.is ==="teacher"){
+      Teacher.findOne({
+        where: {
+          email: req.body.email
         }
-  
-        var passwordIsValid = bcrypt.compareSync(
-          req.body.password,
-          user.password
-        );
-  
-        if (!passwordIsValid) {
-          return res.status(401).send({
-            accessToken: null,
-            message: "Invalid Password!"
-          });
-        }
-  
-        var token = jwt.sign({ id: user.id }, config.secret, {
-          expiresIn: 86400 // 24 hours
-        });
-  
-        var authorities = [];
-        user.getRoles().then(roles => {
-          for (let i = 0; i < roles.length; i++) {
-            authorities.push("ROLE_" + roles[i].name.toUpperCase());
+      })
+        .then(user => {
+          if (!user) {
+            return res.status(404).send({ message: "User Not found." });
           }
+    
+          var passwordIsValid = bcrypt.compareSync(
+            req.body.password,
+            user.password
+          );
+    
+          if (!passwordIsValid) {
+            return res.status(401).send({
+              accessToken: null,
+              message: "Invalid Password!"
+            });
+          }
+    
+          var token = jwt.sign({ id: user.id }, config.secret, {
+            expiresIn: 86400 // 24 hours
+          });
+  
+          res.status(200).send({
+            id: user.id,
+            email: user.email,
+            roles: user.roleId,
+            accessToken: token
+          });  
+        })
+        .catch(err => {
+          res.status(500).send({ message: err.message });
+        });
+
+    }else if(req.body.is === "student"){
+      Student.findOne({
+        where: {
+          username: req.body.username
+        }
+      })
+        .then(user => {
+          if (!user) {
+            return res.status(404).send({ message: "User Not found." });
+          }
+    
+          var passwordIsValid = bcrypt.compareSync(
+            req.body.password,
+            user.password
+          );
+    
+          if (!passwordIsValid) {
+            return res.status(401).send({
+              accessToken: null,
+              message: "Invalid Password!"
+            });
+          }
+    
+          var token = jwt.sign({ id: user.id }, config.secret, {
+            expiresIn: 86400 // 24 hours
+          });
+  
           res.status(200).send({
             id: user.id,
             username: user.username,
-            email: user.email,
-            roles: authorities,
+            roles: user.roleId,
             accessToken: token
-          });
+          });  
+        })
+        .catch(err => {
+          res.status(500).send({ message: err.message });
         });
-      })
-      .catch(err => {
-        res.status(500).send({ message: err.message });
-      });
+    }
+    
   };

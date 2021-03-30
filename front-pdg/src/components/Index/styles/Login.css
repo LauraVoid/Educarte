@@ -7,6 +7,12 @@
  background-size: cover;
 }
 
+.background-form{
+  background-color:white;    
+  border-radius: 10px;
+
+}
+
 .rectangle {
     height: 400px;
     /* width: 500px; */

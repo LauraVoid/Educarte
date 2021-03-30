@@ -2,8 +2,8 @@ exports.allAccess = (req, res) => {
     res.status(200).send("Public Content.");
   };
   
-  exports.userBoard = (req, res) => {
-    res.status(200).send("User Content.");
+  exports.studentBoard = (req, res) => {
+    res.status(200).send("Student Content.");
   };
   
   exports.adminBoard = (req, res) => {
@@ -11,5 +11,5 @@ exports.allAccess = (req, res) => {
   };
   
   exports.moderatorBoard = (req, res) => {
-    res.status(200).send("teac-assistant Content.");
+    res.status(200).send("Teacher assistant Content.");
   };
