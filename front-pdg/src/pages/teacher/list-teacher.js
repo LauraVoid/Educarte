@@ -9,7 +9,7 @@ import InputBase from "@material-ui/core/InputBase";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import SearchIcon from "@material-ui/icons/Search";
-import TableTask from "../../components/task/table-task";
+import TableTeacher from "../../components/teacher/table-teacher";
 
 // CSS OF THIS TEMPLATE
 const useStyles = makeStyles((theme) => ({
@@ -76,43 +76,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TaskExplorer = () => {
+const TeacherExplorer = () => {
   const classes = useStyles();
   return (
     <div className={classes.divContainer}>
       <Grid container>
         <Grid item xs={12} sm={12}>
-          <h1 className={classes.title}>Gestionar tareas</h1>
+          <h1 className={classes.title}>Gestionar profesores</h1>
         </Grid>
       </Grid>
       <Grid container className={classes.root} justify="center">
-        <Grid item xs={12} sm={12}>
-          <Box
-            className={classes.boxSearch}
-            color="text.primary"
-            justifyContent="center"
-          >
-            <Grid item xs={12} sm={12}>
-              <Paper component="form" className={classes.root2}>
-                <IconButton className={classes.iconButton} aria-label="menu">
-                  <MenuIcon />
-                </IconButton>
-                <InputBase
-                  className={classes.input}
-                  placeholder="Filtrar por "
-                  inputProps={{ "aria-label": "search google maps" }}
-                />
-                <IconButton
-                  type="submit"
-                  className={classes.iconButton}
-                  aria-label="search"
-                >
-                  <SearchIcon />
-                </IconButton>
-              </Paper>
-            </Grid>
-          </Box>
-        </Grid>
         <Grid item xs={12} sm={12}>
           <Box
             className={classes.boxContainer}
@@ -122,7 +95,7 @@ const TaskExplorer = () => {
             <div className={classes.sectionDesktop}>
               <Grid item xs={12} className={classes.createStudent}>
                 <Button variant="contained" color="primary" href="/createtask">
-                  Crear +
+                  Agregar +
                 </Button>
               </Grid>
             </div>
@@ -134,13 +107,12 @@ const TaskExplorer = () => {
                   color="primary"
                   href="/createstudent"
                 >
-                  Crear +
+                  Agregar +
                 </Button>
               </Grid>
             </div>
-
             <Grid item xs={12} sm={12}>
-              <TableTask></TableTask>
+              <TableTeacher></TableTeacher>
             </Grid>
           </Box>
         </Grid>
@@ -152,7 +124,7 @@ const mapStateToProps = (state) => ({
   // instid: state.auth.instId,
 });
 
-TaskExplorer.propTypes = {
+TeacherExplorer.propTypes = {
   // instid: PropTypes.any,
 };
-export default connect(mapStateToProps)(TaskExplorer);
+export default connect(mapStateToProps)(TeacherExplorer);

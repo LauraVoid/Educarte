@@ -1,8 +1,17 @@
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
-import { Grid, TextField, Typography, Button } from "@material-ui/core/";
-import SaveIcon from "@material-ui/icons/Save";
+import {
+  Grid,
+  TextField,
+  Button,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@material-ui/core/";
+import FormControl from "@material-ui/core/FormControl";
+import AddToPhotosIcon from "@material-ui/icons/AddToPhotos";
+import SendIcon from "@material-ui/icons/Send";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,57 +41,124 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: "5%",
     marginTop: "3%",
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: "100%",
+    marginBottom: "10%",
+  },
+  input: {
+    display: "none",
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 200,
+  },
+  upload: {
+    marginTop: "5%",
+  },
+  send: {
+    marginTop: "10%",
+  },
+  separate: {
+    marginTop: "5%",
+  },
 }));
 
 const CreateTeacher = () => {
   const classes = useStyles();
+  /* Serve for setting select */
+  const [age, setAge] = React.useState("");
+  const [open, setOpen] = React.useState(false);
+
+  const handleChange = (event) => {
+    setAge(event.target.value);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
   return (
     <div>
       <Grid container className={classes.gridContainer}>
-        <Grid item sm={12} xs={12}>
-          <Typography variant="h6" color="initial" className={classes.title}>
-            Datos del profesor:
-          </Typography>
-        </Grid>
-        <Grid item sm={6}>
+        <Grid item sm={6} className={classes.separate}>
           <form className={classes.root}>
             <Grid item xs={12} className={classes.centrado}>
               <TextField
                 className={classes.componentsItems}
                 id="standard-basic"
-                label="Nombres"
+                label="Título"
               />
             </Grid>
             <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Apellidos"
-              />
+              <FormControl className={classes.formControl}>
+                <InputLabel id="demo-controlled-open-select-label">
+                  Tipo de recurso
+                </InputLabel>
+                <Select
+                  labelId="demo-controlled-open-select-label"
+                  id="demo-controlled-open-select"
+                  open={open}
+                  onClose={handleClose}
+                  onOpen={handleOpen}
+                  value={age}
+                  onChange={handleChange}
+                >
+                  <MenuItem value={10}>Video</MenuItem>
+                  <MenuItem value={20}>Juego</MenuItem>
+                  <MenuItem value={30}>Ficha</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="N° de identificación"
+              <input
+                accept="image/*"
+                className={classes.input}
+                id="contained-button-file"
+                multiple
+                type="file"
               />
+              <label htmlFor="contained-button-file">
+                <Button
+                  startIcon={<AddToPhotosIcon />}
+                  variant="contained"
+                  color="primary"
+                  component="span"
+                  className={classes.upload}
+                  size="small"
+                >
+                  Cargar imagen
+                </Button>
+              </label>
             </Grid>
           </form>
         </Grid>
-        <Grid item sm={6}>
+        <Grid item sm={6} className={classes.separate}>
           <form className={classes.root}>
             <Grid item xs={12} className={classes.centrado}>
               <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Celular"
+                id="date"
+                label="Fecha límite"
+                type="date"
+                defaultValue="2017-05-24"
+                className={classes.textField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
             </Grid>
             <Grid item xs={12} className={classes.centrado}>
               <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Correo"
+                label="Mensaje"
+                placeholder="Ingresa enlaces y/o descripción"
+                multiline
+                rows={4}
+                rowsMax={6}
               />
             </Grid>
           </form>
@@ -92,9 +168,10 @@ const CreateTeacher = () => {
             variant="contained"
             color="primary"
             size="large"
-            endIcon={<SaveIcon></SaveIcon>}
+            endIcon={<SendIcon></SendIcon>}
+            className={classes.send}
           >
-            Guardar
+            Enviar
           </Button>
         </Grid>
       </Grid>

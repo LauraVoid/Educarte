@@ -11,6 +11,7 @@ import Minimal from "./layouts/Minimal/Minimal";
 import Home from "./pages/Home/Home";
 import StudentExplorer from "./pages/student/list-student";
 import CreateStudent from "./pages/user/add-student";
+import TeacherExplorer from "./pages/teacher/list-teacher";
 import CreateTeacher from "./pages/teacher/add-teacher";
 import MainTeacher from "./components/teacher/main";
 import MainInstitution from "./components/Institution/main";
@@ -33,6 +34,11 @@ export default (
           path="/createstudent"
           layout={Minimal}
           component={CreateStudent}
+        />
+        <RouteWithLayout
+          path="/teachers"
+          layout={Minimal}
+          component={TeacherExplorer}
         />
         <RouteWithLayout
           path="/createteacher"

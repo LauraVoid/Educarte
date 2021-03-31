@@ -124,11 +124,7 @@ const MainInstitution = () => {
               </Typography>
             </Grid>
             <Grid item xs={6} sm={4} container direction="column">
-              <IconButton
-                variant="contained"
-                color="primary"
-                href="/createcourse"
-              >
+              <IconButton variant="contained" color="primary" href="/teachers">
                 <PeopleIcon className={classes.largeIcon} color="action" />
               </IconButton>
               <Typography
