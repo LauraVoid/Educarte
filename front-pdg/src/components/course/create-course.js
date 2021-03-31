@@ -201,16 +201,17 @@ const CreateCourse = () => {
   const handleSubmit = (event) => {
 
     let data = {
-      ...coursesState.values,
+      name: coursesState.values.name,
+      institutionId: 1
 
     };
-    console.log(data);
+
 
     axios
       .post(`/course`,data)
       .then((res) => {
         if (res.status >= 200 && res.status < 300) {
-          console.log("Comunidad guardada con éxito");
+          console.log("Curso guardada con éxito");
          
           history.push("/courses");
         } else {
@@ -221,34 +222,15 @@ const CreateCourse = () => {
       .catch((error) => {
         let message1 = "Error";
         switch (error.response.data.message) {
-          case "The person doesn't exist": {
-            message1 = "El host de la comunidad no existe";
+          case "There is a problem": {
+            message1 = "Algo salió mal. No fue posible crear el curso";
             break;
-          }
-          case "The community is full": {
-            message1 =
-              "No es posible crear la comunidad, porque se ha alcanzado el aforo máximo permitido en ese espacio.";
-            break;
-          }
-          case "The person is not community host": {
-            message1 =
-              "La persona que intenta crear la comunidad no es el host";
-            break;
-          }
-          case "The person status is not authorized to create communities": {
-            message1 =
-              "Tu estado no es apto para crear comunidades ni para ingresar a ellas. Si te encuentras en la institución, por favor repórtate ante el personal de bioseguridad.";
-            break;
-          }
+          }          
           default: {
             message1 = "Algo salió mal. No fue posible crear la comunidad";
           }
         }
-        let message = {
-          errorMsg: message1,
-          errorType: "error",
-        };
-        // dispatch(showMessage(message));
+        console.log(message1)
       });
 
     event.preventDefault();

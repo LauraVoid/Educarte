@@ -3,6 +3,7 @@ import './styles/Login.css'
 import TextField from '@material-ui/core/TextField';
 import { Card, CardContent, Grid } from "@material-ui/core";
 import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom"
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from '@material-ui/core/styles';
 import Radio from '@material-ui/core/Radio';
@@ -40,12 +41,10 @@ const loginForm = {
             maximum: 64,
         },
     },
-    institution: {
-        presence: { allowEmpty: false, message: "es requerido" },
-        length: {
-            maximum: 64,
-        },
-    },
+    // institution: {
+    //     presence: { allowEmpty: false, message: "es requerido" },
+        
+    // },
     email: {
         presence: { allowEmpty: false, message: "es requerido" },
         length: {
@@ -55,9 +54,11 @@ const loginForm = {
 
 };
 const Login = () => {
+    let history = useHistory();
     const classes = useStyles();
     const [institution, setInstitution] = useState([]);
     const [selInstitution, setSelInstitution] = useState([]);
+    const [typeUser, setTypeUser] = useState('student');
     //const [userType, setUserType] = useState("");
 
 
@@ -121,6 +122,59 @@ const Login = () => {
             },
         }));
     };
+    const handleSubmit = (event) => {
+
+        let data = {
+            is: typeUser,
+            email:loginState.values.email,
+            password: loginState.values.password         
+
+        };
+        
+
+        console.log("data login", data)
+        axios
+          .post(`auth/api/auth/signin`, data)
+          .then((res) => {
+            if (res.status >= 200 && res.status < 300) {
+                if(data.is === "teacher"){
+                    history.push(`/teacher`);
+                }else if(data.is === "institution"){
+                    history.push(`/courses`);
+                }
+             
+             
+    
+            } else {
+              console.log("hubo un error");
+    
+            }
+          })
+          .catch((error) => {
+            let message1 = "Error";
+            switch (error.response.data.message) {
+              case "Invalid Password!": {
+                message1 = "Contraseña incorrecta";
+                break;
+              }
+              case "User Not found.": {
+                message1 =
+                  "El usuario no se encuentra registrado";
+                break;
+              }             
+              default: {
+                message1 = "Algo salió mal. No fue posible acceder";
+              }
+            }
+            console.log(message1)
+
+          });
+    
+        event.preventDefault();
+    
+    
+      };
+    
     const hasError = (field) =>
         loginState.touched[field] && loginState.errors[field]
             ? true
@@ -142,24 +196,43 @@ const Login = () => {
                                     variant="h4">
                                     Educarte
                                 </Typography>
-                                <form className={classes.root} noValidate autoComplete="off">
-                                    {/* <Grid
+                                <form className={classes.root} noValidate autoComplete="off"
+                                onSubmit={handleSubmit}>
+                                    <Grid
                                         container
+                                        spacing={5}
                                         direction="row"
-                                        justify="flex-start"
-                                        alignItems="flex-start"
-                                        item xs={12} sm={12} >
+                                    >
+
                                         <FormControl component="fieldset">
                                             <FormLabel component="legend">Tipo de usuario</FormLabel>
                                             <RadioGroup aria-label="who" name="usertype"
-                                                value={loginState.values.userType || ""} onChange={handleChange}>
-                                                <FormControlLabel value="student" control={<Radio />} label="Estudiante" />
-                                                <FormControlLabel value="teacher" control={<Radio />} label="Profesor" />
-                                                <FormControlLabel value="institution" control={<Radio />} label="Institución" />
+                                                value={typeUser || ""} onChange={(event, newVal) => setTypeUser(newVal)}>
+                                                <Grid item xs={6} sm={4}
+                                                    container
+                                                    direction="row" >
+                                                    <FormControlLabel value="student" control={<Radio />} label="Estudiante" />
+
+                                                </Grid>
+                                                <Grid item xs={6} sm={4}
+                                                    container
+                                                    direction="row" >
+                                                    <FormControlLabel value="teacher" control={<Radio />} label="Profesor" />
+
+                                                </Grid>
+                                                <Grid item xs={6} sm={4}
+                                                    container
+                                                    direction="row" >
+                                                    <FormControlLabel value="institution" control={<Radio />} label="Institución" />
+
+                                                </Grid>
+
+
+
 
                                             </RadioGroup>
                                         </FormControl>
-                                    </Grid> */}
+                                    </Grid>
                                     <Grid item xs={12} >
                                         <TextField id="standard-basic" label="Correo Electrónico/Usuario" fullWidth
                                             onChange={handleChange}
@@ -217,7 +290,15 @@ const Login = () => {
                                             <br></br>
 
                                         </Grid>
-                                        <Button fullWidth variant="contained" color="primary">Iniciar sesión</Button>
+                                        <Button fullWidth color="primary"
+                                            type="submit"
+                                            variant="contained"
+                                            disabled={
+                                                !loginState.isValid ||
+                                                typeUser === null ||
+                                                typeUser === ""
+                                            }
+                                        >Iniciar sesión</Button>
                                         <Grid item xs={12} md={12}>
                                             <br></br>
                                             <br></br>

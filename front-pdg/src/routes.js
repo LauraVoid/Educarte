@@ -13,6 +13,7 @@ import StudentExplorer from "./pages/student/list-student";
 import CreateStudent from "./pages/user/add-student";
 import CreateTeacher from "./pages/teacher/add-teacher";
 import MainTeacher from "./components/teacher/main";
+import MainInstitution from "./components/Institution/main";
 import store from "./store/store";
 
 export default (
@@ -22,6 +23,7 @@ export default (
         <Route path="/login" component={Login} />
         <Route path="/feedback" component={Feedback} />
         <Route path="/teacher" component={MainTeacher} />
+        <Route path="/institution" component={MainInstitution} />
         <Route path="/createcourse" component={Createcourse} />
         <Route path="/courses" component={ListCourse} />
         <RouteWithLayout exact path="/" layout={Minimal} component={Home} />
