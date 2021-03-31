@@ -14,6 +14,8 @@ import CreateStudent from "./pages/user/add-student";
 import CreateTeacher from "./pages/teacher/add-teacher";
 import MainTeacher from "./components/teacher/main";
 import MainInstitution from "./components/Institution/main";
+import TaskExplorer from "./pages/task/list-task";
+import CreateTask from "./pages/task/add-task";
 import store from "./store/store";
 
 export default (
@@ -41,6 +43,16 @@ export default (
           path="/students"
           layout={Minimal}
           component={StudentExplorer}
+        />
+        <RouteWithLayout
+          path="/tasks"
+          layout={Minimal}
+          component={TaskExplorer}
+        />
+        <RouteWithLayout
+          path="/createtask"
+          layout={Minimal}
+          component={CreateTask}
         />
       </Switch>
     </BrowserRouter>
