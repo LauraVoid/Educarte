@@ -28,61 +28,24 @@ const useStyles = makeStyles((theme) => ({
     justifyItems: "center",
     marginBottom: "2%",
   },
+  title: {
+    marginLeft: "5%",
+    marginTop: "3%",
+  },
 }));
 
-const CreateStudent = () => {
+const CreateTeacher = () => {
   const classes = useStyles();
   return (
     <div>
       <Grid container className={classes.gridContainer}>
-        <Grid item sm={6}>
-          <form className={classes.root}>
-            <Typography
-              className={classes.componentsItems}
-              variant="h6"
-              color="initial"
-            >
-              Datos del estudiante:
-            </Typography>
-            <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Nombres"
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Apellidos"
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Fecha de nacimiento"
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Registro de nacimiento"
-              />
-            </Grid>
-          </form>
+        <Grid item sm={12} xs={12}>
+          <Typography variant="h6" color="initial" className={classes.title}>
+            Datos del profesor:
+          </Typography>
         </Grid>
         <Grid item sm={6}>
           <form className={classes.root}>
-            <Typography
-              className={classes.componentsItems}
-              variant="h6"
-              color="initial"
-            >
-              Datos del acudiente:
-            </Typography>
             <Grid item xs={12} className={classes.centrado}>
               <TextField
                 className={classes.componentsItems}
@@ -104,18 +67,22 @@ const CreateStudent = () => {
                 label="N° de identificación"
               />
             </Grid>
+          </form>
+        </Grid>
+        <Grid item sm={6}>
+          <form className={classes.root}>
             <Grid item xs={12} className={classes.centrado}>
               <TextField
                 className={classes.componentsItems}
                 id="standard-basic"
-                label="Correo electrónico"
+                label="Celular"
               />
             </Grid>
             <Grid item xs={12} className={classes.centrado}>
               <TextField
                 className={classes.componentsItems}
                 id="standard-basic"
-                label="Número teléfonico"
+                label="Correo"
               />
             </Grid>
           </form>
@@ -139,7 +106,7 @@ const mapStateToProps = (state) => ({
   // instid: state.auth.instId,
 });
 
-CreateStudent.propTypes = {
+CreateTeacher.propTypes = {
   // instid: PropTypes.any,
 };
-export default connect(mapStateToProps)(CreateStudent);
+export default connect(mapStateToProps)(CreateTeacher);

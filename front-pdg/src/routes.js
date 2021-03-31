@@ -9,8 +9,10 @@ import Feedback from "./components/teacher/feedback";
 import RouteWithLayout from "./components/configRouter/RouteWithLayout";
 import Minimal from "./layouts/Minimal/Minimal";
 import Home from "./pages/Home/Home";
+import StudentExplorer from "./pages/student/list-student";
 import CreateStudent from "./pages/user/add-student";
-import MainTeacher from "./components/teacher/main"
+import CreateTeacher from "./pages/teacher/add-teacher";
+import MainTeacher from "./components/teacher/main";
 import store from "./store/store";
 
 export default (
@@ -27,6 +29,16 @@ export default (
           path="/createstudent"
           layout={Minimal}
           component={CreateStudent}
+        />
+        <RouteWithLayout
+          path="/createteacher"
+          layout={Minimal}
+          component={CreateTeacher}
+        />
+        <RouteWithLayout
+          path="/students"
+          layout={Minimal}
+          component={StudentExplorer}
         />
       </Switch>
     </BrowserRouter>
