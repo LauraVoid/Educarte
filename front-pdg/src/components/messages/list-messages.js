@@ -36,9 +36,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const messagesTest = [
-  { id: "1", sender: "Pepito", description: "Asistencia" },
+  {
+    id: "1",
+    sender: "Pepito Alfonso Gutierrez Payares",
+    description: "Asistencia",
+  },
   { id: "2", sender: "Laura Eustaquia", description: "Nuevo Correo" },
-  { id: "3", sender: "David Pancrasio", description: "Calse presencial" },
+  { id: "3", sender: "David Pancrasio", description: "Clase presencial" },
   { id: "4", sender: "Douglas", description: "Tarea pendiente" },
 ];
 
@@ -63,34 +67,40 @@ const MessagesExplorer = () => {
               {messagesTest.map((msg) => {
                 return (
                   <ListItem key={`${msg.id}`} button alignItems="center">
-                    <ListItemIcon>
-                      <AccountCircleIcon></AccountCircleIcon>
-                    </ListItemIcon>
                     <Grid container>
-                      <Grid item xs={6}>
-                        <ListItemText
-                          id={`${msg.id}`}
-                          primary={`${msg.sender}`}
-                        />
+                      <Grid container sm={4} xs={4}>
+                        <Grid item sm={3} xs={12}>
+                          <ListItemIcon>
+                            <AccountCircleIcon></AccountCircleIcon>
+                          </ListItemIcon>
+                        </Grid>
+                        <Grid item sm={8} xs={12}>
+                          <ListItemText
+                            id={`${msg.id}`}
+                            primary={`${msg.sender}`}
+                          />
+                        </Grid>
                       </Grid>
-                      <Grid item xs={6}>
+                      <Grid item sm={4} xs={4} className={classes.centrado}>
                         <ListItemText
                           id={`${msg.id}`}
                           primary={`${msg.description}`}
                         />
                       </Grid>
+                      <Grid item sm={4} xs={4}>
+                        <ListItemSecondaryAction>
+                          <IconButton edge="end" aria-label="comments">
+                            <EmailIcon />
+                          </IconButton>
+                          <IconButton edge="end" aria-label="comments">
+                            <DoneOutlineIcon />
+                          </IconButton>
+                          <IconButton edge="end" aria-label="comments">
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      </Grid>
                     </Grid>
-                    <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="comments">
-                        <EmailIcon />
-                      </IconButton>
-                      <IconButton edge="end" aria-label="comments">
-                        <DoneOutlineIcon />
-                      </IconButton>
-                      <IconButton edge="end" aria-label="comments">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
                     <Divider></Divider>
                   </ListItem>
                 );

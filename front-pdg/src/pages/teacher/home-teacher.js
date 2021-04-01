@@ -104,12 +104,12 @@ const HomeTeacher = () => {
         <Paper className={classes.paperBanner} elevation={10}>
           <BannerTeacher></BannerTeacher>
         </Paper>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <Paper className={classes.paperStudents} elevation={10}>
             <StudentsTeacher></StudentsTeacher>
           </Paper>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <Paper className={classes.paperMeeting} elevation={10}>
             <MeetingTeacher></MeetingTeacher>
           </Paper>

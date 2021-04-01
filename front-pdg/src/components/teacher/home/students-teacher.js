@@ -64,24 +64,34 @@ const StudentsTeacher = () => {
               {studentTest.map((stud) => {
                 return (
                   <ListItem key={`${stud.id}`} button alignItems="center">
-                    <ListItemIcon>
-                      <AccountCircleIcon></AccountCircleIcon>
-                    </ListItemIcon>
-                    <ListItemText
-                      id={`${stud.id}`}
-                      primary={`${stud.name} ${stud.lastname}`}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton edge="end" aria-label="comments">
-                        <CommentIcon />
-                      </IconButton>
-                      <IconButton edge="end" aria-label="comments">
-                        <ForumIcon />
-                      </IconButton>
-                      <IconButton edge="end" aria-label="comments">
-                        <AddIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
+                    <Grid container>
+                      <Grid container xs={6}>
+                        <Grid item xs={4}>
+                          <ListItemIcon>
+                            <AccountCircleIcon></AccountCircleIcon>
+                          </ListItemIcon>
+                        </Grid>
+                        <Grid item xs={8}>
+                          <ListItemText
+                            id={`${stud.id}`}
+                            primary={`${stud.name} ${stud.lastname}`}
+                          />
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={3}>
+                        <ListItemSecondaryAction>
+                          <IconButton edge="end" aria-label="comments">
+                            <CommentIcon />
+                          </IconButton>
+                          <IconButton edge="end" aria-label="comments">
+                            <ForumIcon />
+                          </IconButton>
+                          <IconButton edge="end" aria-label="comments">
+                            <AddIcon />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      </Grid>
+                    </Grid>
                     <Divider></Divider>
                   </ListItem>
                 );
