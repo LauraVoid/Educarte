@@ -5,18 +5,31 @@ import { Provider } from "react-redux";
 import Login from "./components/Index/Login";
 import Createcourse from "./components/course/create-course";
 import ListCourse from "./components/course/list-course";
-import Feedback from "./components/teacher/feedback";
+
 import RouteWithLayout from "./components/configRouter/RouteWithLayout";
 import Minimal from "./layouts/Minimal/Minimal";
+
+//pages for main view
 import Home from "./pages/Home/Home";
+
+//pages for institution
+import MainInstitution from "./components/Institution/main";
+
+//pages for student
 import StudentExplorer from "./pages/student/list-student";
 import CreateStudent from "./pages/user/add-student";
+
+//pages for teacher
 import HomeTeacher from "./pages/teacher/home-teacher";
 import TeacherExplorer from "./pages/teacher/list-teacher";
 import CreateTeacher from "./pages/teacher/add-teacher";
-import MainInstitution from "./components/Institution/main";
+import MessageTeacher from "./pages/messages/message-teacher";
+import Feedback from "./components/teacher/feedback";
+
+//pages for tasks
 import TaskExplorer from "./pages/task/list-task";
 import CreateTask from "./pages/task/add-task";
+
 import store from "./store/store";
 
 export default (
@@ -63,6 +76,11 @@ export default (
           path="/createtask"
           layout={Minimal}
           component={CreateTask}
+        />
+        <RouteWithLayout
+          path="/messagesteacher"
+          layout={Minimal}
+          component={MessageTeacher}
         />
       </Switch>
     </BrowserRouter>

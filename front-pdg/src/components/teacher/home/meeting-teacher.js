@@ -61,7 +61,7 @@ const MeetingTeacher = () => {
               return (
                 <Card className={classes.card}>
                   <Grid container>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                       <CardContent>
                         <Typography
                           className={classes.title}
@@ -72,7 +72,7 @@ const MeetingTeacher = () => {
                         </Typography>
                       </CardContent>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                       <CardContent>
                         <Typography
                           className={classes.title}
