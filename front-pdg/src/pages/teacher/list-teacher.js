@@ -4,11 +4,6 @@ import { Grid, Box, Button } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import bgd from "../../img/backgrounds/B7.png";
-import Paper from "@material-ui/core/Paper";
-import InputBase from "@material-ui/core/InputBase";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from "@material-ui/icons/Search";
 import TableTeacher from "../../components/teacher/table-teacher";
 
 // CSS OF THIS TEMPLATE

@@ -11,9 +11,9 @@ import Minimal from "./layouts/Minimal/Minimal";
 import Home from "./pages/Home/Home";
 import StudentExplorer from "./pages/student/list-student";
 import CreateStudent from "./pages/user/add-student";
+import HomeTeacher from "./pages/teacher/home-teacher";
 import TeacherExplorer from "./pages/teacher/list-teacher";
 import CreateTeacher from "./pages/teacher/add-teacher";
-import MainTeacher from "./components/teacher/main";
 import MainInstitution from "./components/Institution/main";
 import TaskExplorer from "./pages/task/list-task";
 import CreateTask from "./pages/task/add-task";
@@ -25,7 +25,6 @@ export default (
       <Switch>
         <Route path="/login" component={Login} />
         <Route path="/feedback" component={Feedback} />
-        <Route path="/teacher" component={MainTeacher} />
         <Route path="/institution" component={MainInstitution} />
         <Route path="/createcourse" component={Createcourse} />
         <Route path="/courses" component={ListCourse} />
@@ -34,6 +33,11 @@ export default (
           path="/createstudent"
           layout={Minimal}
           component={CreateStudent}
+        />
+        <RouteWithLayout
+          path="/teacher"
+          layout={Minimal}
+          component={HomeTeacher}
         />
         <RouteWithLayout
           path="/teachers"
