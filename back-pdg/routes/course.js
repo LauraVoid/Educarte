@@ -6,6 +6,6 @@ var course_controller = require("../controllers/course-controller");
 router.get("/",course_controller.index);
 router.post("/",course_controller.create);
 router.put("/",course_controller.update);
-router.delete("/",course_controller.delete);
+router.delete("/:id",course_controller.delete);
 
 module.exports = router;

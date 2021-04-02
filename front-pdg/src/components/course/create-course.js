@@ -6,9 +6,13 @@ import CardContent from "@material-ui/core/CardContent";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import PropTypes from "prop-types";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -84,6 +88,79 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const cellsHead = [  
+  {
+      id: "name",
+      numeric: false,
+      disablePadding: false,
+      label: "Nombre",
+  }
+  
+
+];
+HeadTable.propTypes = {
+  classes: PropTypes.object.isRequired,
+  
+  onRequestSort: PropTypes.func.isRequired,
+  
+  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
+  orderBy: PropTypes.string.isRequired,
+  rowCount: PropTypes.number.isRequired,
+};
+function HeadTable(props) {
+  const { order, orderBy, onRequestSort } = props;
+  const createSortHandler = (property) => (event) => {
+      onRequestSort(event, property);
+  };
+
+  return (
+      <TableHead>
+          <TableRow>
+              <TableCell padding="checkbox"></TableCell>
+              {cellsHead.map((headCell) => (
+                  <TableCell
+                      key={headCell.id}
+                      align={headCell.numeric ? "left" : "left"}
+                      padding={headCell.disablePadding ? "none" : "default"}
+                      sortDirection={orderBy === headCell.id ? order : false}
+                  >
+                      <TableSortLabel
+                          active={orderBy === headCell.id}
+                          direction={orderBy === headCell.id ? order : "asc"}
+                          onClick={createSortHandler(headCell.id)}
+                      >
+                          {headCell.label}
+                      </TableSortLabel>
+                  </TableCell>
+              ))}
+          </TableRow>
+      </TableHead>
+  );
+}
+function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+      return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+      return 1;
+  }
+  return 0;
+}
+function getComparator(order, orderBy) {
+  return order === "desc"
+      ? (a, b) => descendingComparator(a, b, orderBy)
+      : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
 const course = {
   id: {
     length: {
@@ -99,14 +176,20 @@ const course = {
 
 };
 
+
 const CreateCourse = () => {
   const dispatch = useDispatch();
   let history = useHistory();
   const classes = useStyles();
 
+  const [orderBy, setOrderBy] = React.useState("id");
+  const [dense, setDense] = React.useState(true);
+    const [order, setOrder] = React.useState("asc");
+    const [selected, setSelected] = React.useState([]);
 
-  const [students, setStudents] = useState([]);
+
   const [teachers, setTeachers] = useState([]);
+  const [students, setStudents] = useState([]);
 
   const [studentsList, setStudentsList] = useState([]);
   const [teacherCourse, setTeacherCourse] = useState([]);
@@ -154,24 +237,25 @@ const CreateCourse = () => {
    getTeachers();
    getStudents();
   }, [teachers]);
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+};
 
-  useEffect(()=>{
-    var list =[];
-    studentsCourse.forEach(function(student){
-      var item = {name: student.name+ " " +student.lastname, id: student.id}
-      list.push(item)
-     
-    })
-    setStudentsList(list)
-    console.log(studentsList)
 
-  },[studentsCourse])
+useEffect(()=>{
+  setCoursesState((coursesState)=>({
+    ...coursesState,
+    studentsCou : studentsCourse
+
+  }))
+  
+},[studentsCourse])
 
 
   useEffect(() => {
     const errors = validate(coursesState.values, course);
-
-    //const errors= false;
     setCoursesState((coursesState) => ({
       ...coursesState,
       isValid: errors ? false : true,
@@ -235,6 +319,7 @@ const CreateCourse = () => {
 
     event.preventDefault();
   };
+  const isSelected = (name) => selected.indexOf(name) !== -1;
   const hasError = (field) =>
     coursesState.touched[field] && coursesState.errors[field]
       ? true
@@ -348,7 +433,7 @@ const CreateCourse = () => {
                             onChange={(event, newVal) =>{
                               let arry = studentsCourse 
                               arry.push(newVal)
-                              setStudentsCourse(arry)
+                              setStudentsCourse(arry)                            
                               
                            
                             }
@@ -357,37 +442,56 @@ const CreateCourse = () => {
                             // style={{ width: 300 }}
                             renderInput={(params) =>
                               <TextField {...params} label="Estudiantes del curso" variant="outlined"
-                                value={studentsCourse} />}
+                              value={coursesState.values.studentsCou || ""}
+                               />}
                           />
                         </Grid>
                       </form>
+                      <TableContainer>
+                                <Table className="table"
 
-                      <List component="nav" aria-label="secondary mailbox folders">
-                        {studentsList.map((value) => {
-                          
-                                   return (
-                                    <ListItem key={value.id} >
-                                    <ListItemText primary={value.name} />
-                                      </ListItem>
-                                        )
-                         })}
-                        {/* {studentsCourse.forEach(function(student){
-                          var item = {name: student.name+ " " +student.lastname, id: student.id}
-                          return(
-                            <ListItem key={item.id} >
-                            <ListItemText primary={item.name} />
-                        </ListItem>
-                         
-                           ) 
-                        })} */}
-                        {/* {studenList.map((value) => {
+                                    aria-labelledby="tableTitle"
+                                    aria-label="enhanced table"
+                                    size={dense ? "small" : "medium"}
+                                >
+                                    <HeadTable
+                                        classes={classes}                                       
+                                        order={order}
+                                        orderBy={orderBy}
+                                       
+                                        onRequestSort={handleRequestSort}
+                                        rowCount={studentsCourse.length}
+                                    >
+                                    </HeadTable >
+                                    
+                                    <TableBody >
+                                        {stableSort(studentsCourse, getComparator(order, orderBy)).map(
+                                            (row, index) => {
+                                                const isItemSelected = isSelected(row.id);
+                                                
                                                 return (
-                                                    <ListItem key={value.id.id} >
-                                                        <ListItemText primary={value.name} />
-                                                    </ListItem>
-                                                )
-                                            })} */}
-                      </List>
+                                                    <TableRow
+                                                        hover
+                                                        // onClick={(event) => handleClick(event, row.id)}
+                                                        role="checkbox"
+                                                        aria-checked={isItemSelected}
+                                                        tabIndex={-1}
+                                                        key={row.id}
+                                                    
+                                                    >
+                                                        <TableCell></TableCell>
+                                                        <TableCell align="left"> {row.name}</TableCell>
+                                                       
+                                                    </TableRow>
+                                                );
+                                            }
+                                        )}
+
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+
+                      
                     </CardContent>
                   </Card>
                 </Grid>

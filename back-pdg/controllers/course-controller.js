@@ -42,10 +42,11 @@ exports.index = async function (req, res, next) {
      
   };
   exports.delete = async function (req, res, next) {
-   
+      
+
     await Course.destroy({
         where:{
-            id:req.body.id
+            id:req.params.id
         }
     }).then(()=> res.send("The course was deleted"))
     .catch(function(err){
