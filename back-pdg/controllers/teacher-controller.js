@@ -7,3 +7,4 @@ exports.index = async function (req, res, next) {
         res.send(result)
     })   
   };
+

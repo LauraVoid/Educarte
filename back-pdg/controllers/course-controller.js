@@ -1,4 +1,5 @@
 const Course = require("../model/Course");
+const Teacher_Course = require("../model/Teacher_Course");
 
 exports.index = async function (req, res, next) {
 
@@ -8,12 +9,17 @@ exports.index = async function (req, res, next) {
     })   
   };
   exports.create = async function (req, res, next) {
-    await Course.create({
+   const result =  await Course.create({
         name: req.body.name,
         institutionId: req.body.institutionId        
-    }).then(() => res.send("The course was created"))
+    })    
+
+    await Teacher_Course.create({
+        courseId: result.id,
+        teacherId: req.body.teacherId        
+    }).then(() => res.send({message:"The course was created", course: result}))
     .catch(function(err){
-        if(req.body.name === undefined){
+        if(req.body.courseId === undefined){
             res.status(500).send("The course needs a name")
         }else{
             res.status(500).send("There is a problem")

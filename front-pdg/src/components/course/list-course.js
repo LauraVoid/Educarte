@@ -409,7 +409,16 @@ const ListCourse = () => {
                                                         </TableCell>
                                                         <TableCell></TableCell>
                                                         <TableCell align="left"> {row.name}</TableCell>
-                                                        <TableCell align="left"> Profesor</TableCell>
+                                                        <TableCell align="left"> 
+                                                        <IconButton
+                                                                aria-label="view"
+                                                            // onClick={() => {
+                                                            //     handleClickOpen(row);
+                                                            // }}
+                                                            >
+                                                                <EyeButton color="disabled" />
+                                                            </IconButton>
+                                                        </TableCell>
                                                         
                                                         <TableCell align="left">
                                                             <IconButton
