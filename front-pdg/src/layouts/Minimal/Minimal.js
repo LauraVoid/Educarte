@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import Topbar from "./components/Topbar";
 import Footer from "../Main/components/Footer";
+import ShowMessage from "../../components/StatusMessage";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -22,8 +23,10 @@ const Minimal = (props) => {
   return (
     <div className={classes.root}>
       <Topbar />
-      <main className={classes.content}>{children}</main>
-      {/* Aquí iria el Footer */}
+      <main className={classes.content}>
+        <ShowMessage></ShowMessage>
+        {children}
+      </main>
       <Footer />
     </div>
   );
