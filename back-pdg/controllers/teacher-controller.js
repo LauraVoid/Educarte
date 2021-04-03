@@ -18,10 +18,14 @@ exports.create = async function (req, res, next) {
       institutionId: req.body.institutionId,
       roleId: 1,
     });
+    //console.log(teacher.dataValues.id);
     return res.status(200).json({
       teacher,
     });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.log(err);
+    return res
+      .status(406) //NOT ACCEPTABLE SINCE THE BODY IS WRONG
+      .send({ error: "Ha ocurrido un error, intentalo de nuevo" });
   }
 };
