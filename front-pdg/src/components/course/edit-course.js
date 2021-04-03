@@ -103,7 +103,7 @@ const course = {
 };
 
 
-const CreateCourse = () => {
+const EditCourse = () => {
   const dispatch = useDispatch();
   let history = useHistory();
   const classes = useStyles();
@@ -142,14 +142,33 @@ const CreateCourse = () => {
   });
 
   useEffect(() => {
+      
+        axios
+        .get(`student/`)
+        .then((res) => {
+          if (res.status === 200) {
+            setStudents(res.data);  
+  
+          } else console.log(res.status);
+        })
+        .catch((err) => console.log(err));          
+      
+  });
+
+  useEffect(() => {
     if(students.length === 0){
       axios
-      .get(`student/`)
+      .get(`/find/`+ 2)
       .then((res) => {
         if (res.status === 200) {
-          setStudents(res.data);
+            setCoursesState({
+                values: {
+                    name: res.data.course.name,
+                    id: res.data.course.id
 
-
+                }
+            })
+            setTeacherCourse(res.data.teacher)
         } else console.log(res.status);
       })
       .catch((err) => console.log(err));          
@@ -250,7 +269,7 @@ const CreateCourse = () => {
       teacherId: teacherCourse.id
     };
     axios
-      .post(`/course`, data)
+      .put(`/course`, data)
       .then((res) => {
          if (res.status >= 200 && res.status < 300) {
           setCreateOpen(true);      
@@ -473,9 +492,9 @@ const mapStateToProps = (state) => ({
   // instid: state.auth.instId,
 });
 
-CreateCourse.propTypes = {
+EditCourse.propTypes = {
 
   // instid: PropTypes.any,
 };
 
-export default connect(mapStateToProps)(CreateCourse);
+export default connect(mapStateToProps)(EditCourse);

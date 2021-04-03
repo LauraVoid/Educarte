@@ -4,6 +4,7 @@ var course_controller = require("../controllers/course-controller");
 
 /* GET home page. */
 router.get("/",course_controller.index);
+router.get("/find/:id",course_controller.findById)
 router.post("/",course_controller.create);
 router.put("/",course_controller.update);
 router.delete("/:id",course_controller.delete);

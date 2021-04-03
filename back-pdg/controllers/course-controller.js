@@ -1,5 +1,6 @@
 const Course = require("../model/Course");
 const Teacher_Course = require("../model/Teacher_Course");
+const Teacher = require("../model/Teacher");
 
 exports.index = async function (req, res, next) {
 
@@ -8,6 +9,27 @@ exports.index = async function (req, res, next) {
         res.send(result)
     })   
   };
+//Search a course by Id and return the course and the teacher's course
+exports.findById = async function (req,res,next){
+
+    const result = await Course.findOne({
+        where: {
+            id: req.params.id            
+          }
+    })
+    const result2 = await Teacher_Course.findOne({
+        where: {
+            courseId: result.id  
+          }
+    })
+
+    await Teacher.findOne({
+        where: {
+            id: result2.teacherId  
+          }
+    }).then((teacherf) => res.send({course:result, teacher:teacherf}))
+
+}
   exports.create = async function (req, res, next) {
    const result =  await Course.create({
         name: req.body.name,

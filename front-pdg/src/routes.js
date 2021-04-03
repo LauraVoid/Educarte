@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import Login from "./components/Index/Login";
 import Createcourse from "./components/course/create-course";
 import ListCourse from "./components/course/list-course";
+import EditCourse from "./components/course/edit-course"
 
 import RouteWithLayout from "./components/configRouter/RouteWithLayout";
 import Minimal from "./layouts/Minimal/Minimal";
@@ -40,6 +41,7 @@ export default (
         <Route path="/feedback" component={Feedback} />
         <Route path="/institution" component={MainInstitution} />
         <Route path="/createcourse" component={Createcourse} />
+        <Route path="/editcourse" component={EditCourse} />
         <Route path="/courses" component={ListCourse} />
         <RouteWithLayout exact path="/" layout={Minimal} component={Home} />
         <RouteWithLayout
