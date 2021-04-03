@@ -10,14 +10,16 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TablePagination from "@material-ui/core/TablePagination";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Typography from "@material-ui/core/Typography";
 import Button from '@material-ui/core/Button';
 import axios from '../../utils/axios';
 import EyeButton from '@material-ui/icons/Visibility';
 import DeleteIcon from '@material-ui/icons/Delete';
-
 import EditIcon from '@material-ui/icons/Create';
 import IconButton from '@material-ui/core/IconButton';
 import { useHistory } from "react-router-dom";
@@ -218,8 +220,10 @@ const ListCourse = () => {
     const [totalResults, setTotalResults] = React.useState(0);
     const [dense, setDense] = React.useState(true);
     const [order, setOrder] = React.useState("asc");
+    const [reload, setReload] = React.useState(false);
     const [orderBy, setOrderBy] = React.useState("id");
     const [selected, setSelected] = React.useState([]);
+    const [activeOpen, setActiveOpen] = React.useState(false);
 
 
 
@@ -255,17 +259,20 @@ const ListCourse = () => {
         getCourses();
 
     }, [page]);
+    useEffect(() => {
+        getCourses();
+
+    }, [reload]);
 
 
     const handleClickActiveOpen = (row) => {
         setCourSelected(row);
-        //setActiveOpen(true);
+        setActiveOpen(true);
     };
+    const handleCloseActive = () => {
+        setActiveOpen(false);
+      };    
 
-
-    const numOfPages = () => {
-        return Math.ceil(totalResults / rowsPerPage);
-    };
 
 
     const handleRequestSort = (event, property) => {
@@ -282,9 +289,7 @@ const ListCourse = () => {
         }
         setSelected([]);
     };
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
+
     const handleClick = (event, name) => {
         const selectedIndex = selected.indexOf(name);
         let newSelected = [];
@@ -304,14 +309,43 @@ const ListCourse = () => {
 
         setSelected(newSelected);
     };
+    function deleteCourse() {
+        axios
+            .delete(`course/` + courSelected.id)
+            .then((res) => {
+                if (res.status >= 200 && res.status < 300) {
+                    console.log("borrado con éxito");
+                    setActiveOpen(false);
+                    handleReload();
 
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
-    const handleChangeDense = (event) => {
-        setDense(event.target.checked);
-    };
+                } else {
+                    console.log("Hubo un error");
+                }
+            })
+            .catch((error) => {
+                let message1 = "Error";
+                switch (error.response.data.message) {
+                    case "The followuptype doesn't exist": {
+                        message1 = "El curso que intentas borrar no existe";
+                        break;
+                    }                    
+                    default: {
+                        message1 = "Algo salió mal. No fue posible borrar el curso";
+                    }
+                }
+                //   let message = {
+                //     errorMsg: message1,
+                //     errorType: "error",
+                //   };
+                console.log(message1)
+                //   dispatch(showMessage(message));
+            });
+
+    }
+    const handleReload =()=>{
+        setReload(!reload);
+    }
+
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -354,30 +388,38 @@ const ListCourse = () => {
                                         {stableSort(courses, getComparator(order, orderBy)).map(
                                             (row, index) => {
                                                 const isItemSelected = isSelected(row.id);
-                                                const labelId = `enhanced-table-checkbox-${index}`;
+                                                
                                                 return (
                                                     <TableRow
                                                         hover
-                                                        onClick={(event) => handleClick(event, row.id)}
+                                                        // onClick={(event) => handleClick(event, row.id)}
                                                         role="checkbox"
                                                         aria-checked={isItemSelected}
                                                         tabIndex={-1}
                                                         key={row.id}
-                                                    //selected={isItemSelected}
+                                                    
                                                     >
 
                                                         <TableCell
                                                             align="right"
-                                                        //component="th"
-                                                        // id={labelId}
-                                                        // scope="row"
+                                                        
                                                         >
                                                             {" "}
                                                             {row.id}
                                                         </TableCell>
                                                         <TableCell></TableCell>
                                                         <TableCell align="left"> {row.name}</TableCell>
-                                                        <TableCell align="left"> Profesor</TableCell>
+                                                        <TableCell align="left"> 
+                                                        <IconButton
+                                                                aria-label="view"
+                                                            // onClick={() => {
+                                                            //     handleClickOpen(row);
+                                                            // }}
+                                                            >
+                                                                <EyeButton color="disabled" />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                        
                                                         <TableCell align="left">
                                                             <IconButton
                                                                 aria-label="view"
@@ -388,10 +430,6 @@ const ListCourse = () => {
                                                                 <EyeButton color="disabled" />
                                                             </IconButton>
                                                         </TableCell>
-
-
-
-
                                                         <TableCell align="left">
                                                             <IconButton
                                                                 aria-label="view"
@@ -400,6 +438,14 @@ const ListCourse = () => {
                                                                 }}
                                                             >
                                                                 <DeleteIcon></DeleteIcon>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                aria-label="view"
+                                                                // onClick={() => {
+                                                                //     handleClickActiveOpen(row);
+                                                                // }}
+                                                            >
+                                                                <EditIcon></EditIcon>
                                                             </IconButton>
                                                         </TableCell>
                                                     </TableRow>
@@ -410,6 +456,30 @@ const ListCourse = () => {
                                     </TableBody>
                                 </Table>
                             </TableContainer>
+
+                            <Dialog
+                                onClose={handleCloseActive}
+                                aria-labelledby="customized-dialog-title"
+                                open={activeOpen}
+                            >
+                                <DialogTitle id="customized-dialog-title" onClose={handleCloseActive}>
+                                    Confirmación
+                                </DialogTitle>
+                                <DialogContent dividers>
+                                    <Typography gutterBottom>
+                                        {"¿Está seguro que desea borrar el curso?"}
+                                    </Typography>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button autoFocus onClick={handleCloseActive} color="primary">
+                                        No
+                                    </Button>
+                                    <Button autoFocus onClick={deleteCourse} color="primary">
+                                        Sí
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+
                         </Grid>
 
 

@@ -4,4 +4,5 @@ var students_controller = require("../controllers/student-controller");
 
 /* GET home page. */
 router.get("/",students_controller.index);
+router.put("/",students_controller.assignToCourse)
 module.exports = router;

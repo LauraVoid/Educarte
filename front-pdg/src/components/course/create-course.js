@@ -5,10 +5,11 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import PropTypes from "prop-types";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
+// import PropTypes from "prop-types";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -84,6 +85,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
 const course = {
   id: {
     length: {
@@ -99,19 +102,23 @@ const course = {
 
 };
 
+
 const CreateCourse = () => {
   const dispatch = useDispatch();
   let history = useHistory();
   const classes = useStyles();
 
 
-  const [students, setStudents] = useState([]);
+ //true = esta en creación del curso, false terminó de crear el curso sigue agregar estudiantes
+  const [courseCreate, setCourseCreate] = useState(true)
+  const [createOpen, setCreateOpen] = useState(false)
+  const [courseCreated, setCourseCreated] = useState(0) 
   const [teachers, setTeachers] = useState([]);
+  const [students, setStudents] = useState([]);
 
-  const [studentsList, setStudentsList] = useState([]);
   const [teacherCourse, setTeacherCourse] = useState([]);
   const [studentsCourse, setStudentsCourse] = useState([]);
- 
+
   const [coursesState, setCoursesState] = useState({
     isValid: false,
     values: {},
@@ -120,12 +127,12 @@ const CreateCourse = () => {
   });
 
 
-  const getTeachers =()=>{
+  const getTeachers = () => {
     if (teachers.length === 0) {
       axios
         .get(`teacher/`)
         .then((res) => {
-          
+
           if (res.status === 200) setTeachers(res.data);
           else console.log(res.status);
         })
@@ -134,44 +141,86 @@ const CreateCourse = () => {
 
   }
 
-  const getStudents =()=>{
-    
-    axios
-    .get(`student/`)
-    .then((res) => {
-      if (res.status === 200) {
-        setStudents(res.data);
-        
+  const getStudents = () => {
 
-      } else console.log(res.status);
-    })
-    .catch((err) => console.log(err));
-    
+    axios
+      .get(`student/`)
+      .then((res) => {
+        if (res.status === 200) {
+          setStudents(res.data);
+
+
+        } else console.log(res.status);
+      })
+      .catch((err) => console.log(err));
+
 
   }
 
   useEffect(() => {
-   getTeachers();
-   getStudents();
+    getTeachers();
+    getStudents();
   }, [teachers]);
+ 
 
-  useEffect(()=>{
-    var list =[];
-    studentsCourse.forEach(function(student){
-      var item = {name: student.name+ " " +student.lastname, id: student.id}
-      list.push(item)
-     
-    })
-    setStudentsList(list)
-    console.log(studentsList)
+  useEffect(() => {
+    setStudentsCourse(studentsCourse)
 
-  },[studentsCourse])
+  }, [studentsCourse])
+
+  const handleStudents = (event, newVal) => {
+    
+    setStudentsCourse(newVal)   
+
+  }
+  const handleCloseCreate = () => {
+    setCreateOpen(false);
+  };
+  const handleActiveStudents = () => {
+    setCourseCreate(false)
+    setCreateOpen(false);
+  };  
+  const handleSubmitStudents = (event) => {
+    console.log("STATE",studentsCourse)
+    console.log("STATE ID",courseCreated)
+    let data = {
+      students: studentsCourse,
+      institutionId: 1,
+      courseId: courseCreated
+    };
+    axios
+      .put(`/student`, data)
+      .then((res) => {
+
+        if (res.status >= 200 && res.status < 300) {
+          console.log("Estudiantes agregados con éxito");
+
+          history.push("/courses");
+        } else {
+          console.log("hubo un error");
+          console.log(res);
+        }
+      })
+      .catch((error) => {
+        let message1 = "Error";
+        switch (error.data.message) {
+          case "There is a problem": {
+            message1 = "Algo salió mal. No fue posible crear el curso";
+            break;
+          }
+          default: {
+            message1 = "Algo salió mal. No fue posible crear el curso";
+          }
+        }
+        console.log(message1)
+      });
+
+    event.preventDefault();
+  }
 
 
   useEffect(() => {
     const errors = validate(coursesState.values, course);
-
-    //const errors= false;
     setCoursesState((coursesState) => ({
       ...coursesState,
       isValid: errors ? false : true,
@@ -198,22 +247,23 @@ const CreateCourse = () => {
     }));
   };
 
+
   const handleSubmit = (event) => {
 
     let data = {
       name: coursesState.values.name,
-      institutionId: 1
-
+      institutionId: 1,
+      teacherId: teacherCourse.id
     };
-
-
     axios
-      .post(`/course`,data)
+      .post(`/course`, data)
       .then((res) => {
-        if (res.status >= 200 && res.status < 300) {
-          console.log("Curso guardada con éxito");
-         
-          history.push("/courses");
+         if (res.status >= 200 && res.status < 300) {
+          setCreateOpen(true);      
+          setCourseCreated(res.data.course.id)
+          console.log("Curso guardado con éxito");
+
+          
         } else {
           console.log("hubo un error");
           console.log(res);
@@ -221,13 +271,13 @@ const CreateCourse = () => {
       })
       .catch((error) => {
         let message1 = "Error";
-        switch (error.response.data.message) {
+        switch (error.data.message) {
           case "There is a problem": {
             message1 = "Algo salió mal. No fue posible crear el curso";
             break;
-          }          
+          }
           default: {
-            message1 = "Algo salió mal. No fue posible crear la comunidad";
+            message1 = "Algo salió mal. No fue posible crear el curso";
           }
         }
         console.log(message1)
@@ -235,6 +285,8 @@ const CreateCourse = () => {
 
     event.preventDefault();
   };
+ 
+
   const hasError = (field) =>
     coursesState.touched[field] && coursesState.errors[field]
       ? true
@@ -244,29 +296,30 @@ const CreateCourse = () => {
     <div className="background">
       <Grid container className={classes.grid}>
         <Grid
-         
+
           item
           md={12}
           xs={12}
-          
+
         >
           <div style={{ padding: 20 }}>
             <h1>Crear un curso</h1>
 
             <div style={{ padding: 40 }}>
               <Grid container spacing={5} className="Grid-main-blue">
+               
                 <Grid item xs={6}>
                   <Card>
                     <CardContent>
                       <Typography className="title" color="textSecondary" gutterBottom>
                         Datos del curso
                                 </Typography>
-                      <form className="root"  autoComplete="off"  onSubmit={handleSubmit}>
-                       
+                      <form className="root" autoComplete="off" onSubmit={handleSubmit}>
+
                         <Grid item xs={12}>
                           <TextField id="standard-basic" label="Nombre del curso" fullWidth
                             onChange={handleChange}
-                            name="name"                           
+                            name="name"
                             error={hasError("name")}
                             type="text"
                             value={coursesState.values.name || ""}
@@ -275,7 +328,7 @@ const CreateCourse = () => {
                                 ? "Debes darle un nombre al curso"
                                 : null
                             }
-    
+
                           />
                         </Grid>
                         <Grid item xs={12} md={12}>
@@ -299,7 +352,7 @@ const CreateCourse = () => {
                             // style={{ width: 300 }}
                             renderInput={(params) => (
                               <TextField {...params} label="Docente encargado" variant="outlined"
-                                // onSelect={(e)=> console.log(e.target)} 
+                             
                                 value={teacherCourse} />
 
                             )
@@ -315,11 +368,10 @@ const CreateCourse = () => {
 
                         <Grid item xs={12}>
                           <Button variant="contained" color="primary"
-                         
-                            
+                            type="submit"
                           >
                             Guardar curso
-                                        </Button>
+                          </Button>
 
                         </Grid>
 
@@ -336,58 +388,57 @@ const CreateCourse = () => {
                       <Typography className="title" color="textSecondary" gutterBottom>
                         Estudiantes del curso
                             </Typography>
-                      <form className="root" noValidate autoComplete="off" >
+                            <Typography variant="body2" component="p">
+                              Para agregar estudiantes debes primero guardar el curso
+         
+                            </Typography>
+                      <form className="root" noValidate autoComplete="off"
+                        onSubmit={handleSubmitStudents}>
+                        <Button variant="contained" color="primary"
+                          type="submit"
+                          disabled={
+                            courseCreate                            
+                        }
+                        >
+                          Guardar estudiantes
+                          </Button>
+                        <Grid item xs={12} md={12}>
+                          <br></br>
+                          <br></br>
+
+                        </Grid>
 
 
                         <Grid item xs={12}>
-                          <Autocomplete
-                            id="combo-box-demo"
+                        <Autocomplete
+                            multiple
+                            id="tags-standard"
                             options={students}
-                            disableClearable
                             getOptionLabel={(option) => option !== "" ? option.name + " " + option.lastname : option}
-                            onChange={(event, newVal) =>{
-                              let arry = studentsCourse 
-                              arry.push(newVal)
-                              setStudentsCourse(arry)
-                              
-                           
-                            }
+                            onChange={(event, newVal) => handleStudents(event, newVal)}
 
-                            } 
-                            // style={{ width: 300 }}
-                            renderInput={(params) =>
-                              <TextField {...params} label="Estudiantes del curso" variant="outlined"
-                                value={studentsCourse} />}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+
+                                variant="standard"
+                                label="Multiple values"
+                                placeholder="Favorites"
+                              />
+                            )}
                           />
+                          
+
+                         
                         </Grid>
                       </form>
+                      <Grid item xs={12} md={12}>
+                        <br></br>
+                        <br></br>
 
-                      <List component="nav" aria-label="secondary mailbox folders">
-                        {studentsList.map((value) => {
-                          
-                                   return (
-                                    <ListItem key={value.id} >
-                                    <ListItemText primary={value.name} />
-                                      </ListItem>
-                                        )
-                         })}
-                        {/* {studentsCourse.forEach(function(student){
-                          var item = {name: student.name+ " " +student.lastname, id: student.id}
-                          return(
-                            <ListItem key={item.id} >
-                            <ListItemText primary={item.name} />
-                        </ListItem>
-                         
-                           ) 
-                        })} */}
-                        {/* {studenList.map((value) => {
-                                                return (
-                                                    <ListItem key={value.id.id} >
-                                                        <ListItemText primary={value.name} />
-                                                    </ListItem>
-                                                )
-                                            })} */}
-                      </List>
+                      </Grid>
+
+
                     </CardContent>
                   </Card>
                 </Grid>
@@ -395,18 +446,41 @@ const CreateCourse = () => {
             </div>
           </div>
         </Grid>
+        <Dialog
+                                onClose={handleCloseCreate}
+                                aria-labelledby="customized-dialog-title"
+                                open={createOpen}
+                            >
+                                <DialogTitle id="customized-dialog-title" onClose={handleCloseCreate}>
+                                    Curso guardado con exito
+                                </DialogTitle>
+                                <DialogContent dividers>
+                                    <Typography gutterBottom>
+                                        {"¿Desea agregar los estudiantes?"}
+                                    </Typography>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button autoFocus  color="primary"
+                                    href="/courses">
+                                        No
+                                    </Button>
+                                    <Button autoFocus onClick={handleActiveStudents} color="primary">
+                                        Sí
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
       </Grid>
     </div>
   );
 };
 
 const mapStateToProps = (state) => ({
-  
+
   // instid: state.auth.instId,
 });
 
 CreateCourse.propTypes = {
- 
+
   // instid: PropTypes.any,
 };
 
