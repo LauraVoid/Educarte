@@ -22,6 +22,12 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+
 import EditIcon from "@material-ui/icons/Edit";
 import axios from "../../utils/axios";
 import { useDispatch } from "react-redux";
@@ -123,7 +129,7 @@ function stableSort(array, comparator) {
 }
 
 function EnhancedTableHead(props) {
-  const { classes, order, orderBy, onRequestSort } = props;
+  const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -250,6 +256,19 @@ function EnhancedTable() {
   //Store all teachers
   const [teachers, setTeachers] = React.useState([]);
 
+  const [teacherSelected, setTeacherSelected] = React.useState([]);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = (row) => {
+    setTeacherSelected(row);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const getTeachers = () => {
     setViewProgress(true);
     axios
@@ -312,26 +331,6 @@ function EnhancedTable() {
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -346,6 +345,52 @@ function EnhancedTable() {
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  function deleteTeacher() {
+    setViewProgress(true);
+
+    axios
+      .delete(`/teacher/${teacherSelected.id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          let sendmessage = {
+            errorMsg: "Profesor borrado con éxito",
+            errorType: "success",
+          };
+          setReload(!reload);
+          setViewProgress(false);
+          setOpen(false);
+          dispatch(showMessage(sendmessage));
+        } else {
+          setOpen(false);
+          setViewProgress(false);
+          console.log("hubo un error");
+        }
+      })
+      .catch((error) => {
+        setOpen(false);
+        setViewProgress(false);
+        let message1 = "mensaje";
+        switch (error.response.data.message) {
+          case "The id needs to be specified": {
+            message1 = "Selecciona un profesor";
+            break;
+          }
+          case "Teacher probably to have any course": {
+            message1 = "Fue imposible borrar al profesor. Inténtalo de nuevo";
+            break;
+          }
+          default: {
+            message1 = "Algo salió mal. No fue posible borrar el profesor";
+          }
+        }
+        let message = {
+          errorMsg: message1,
+          errorType: "error",
+        };
+        dispatch(showMessage(message));
+      });
+  }
 
   return (
     <Grid container>
@@ -395,11 +440,15 @@ function EnhancedTable() {
                         <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">
                           <IconButton>
-                            <EditIcon color="disabled" />
+                            <EditIcon />
                           </IconButton>
                         </TableCell>
                         <TableCell align="left">
-                          <IconButton>
+                          <IconButton
+                            onClick={() => {
+                              handleClickOpen(row);
+                            }}
+                          >
                             <DeleteForeverIcon></DeleteForeverIcon>
                           </IconButton>
                         </TableCell>
@@ -433,6 +482,28 @@ function EnhancedTable() {
           control={<Switch checked={dense} onChange={handleChangeDense} />}
           label="Ajustar tabla"
         />
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Advertencia"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              ¿Está seguro que desea borrar el profesor?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleClose} color="primary">
+              NO
+            </Button>
+            <Button onClick={deleteTeacher} color="primary" autoFocus>
+              SÍ
+            </Button>
+          </DialogActions>
+        </Dialog>
         {viewProgress ? (
           <CircularProgress className={classes.progress}></CircularProgress>
         ) : (

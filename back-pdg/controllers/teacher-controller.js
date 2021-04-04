@@ -1,4 +1,5 @@
 const Teacher = require("../model/Teacher");
+const Course = require("../model/Course");
 
 const getPagination = (page, size) => {
   const limit = size ? +size : 5;
@@ -49,4 +50,24 @@ exports.create = async function (req, res, next) {
       .status(406) //NOT ACCEPTABLE SINCE THE BODY IS WRONG
       .send({ error: "Ha ocurrido un error, intentalo de nuevo" });
   }
+};
+
+exports.delete = async function (req, res) {
+  console.log(req.params);
+  await Teacher.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then(() => {
+      res.status(200).send("Teacher was success deleted");
+    })
+    .catch((error) => {
+      console.log(error);
+      if (req.params.id === undefined) {
+        res.status(406).send("The id needs to be specified");
+      } else {
+        res.status(406).send("Teacher probably to have any course");
+      }
+    });
 };
