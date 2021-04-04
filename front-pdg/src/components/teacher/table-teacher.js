@@ -21,6 +21,7 @@ import Switch from "@material-ui/core/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import EditIcon from "@material-ui/icons/Edit";
 import axios from "../../utils/axios";
 import { useDispatch } from "react-redux";
@@ -57,6 +58,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "50px",
     padding: "10px",
     margin: "10px",
+  },
+  progress: {
+    position: "fixed",
+    zIndex: 50,
+    top: "50%",
+    left: "50%",
   },
 }));
 
@@ -250,6 +257,7 @@ function EnhancedTable() {
       .then((res) => {
         if (res.status === 200) {
           setTeachers(res.data);
+          setViewProgress(false);
         }
       })
       .catch(() => {
@@ -425,6 +433,11 @@ function EnhancedTable() {
           control={<Switch checked={dense} onChange={handleChangeDense} />}
           label="Ajustar tabla"
         />
+        {viewProgress ? (
+          <CircularProgress className={classes.progress}></CircularProgress>
+        ) : (
+          <></>
+        )}
       </div>
     </Grid>
   );
