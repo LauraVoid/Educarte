@@ -89,7 +89,11 @@ const TeacherExplorer = () => {
           >
             <div className={classes.sectionDesktop}>
               <Grid item xs={12} className={classes.createStudent}>
-                <Button variant="contained" color="primary" href="/createtask">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  href="/createteacher"
+                >
                   Agregar +
                 </Button>
               </Grid>

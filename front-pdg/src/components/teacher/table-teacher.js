@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
@@ -22,6 +22,9 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import EditIcon from "@material-ui/icons/Edit";
+import axios from "../../utils/axios";
+import { useDispatch } from "react-redux";
+import { showMessage } from "../../actions/actionMessage";
 
 import { connect } from "react-redux";
 
@@ -57,15 +60,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const rows = [];
-
 const headCells = [
-  {
-    id: "id",
-    numeric: true,
-    disablePadding: false,
-    label: "N° identificación",
-  },
   { id: "name", numeric: false, disablePadding: false, label: "Nombres" },
   { id: "lastname", numeric: false, disablePadding: false, label: "Apellidos" },
   {
@@ -234,6 +229,7 @@ EnhancedTableToolbar.propTypes = {
 
 function EnhancedTable() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [totalResults, setTotalResults] = React.useState(0);
@@ -241,8 +237,53 @@ function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState("calories"); ///change by other thing
   const [selected, setSelected] = React.useState([]);
   const [dense, setDense] = React.useState(true);
-  //Store all student
-  const [students, setStudents] = React.useState([]);
+  const [reload, setReload] = React.useState(false);
+  const [viewProgress, setViewProgress] = React.useState(false);
+
+  //Store all teachers
+  const [teachers, setTeachers] = React.useState([]);
+
+  const getTeachers = () => {
+    setViewProgress(true);
+    axios
+      .get(`/teacher?page=${page}&&limit=${rowsPerPage}`)
+      .then((res) => {
+        if (res.status === 200) {
+          setTeachers(res.data);
+        }
+      })
+      .catch(() => {
+        setViewProgress(false);
+        let message = {
+          errorMsg:
+            "Hubo un error al cargar los profesores, por favor intente más tarde.",
+          errorType: "error",
+        };
+        dispatch(showMessage(message));
+      });
+  };
+
+  const getNumOfTeachers = () => {
+    let route = `/teacher/count`;
+    axios
+      .get(route)
+      .then((response) => {
+        setTotalResults(response.data.total);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    getNumOfTeachers();
+    getTeachers();
+  }, [page, rowsPerPage]);
+
+  useEffect(() => {
+    getNumOfTeachers();
+    getTeachers();
+  }, [reload]);
 
   const numOfPages = () => {
     return Math.ceil(totalResults / rowsPerPage);
@@ -256,7 +297,7 @@ function EnhancedTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = teachers.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -316,12 +357,12 @@ function EnhancedTable() {
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                rowCount={teachers.length}
               />
               <TableBody onChangePage={handleChangePage}>
-                {stableSort(students, getComparator(order, orderBy)).map(
+                {stableSort(teachers, getComparator(order, orderBy)).map(
                   (row, index) => {
-                    const isItemSelected = isSelected(students.name);
+                    const isItemSelected = isSelected(teachers.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
@@ -332,18 +373,18 @@ function EnhancedTable() {
                         key={row.name}
                         aria-checked={isItemSelected}
                       >
+                        <TableCell padding="checkbox"></TableCell>
                         <TableCell
                           component="th"
                           id={labelId}
                           scope="row"
-                          padding="none"
+                          align="left"
                         >
                           {row.name}
                         </TableCell>
-                        <TableCell align="right">{row.calories}</TableCell>
-                        <TableCell align="right">{row.fat}</TableCell>
-                        <TableCell align="right">{row.carbs}</TableCell>
-                        <TableCell align="right">{row.protein}</TableCell>
+                        <TableCell align="left">{row.lastname}</TableCell>
+                        <TableCell align="left">{row.phone}</TableCell>
+                        <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">
                           <IconButton>
                             <EditIcon color="disabled" />
