@@ -71,3 +71,29 @@ exports.delete = async function (req, res) {
       }
     });
 };
+
+exports.update = async function (req, res, next) {
+  console.log(req.body);
+  await Teacher.update(
+    {
+      name: req.body.name,
+      lastname: req.body.lastname,
+      idDocument: req.body.identification,
+      phone: req.body.cellphone,
+      email: req.body.email,
+    },
+    {
+      where: {
+        id: req.body.id,
+      },
+    }
+  )
+    .then(() => res.send("The teacher was updated"))
+    .catch(function (err) {
+      if (req.body.name === undefined) {
+        res.status(406).send("The teacher needs a name");
+      } else {
+        res.status(406).send("There is a problem");
+      }
+    });
+};

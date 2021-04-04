@@ -27,6 +27,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogEdit from "./dialog-edit";
 
 import EditIcon from "@material-ui/icons/Edit";
 import axios from "../../utils/axios";
@@ -74,6 +75,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const headCells = [
+  {
+    id: "idDocument",
+    numeric: false,
+    disablePadding: false,
+    label: "N° identificación",
+  },
   { id: "name", numeric: false, disablePadding: false, label: "Nombres" },
   { id: "lastname", numeric: false, disablePadding: false, label: "Apellidos" },
   {
@@ -252,6 +259,7 @@ function EnhancedTable() {
   const [dense, setDense] = React.useState(true);
   const [reload, setReload] = React.useState(false);
   const [viewProgress, setViewProgress] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
 
   //Store all teachers
   const [teachers, setTeachers] = React.useState([]);
@@ -260,6 +268,10 @@ function EnhancedTable() {
 
   const [open, setOpen] = React.useState(false);
 
+  const handleReload = () => {
+    setReload(!reload);
+  };
+
   const handleClickOpen = (row) => {
     setTeacherSelected(row);
     setOpen(true);
@@ -267,6 +279,15 @@ function EnhancedTable() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleClickOpenEdit = (row) => {
+    setTeacherSelected(row);
+    setOpenEdit(true);
   };
 
   const getTeachers = () => {
@@ -343,6 +364,25 @@ function EnhancedTable() {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
+  const handleClick = (event, name) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+
+    setSelected(newSelected);
+  };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -417,16 +457,24 @@ function EnhancedTable() {
                   (row, index) => {
                     const isItemSelected = isSelected(teachers.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
-
                     return (
                       <TableRow
+                        onClick={(event) => handleClick(event, row.id)}
                         hover
                         role="checkbox"
                         tabIndex={-1}
-                        key={row.name}
+                        key={row.id}
                         aria-checked={isItemSelected}
                       >
                         <TableCell padding="checkbox"></TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          align="left"
+                        >
+                          {row.idDocument}
+                        </TableCell>
                         <TableCell
                           component="th"
                           id={labelId}
@@ -440,7 +488,11 @@ function EnhancedTable() {
                         <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">
                           <IconButton>
-                            <EditIcon />
+                            <EditIcon
+                              onClick={() => {
+                                handleClickOpenEdit(row);
+                              }}
+                            />
                           </IconButton>
                         </TableCell>
                         <TableCell align="left">
@@ -482,6 +534,7 @@ function EnhancedTable() {
           control={<Switch checked={dense} onChange={handleChangeDense} />}
           label="Ajustar tabla"
         />
+        {/* Dialog for delete a teacher */}
         <Dialog
           open={open}
           onClose={handleClose}
@@ -503,6 +556,26 @@ function EnhancedTable() {
               SÍ
             </Button>
           </DialogActions>
+        </Dialog>
+        {/* Dialog to edit a teacher */}
+        <Dialog
+          open={openEdit}
+          onClose={handleCloseEdit}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Editar profesor"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <DialogEdit
+                closeEdit={handleCloseEdit}
+                reload={reload}
+                handleReload={handleReload}
+                teacherSelected={teacherSelected}
+              ></DialogEdit>
+            </DialogContentText>
+          </DialogContent>
         </Dialog>
         {viewProgress ? (
           <CircularProgress className={classes.progress}></CircularProgress>
