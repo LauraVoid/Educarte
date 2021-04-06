@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { withRouter } from 'react-router-dom';
 import './styles/Login.css'
 import TextField from '@material-ui/core/TextField';
 import { Card, CardContent, Grid } from "@material-ui/core";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom"
+import { useDispatch } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from '@material-ui/core/styles';
 import Radio from '@material-ui/core/Radio';
@@ -16,6 +18,7 @@ import Button from '@material-ui/core/Button';
 import axios from "../../utils/axios";
 import { connect } from "react-redux";
 import validate from "validate.js";
+import loginUser from "../../actions/auth"
 
 
 const useStyles = makeStyles((theme) => ({
@@ -53,8 +56,10 @@ const loginForm = {
     },
 
 };
-const Login = () => {
+const Login = (props) => {
+    
     let history = useHistory();
+    const dispatch = useDispatch();
     const classes = useStyles();
     const [institution, setInstitution] = useState([]);
     const [selInstitution, setSelInstitution] = useState([]);
@@ -138,6 +143,11 @@ const Login = () => {
           .then((res) => {
             if (res.status >= 200 && res.status < 300) {
                 if(data.is === "teacher"){
+                   let dataLogin = res.data
+                   dispatch(
+                       loginUser(dataLogin)
+                       )
+                    
                     history.push(`/teacher`);
                 }else if(data.is === "institution"){
                     history.push(`/courses`);
@@ -333,15 +343,20 @@ const Login = () => {
 }
 
 const mapStateToProps = (state) => ({
+    institutionId: state.reducerLogin
 
     // instid: state.auth.instId,
 });
+const mapDispatchToProps = {
+    loginUser,    
+};
+
 
 Login.propTypes = {
 
     //instid: PropTypes.any,
 };
 
-export default connect(mapStateToProps)(Login);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
 
 

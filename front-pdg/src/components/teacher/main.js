@@ -90,9 +90,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MainTeacher = () => {
+const MainTeacher = (props) => {
   const dispatch = useDispatch();
   let history = useHistory();
+  const { institutionId} = props;
   const classes = useStyles();
 
   const [courses, setCourses] = useState([]);
@@ -114,6 +115,7 @@ const MainTeacher = () => {
 
   const getCourses = () => {
     // setViewProgress(true);
+    console.log("ID INST", institutionId)
     axios
       .get("course/")
       .then((res) => {
@@ -127,7 +129,9 @@ const MainTeacher = () => {
   };
 
   useEffect(() => {
+
     getCourses();
+   
   }, [page]);
 
   const handleClickActiveOpen = (row) => {
@@ -272,6 +276,7 @@ const MainTeacher = () => {
 };
 
 const mapStateToProps = (state) => ({
+  institutionId: state.reducerLogin
   // instid: state.auth.instId,
 });
 

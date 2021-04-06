@@ -1,4 +1,8 @@
-export function getAllActions(institution) {
-    return axios.get(`fencetranctr/adm/institutions/${institution}/actions/`);
-  }
-  
+export const type = 'loginUser';
+
+const loginUser = (dataLogin) => ({
+    type,
+    payload: dataLogin,
+});
+
+export default loginUser;
