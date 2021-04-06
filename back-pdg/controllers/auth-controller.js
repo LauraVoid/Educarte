@@ -96,6 +96,7 @@ exports.signup = async  (req, res) => {
   
           res.status(200).send({
             id: user.id,
+            institutionId: user.institutionId,
             email: user.email,
             roles: user.roleId,
             accessToken: token
