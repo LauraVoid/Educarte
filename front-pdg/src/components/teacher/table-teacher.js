@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
@@ -21,7 +21,18 @@ import Switch from "@material-ui/core/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogEdit from "./dialog-edit";
+
 import EditIcon from "@material-ui/icons/Edit";
+import axios from "../../utils/axios";
+import { useDispatch } from "react-redux";
+import { showMessage } from "../../actions/actionMessage";
 
 import { connect } from "react-redux";
 
@@ -55,14 +66,18 @@ const useStyles = makeStyles((theme) => ({
     padding: "10px",
     margin: "10px",
   },
+  progress: {
+    position: "fixed",
+    zIndex: 50,
+    top: "50%",
+    left: "50%",
+  },
 }));
-
-const rows = [];
 
 const headCells = [
   {
-    id: "id",
-    numeric: true,
+    id: "idDocument",
+    numeric: false,
     disablePadding: false,
     label: "N° identificación",
   },
@@ -121,7 +136,7 @@ function stableSort(array, comparator) {
 }
 
 function EnhancedTableHead(props) {
-  const { classes, order, orderBy, onRequestSort } = props;
+  const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -234,6 +249,7 @@ EnhancedTableToolbar.propTypes = {
 
 function EnhancedTable() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [totalResults, setTotalResults] = React.useState(0);
@@ -241,8 +257,81 @@ function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState("calories"); ///change by other thing
   const [selected, setSelected] = React.useState([]);
   const [dense, setDense] = React.useState(true);
-  //Store all student
-  const [students, setStudents] = React.useState([]);
+  const [reload, setReload] = React.useState(false);
+  const [viewProgress, setViewProgress] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
+
+  //Store all teachers
+  const [teachers, setTeachers] = React.useState([]);
+
+  const [teacherSelected, setTeacherSelected] = React.useState([]);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleReload = () => {
+    setReload(!reload);
+  };
+
+  const handleClickOpen = (row) => {
+    setTeacherSelected(row);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleClickOpenEdit = (row) => {
+    setTeacherSelected(row);
+    setOpenEdit(true);
+  };
+
+  const getTeachers = () => {
+    setViewProgress(true);
+    axios
+      .get(`/teacher?page=${page}&&limit=${rowsPerPage}`)
+      .then((res) => {
+        if (res.status === 200) {
+          setTeachers(res.data);
+          setViewProgress(false);
+        }
+      })
+      .catch(() => {
+        setViewProgress(false);
+        let message = {
+          errorMsg:
+            "Hubo un error al cargar los profesores, por favor intente más tarde.",
+          errorType: "error",
+        };
+        dispatch(showMessage(message));
+      });
+  };
+
+  const getNumOfTeachers = () => {
+    let route = `/teacher/count`;
+    axios
+      .get(route)
+      .then((response) => {
+        setTotalResults(response.data.total);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    getNumOfTeachers();
+    getTeachers();
+  }, [page, rowsPerPage]);
+
+  useEffect(() => {
+    getNumOfTeachers();
+    getTeachers();
+  }, [reload]);
 
   const numOfPages = () => {
     return Math.ceil(totalResults / rowsPerPage);
@@ -256,13 +345,25 @@ function EnhancedTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = teachers.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleChangeDense = (event) => {
+    setDense(event.target.checked);
+  };
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
@@ -283,20 +384,53 @@ function EnhancedTable() {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
-
   const isSelected = (name) => selected.indexOf(name) !== -1;
+
+  function deleteTeacher() {
+    setViewProgress(true);
+
+    axios
+      .delete(`/teacher/${teacherSelected.id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          let sendmessage = {
+            errorMsg: "Profesor borrado con éxito",
+            errorType: "success",
+          };
+          setReload(!reload);
+          setViewProgress(false);
+          setOpen(false);
+          dispatch(showMessage(sendmessage));
+        } else {
+          setOpen(false);
+          setViewProgress(false);
+          console.log("hubo un error");
+        }
+      })
+      .catch((error) => {
+        setOpen(false);
+        setViewProgress(false);
+        let message1 = "mensaje";
+        switch (error.response.data.message) {
+          case "The id needs to be specified": {
+            message1 = "Selecciona un profesor";
+            break;
+          }
+          case "Teacher probably to have any course": {
+            message1 = "Fue imposible borrar al profesor. Inténtalo de nuevo";
+            break;
+          }
+          default: {
+            message1 = "Algo salió mal. No fue posible borrar el profesor";
+          }
+        }
+        let message = {
+          errorMsg: message1,
+          errorType: "error",
+        };
+        dispatch(showMessage(message));
+      });
+  }
 
   return (
     <Grid container>
@@ -316,41 +450,57 @@ function EnhancedTable() {
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                rowCount={teachers.length}
               />
               <TableBody onChangePage={handleChangePage}>
-                {stableSort(students, getComparator(order, orderBy)).map(
+                {stableSort(teachers, getComparator(order, orderBy)).map(
                   (row, index) => {
-                    const isItemSelected = isSelected(students.name);
+                    const isItemSelected = isSelected(teachers.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
-
                     return (
                       <TableRow
+                        onClick={(event) => handleClick(event, row.id)}
                         hover
                         role="checkbox"
                         tabIndex={-1}
-                        key={row.name}
+                        key={row.id}
                         aria-checked={isItemSelected}
                       >
+                        <TableCell padding="checkbox"></TableCell>
                         <TableCell
                           component="th"
                           id={labelId}
                           scope="row"
-                          padding="none"
+                          align="left"
+                        >
+                          {row.idDocument}
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          align="left"
                         >
                           {row.name}
                         </TableCell>
-                        <TableCell align="right">{row.calories}</TableCell>
-                        <TableCell align="right">{row.fat}</TableCell>
-                        <TableCell align="right">{row.carbs}</TableCell>
-                        <TableCell align="right">{row.protein}</TableCell>
+                        <TableCell align="left">{row.lastname}</TableCell>
+                        <TableCell align="left">{row.phone}</TableCell>
+                        <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">
                           <IconButton>
-                            <EditIcon color="disabled" />
+                            <EditIcon
+                              onClick={() => {
+                                handleClickOpenEdit(row);
+                              }}
+                            />
                           </IconButton>
                         </TableCell>
                         <TableCell align="left">
-                          <IconButton>
+                          <IconButton
+                            onClick={() => {
+                              handleClickOpen(row);
+                            }}
+                          >
                             <DeleteForeverIcon></DeleteForeverIcon>
                           </IconButton>
                         </TableCell>
@@ -384,6 +534,54 @@ function EnhancedTable() {
           control={<Switch checked={dense} onChange={handleChangeDense} />}
           label="Ajustar tabla"
         />
+        {/* Dialog for delete a teacher */}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Advertencia"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              ¿Está seguro que desea borrar el profesor?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleClose} color="primary">
+              NO
+            </Button>
+            <Button onClick={deleteTeacher} color="primary" autoFocus>
+              SÍ
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/* Dialog to edit a teacher */}
+        <Dialog
+          open={openEdit}
+          onClose={handleCloseEdit}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Editar profesor"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <DialogEdit
+                closeEdit={handleCloseEdit}
+                reload={reload}
+                handleReload={handleReload}
+                teacherSelected={teacherSelected}
+              ></DialogEdit>
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
+        {viewProgress ? (
+          <CircularProgress className={classes.progress}></CircularProgress>
+        ) : (
+          <></>
+        )}
       </div>
     </Grid>
   );
