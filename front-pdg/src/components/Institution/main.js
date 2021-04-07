@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import PeopleIcon from "@material-ui/icons/People";
 import SchoolIcon from "@material-ui/icons/School";
 import Button from "@material-ui/core/Button";
-import axios from "../../utils/axios";
+// import axios from "../../utils/axios";
 import HomeWorkIcon from "@material-ui/icons/HomeWork";
 import IconButton from "@material-ui/core/IconButton";
 import "./style/institution.css";
@@ -180,29 +180,7 @@ const MainInstitution = () => {
                 wrap="nowrap"
                 className="Grid-main-green"
               >
-                <Card className={classes.card}>
-                  <CardContent>
-                    <Typography
-                      className={classes.title}
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Reuniones
-                    </Typography>
-
-                    <Card>
-                      <CardContent>
-                        <Typography
-                          className={classes.title}
-                          color="textSecondary"
-                          gutterBottom
-                        >
-                          Reunion lunes 21
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </CardContent>
-                </Card>
+                
               </Grid>
             </Grid>
           </div>
@@ -212,12 +190,21 @@ const MainInstitution = () => {
   );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+  console.log(state),{
+  
+    id: state.login.id,
+    name: state.login.name,
+    email: state.login.email,
   // instid: state.auth.instId,
 });
 
 MainInstitution.propTypes = {
+  
+  id: PropTypes.number,
+  name: PropTypes.string,
+  email: PropTypes.string,
   //instid: PropTypes.any,
 };
 
-export default connect(mapStateToProps)(MainInstitution);
+export default connect(mapStateToProps,{})(MainInstitution);

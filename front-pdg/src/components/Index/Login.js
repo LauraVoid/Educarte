@@ -142,15 +142,14 @@ const Login = (props) => {
           .post(`auth/api/auth/signin`, data)
           .then((res) => {
             if (res.status >= 200 && res.status < 300) {
-                if(data.is === "teacher"){
-                   let dataLogin = res.data
+                let dataLogin = res.data
                    dispatch(
                        loginUser(dataLogin)
                        )
-                    
+                if(data.is === "teacher"){                     
                     history.push(`/teacher`);
                 }else if(data.is === "institution"){
-                    history.push(`/courses`);
+                    history.push(`/institution`);
                 }
              
              
@@ -343,7 +342,8 @@ const Login = (props) => {
 }
 
 const mapStateToProps = (state) => ({
-    institutionId: state.reducerLogin
+    
+    institutionId: state.login.id
 
     // instid: state.auth.instId,
 });

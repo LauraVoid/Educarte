@@ -5,7 +5,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -103,7 +103,7 @@ const course = {
 };
 
 
-const CreateCourse = () => {
+const CreateCourse = (props) => {
   const dispatch = useDispatch();
   let history = useHistory();
   const classes = useStyles();
@@ -179,7 +179,7 @@ const CreateCourse = () => {
     console.log("STATE ID",courseCreated)
     let data = {
       students: studentsCourse,
-      institutionId: 1,
+      institutionId: props.idInst,
       courseId: courseCreated
     };
     axios
@@ -246,9 +246,10 @@ const CreateCourse = () => {
 
     let data = {
       name: coursesState.values.name,
-      institutionId: 1,
+      institutionId: props.idInst,
       teacherId: teacherCourse.id
     };
+    console.log("ID INS", data.institutionId)
     axios
       .post(`/course`, data)
       .then((res) => {
@@ -468,13 +469,21 @@ const CreateCourse = () => {
   );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+  console.log(state),{
+  
 
+  id: state.login.id,
+  name: state.login.name,
+  email: state.login.email,
   // instid: state.auth.instId,
 });
 
 CreateCourse.propTypes = {
 
+    id: PropTypes.number,
+    name: PropTypes.string,
+    email: PropTypes.string
   // instid: PropTypes.any,
 };
 

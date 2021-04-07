@@ -496,13 +496,19 @@ const ListCourse = () => {
     );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+    console.log(state),{
 
+    id: state.login.id,
+    name: state.login.name,
+    email: state.login.email,
     // instid: state.auth.instId,
 });
 
 ListCourse.propTypes = {
-
+    id: PropTypes.number,
+    name: PropTypes.string,
+    email: PropTypes.string,
     //instid: PropTypes.any,
 };
 

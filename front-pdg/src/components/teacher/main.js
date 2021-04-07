@@ -13,6 +13,7 @@ import axios from "../../utils/axios";
 import ForumIcon from "@material-ui/icons/Forum";
 import IconButton from "@material-ui/core/IconButton";
 import { useHistory } from "react-router-dom";
+// import {useSelector} from "react-redux"
 import "./style/teacher.css";
 import { blue, yellow } from "@material-ui/core/colors";
 import { dark } from "@material-ui/core/styles/createPalette";
@@ -93,7 +94,8 @@ const useStyles = makeStyles((theme) => ({
 const MainTeacher = (props) => {
   const dispatch = useDispatch();
   let history = useHistory();
-  const { institutionId} = props;
+  
+  // const stateLogin = useSelector(state => state.login)
   const classes = useStyles();
 
   const [courses, setCourses] = useState([]);
@@ -114,13 +116,13 @@ const MainTeacher = (props) => {
   });
 
   const getCourses = () => {
-    // setViewProgress(true);
-    console.log("ID INST", institutionId)
+ 
     axios
       .get("course/")
       .then((res) => {
         if (res.status === 200) {
           setCourses(res.data);
+          console.log (props.institutionId)
         } else console.log(res.status);
       })
       .catch(() => {
@@ -144,7 +146,7 @@ const MainTeacher = (props) => {
   return (
     <div className="background1">
       <div style={{ padding: 20 }}>
-        <h1>Bienvenido</h1>
+        <h1>Bienvenido {props.name +" " + props.lastname}</h1>
 
         <div style={{ padding: 40, margin: 50 }}>
           <Grid
@@ -169,6 +171,7 @@ const MainTeacher = (props) => {
                 align="center"
               >
                 Mis mensajes
+                
               </Typography>
             </Grid>
             <Grid item xs={6} sm={3} container direction="column">
@@ -265,7 +268,7 @@ const MainTeacher = (props) => {
                       </CardContent>
                     </Card>
                   </CardContent>
-                </Card>
+                </Card>               
               </Grid>
             </Grid>
           </div>
@@ -276,12 +279,20 @@ const MainTeacher = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  institutionId: state.reducerLogin
+  institutionId: state.login.institutionId,
+  id: state.login.id,
+  name: state.login.name,
+  lastname: state.login.lastname,
+  
   // instid: state.auth.instId,
 });
 
 MainTeacher.propTypes = {
+  institutionId: PropTypes.number,
+  id: PropTypes.number,
+  name: PropTypes.string,
+  lastname: PropTypes.string,
   //instid: PropTypes.any,
 };
 
-export default connect(mapStateToProps)(MainTeacher);
+export default connect(mapStateToProps, {})(MainTeacher);

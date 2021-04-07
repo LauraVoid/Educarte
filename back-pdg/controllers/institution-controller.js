@@ -1,4 +1,5 @@
 const Institution = require("../model/Institution");
+var bcrypt = require("bcryptjs");
 
 exports.index = async function (req, res, next) {
 
@@ -11,7 +12,7 @@ exports.index = async function (req, res, next) {
     await Institution.create({
         name: req.body.name,
         email:req.body.email,
-        password:req.body.password
+        password:bcrypt.hashSync(req.body.password, 8)
     }).then(() => res.send("The institution was created"))
     .catch(function(err){
         if(req.body.name === undefined){

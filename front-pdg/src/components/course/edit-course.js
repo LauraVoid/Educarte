@@ -5,7 +5,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -103,7 +103,7 @@ const course = {
 };
 
 
-const EditCourse = () => {
+const EditCourse = (props) => {
   const dispatch = useDispatch();
   let history = useHistory();
   const classes = useStyles();
@@ -265,7 +265,7 @@ const EditCourse = () => {
 
     let data = {
       name: coursesState.values.name,
-      institutionId: 1,
+      institutionId: props.idInst,
       teacherId: teacherCourse.id
     };
     axios
@@ -489,11 +489,16 @@ const EditCourse = () => {
 
 const mapStateToProps = (state) => ({
 
+  idInst: state.login.id,
+  name: state.login.name,
+  email: state.login.email,
   // instid: state.auth.instId,
 });
 
 EditCourse.propTypes = {
-
+  idInst: PropTypes.number,
+  name: PropTypes.string,
+  email: PropTypes.string
   // instid: PropTypes.any,
 };
 

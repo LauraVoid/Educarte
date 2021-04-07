@@ -8,7 +8,7 @@ const reducer = combineReducers({
   reducerUser,
   reducerInstitution,
   reducerMessage,
-  reducerLogin,
+  login: reducerLogin,
 });
 
 const store = createStore(reducer);

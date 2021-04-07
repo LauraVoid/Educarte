@@ -4,6 +4,7 @@ const config = require("../config/auth-config");
 const Op = Sequelize.Op;
 const Teacher = db.user;
 const Student = db.student;
+const Institution = db.institution;
 const Role = db.role;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -97,6 +98,8 @@ exports.signup = async  (req, res) => {
           res.status(200).send({
             id: user.id,
             institutionId: user.institutionId,
+            name: user.name,
+            lastname: user.lastname,
             email: user.email,
             roles: user.roleId,
             accessToken: token
@@ -145,7 +148,7 @@ exports.signup = async  (req, res) => {
         });
     }
     else if(req.body.is === "institution"){
-      Student.findOne({
+      Institution.findOne({
         where: {
           email: req.body.email
         }
@@ -174,6 +177,7 @@ exports.signup = async  (req, res) => {
           res.status(200).send({
             id: user.id,
             email: user.email,
+            name: user.name,
             accessToken: token
           });  
         })
