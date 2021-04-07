@@ -158,7 +158,7 @@ const CreateStudent = () => {
 
   /* Date birthday */
   const [selectedDate, setSelectedDate] = React.useState(
-    new Date("2018-08-18T21:11:54")
+    new Date("2018/08/18")
   );
 
   const handleDateChange = (date) => {
@@ -266,10 +266,13 @@ const CreateStudent = () => {
                   margin="normal"
                   id="date-picker-dialog"
                   label="Fecha de nacimiento"
-                  format="MM/dd/yyyy"
+                  format="dd/MM/yyyy"
                   value={selectedDate}
                   onChange={handleDateChange}
                   name="birthdayStudent"
+                  invalidDateMessage="Fecha ingresada inválida"
+                  maxDateMessage="La fecha ingresada es mayor a la fecha actual"
+                  minDateMessage="La fecha ingresada es muy antigua"
                   KeyboardButtonProps={{
                     "aria-label": "change date",
                   }}

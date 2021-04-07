@@ -452,7 +452,7 @@ function EnhancedTable() {
                 onRequestSort={handleRequestSort}
                 rowCount={teachers.length}
               />
-              <TableBody onChangePage={handleChangePage}>
+              <TableBody>
                 {stableSort(teachers, getComparator(order, orderBy)).map(
                   (row, index) => {
                     const isItemSelected = isSelected(teachers.name);
