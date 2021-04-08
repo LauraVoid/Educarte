@@ -15,20 +15,28 @@ exports.findById = async function (req,res,next){
 
 
     const teac_course =[];
+    const teacher = {};
     const result = await Course.findAll({
         where: {
             institutionId: req.params.instId            
           }
     })
 
-    const final = await result.map((course)=>{
+     result.map((course)=>{
 
-         Teacher_Course.findOne({
+        Teacher_Course.findOne({
             where:{
                 courseId: course.id
             }
-        }).then((info) => teac_course.push(info))
-    }).then (()=> res.send({teac:teac_course}))
+        }).then((tc)=> teac_course.push(tc))
+
+       
+    })
+
+    await res.send(teac_course)
+
+    
+
     
     // res.send({teac: teac_course})
 
