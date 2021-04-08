@@ -175,8 +175,7 @@ const CreateCourse = (props) => {
     setCreateOpen(false);
   };  
   const handleSubmitStudents = (event) => {
-    console.log("STATE",studentsCourse)
-    console.log("STATE ID",courseCreated)
+
     let data = {
       students: studentsCourse,
       institutionId: props.idInst,
@@ -187,7 +186,7 @@ const CreateCourse = (props) => {
       .then((res) => {
 
         if (res.status >= 200 && res.status < 300) {
-          console.log("Estudiantes agregados con éxito");
+          
 
           history.push("/courses");
         } else {
@@ -249,7 +248,7 @@ const CreateCourse = (props) => {
       institutionId: props.idInst,
       teacherId: teacherCourse.id
     };
-    console.log("ID INS", data.institutionId)
+
     axios
       .post(`/course`, data)
       .then((res) => {
@@ -473,7 +472,7 @@ const mapStateToProps = (state) => (
   console.log(state),{
   
 
-  id: state.login.id,
+  idInst: state.login.id,
   name: state.login.name,
   email: state.login.email,
   // instid: state.auth.instId,
@@ -481,7 +480,7 @@ const mapStateToProps = (state) => (
 
 CreateCourse.propTypes = {
 
-    id: PropTypes.number,
+  idInst: PropTypes.number,
     name: PropTypes.string,
     email: PropTypes.string
   // instid: PropTypes.any,

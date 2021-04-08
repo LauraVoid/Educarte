@@ -32,7 +32,7 @@ import Feedback from "./components/teacher/feedback";
 import TaskExplorer from "./pages/task/list-task";
 import CreateTask from "./pages/task/add-task";
 
-import store from "./store/store";
+import {store} from "./store/store";
 
 export default (
   <Provider store={store}>
