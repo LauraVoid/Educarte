@@ -8,4 +8,5 @@ router.get("/", students_controller.index);
 router.post("/", students_controller.create);
 router.delete("/:id", students_controller.delete);
 router.put("/", students_controller.assignToCourse);
+router.put("/:id", students_controller.update);
 module.exports = router;

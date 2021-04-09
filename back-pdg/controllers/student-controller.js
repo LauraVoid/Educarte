@@ -103,3 +103,30 @@ exports.assignToCourse = async function (req, res, next) {
   });
   res.status(200).send({ message: "The students was assigned" });
 };
+
+exports.update = async function (req, res, next) {
+  console.log(req.body);
+  await Student.update(
+    {
+      name: req.body.nameStudent,
+      lastname: req.body.lastnameStudent,
+      idDocument: req.body.idDocumentStudent,
+      dateBirthday: req.body.dateBirthday,
+      courseId: req.body.courseId,
+      username: req.body.idDocumentStudent,
+    },
+    {
+      where: {
+        id: req.params.id,
+      },
+    }
+  )
+    .then(() => res.send("The student was updated"))
+    .catch(function (err) {
+      if (req.body.name === undefined) {
+        res.status(406).send("The student needs a name");
+      } else {
+        res.status(406).send("There is a problem");
+      }
+    });
+};

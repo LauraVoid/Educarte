@@ -34,6 +34,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import DialogEdit from "./dialog-edit";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -504,7 +505,11 @@ function EnhancedTable() {
                         </TableCell>
                         <TableCell>
                           <IconButton>
-                            <EditIcon />
+                            <EditIcon
+                              onClick={() => {
+                                handleClickOpenEdit(row);
+                              }}
+                            />
                           </IconButton>
                         </TableCell>
                         <TableCell align="left">
@@ -568,6 +573,26 @@ function EnhancedTable() {
               SÍ
             </Button>
           </DialogActions>
+        </Dialog>
+        {/* Dialog to edit a student */}
+        <Dialog
+          open={openEdit}
+          onClose={handleCloseEdit}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Editar estudiante"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <DialogEdit
+                closeEdit={handleCloseEdit}
+                reload={reload}
+                handleReload={handleReload}
+                studentSelected={studentSelected}
+              ></DialogEdit>
+            </DialogContentText>
+          </DialogContent>
         </Dialog>
         {viewProgress ? (
           <CircularProgress className={classes.progress}></CircularProgress>
