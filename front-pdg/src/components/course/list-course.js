@@ -207,7 +207,7 @@ function getComparator(order, orderBy) {
 }
 
 
-const ListCourse = () => {
+const ListCourse = (props) => {
     const dispatch = useDispatch();
     let history = useHistory();
     const classes = useStyles();
@@ -235,7 +235,25 @@ const ListCourse = () => {
         touched: {},
         errors: {},
     });
+    
+    useEffect(() => {
+        if(courses.length !== 0){
+            
+                axios
+                .get(`course/find/`+props.id)
+                .then((res) => {
+                  if (res.status === 200) {
+                    console.log(res.data.teac)
+          
+          
+                  } else console.log(res.status);
+                })
+                .catch((err) => console.log(err));          
+              
 
+        }
+        
+    }, [courses]);
 
     const getCourses = () => {
         // setViewProgress(true);
@@ -496,13 +514,19 @@ const ListCourse = () => {
     );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+    console.log(state),{
 
+    id: state.login.id,
+    name: state.login.name,
+    email: state.login.email,
     // instid: state.auth.instId,
 });
 
 ListCourse.propTypes = {
-
+    id: PropTypes.number,
+    name: PropTypes.string,
+    email: PropTypes.string,
     //instid: PropTypes.any,
 };
 

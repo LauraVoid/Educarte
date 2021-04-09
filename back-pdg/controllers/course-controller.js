@@ -12,22 +12,31 @@ exports.index = async function (req, res, next) {
 //Search a course by Id and return the course and the teacher's course
 exports.findById = async function (req,res,next){
 
-    const result = await Course.findOne({
+
+
+    const teac_course =[];
+    const result = await Course.findAll({
         where: {
-            id: req.params.id            
-          }
-    })
-    const result2 = await Teacher_Course.findOne({
-        where: {
-            courseId: result.id  
+            institutionId: req.params.instId            
           }
     })
 
-    await Teacher.findOne({
-        where: {
-            id: result2.teacherId  
-          }
-    }).then((teacherf) => res.send({course:result, teacher:teacherf}))
+    const final = await result.map((course)=>{
+
+         Teacher_Course.findOne({
+            where:{
+                courseId: course.id
+            }
+        }).then((info) => teac_course.push(info))
+    }).then (()=> res.send({teac:teac_course}))
+    
+    // res.send({teac: teac_course})
+
+    // await Teacher.findOne({
+    //     where: {
+    //         id: result2.teacherId  
+    //       }
+    // }).then((teacherf) => res.send({course:result, teacher:teacherf}))
 
 }
   exports.create = async function (req, res, next) {

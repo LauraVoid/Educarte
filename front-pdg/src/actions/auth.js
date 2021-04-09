@@ -1,7 +1,7 @@
 export const type = 'loginUser';
 
 const loginUser = (dataLogin) => ({
-    type,
+    type: 'loginUser',
     payload: dataLogin,
 });
 

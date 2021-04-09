@@ -5,7 +5,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -103,7 +103,7 @@ const course = {
 };
 
 
-const CreateCourse = () => {
+const CreateCourse = (props) => {
   const dispatch = useDispatch();
   let history = useHistory();
   const classes = useStyles();
@@ -175,11 +175,10 @@ const CreateCourse = () => {
     setCreateOpen(false);
   };  
   const handleSubmitStudents = (event) => {
-    console.log("STATE",studentsCourse)
-    console.log("STATE ID",courseCreated)
+
     let data = {
       students: studentsCourse,
-      institutionId: 1,
+      institutionId: props.idInst,
       courseId: courseCreated
     };
     axios
@@ -187,7 +186,7 @@ const CreateCourse = () => {
       .then((res) => {
 
         if (res.status >= 200 && res.status < 300) {
-          console.log("Estudiantes agregados con éxito");
+          
 
           history.push("/courses");
         } else {
@@ -246,9 +245,10 @@ const CreateCourse = () => {
 
     let data = {
       name: coursesState.values.name,
-      institutionId: 1,
+      institutionId: props.idInst,
       teacherId: teacherCourse.id
     };
+
     axios
       .post(`/course`, data)
       .then((res) => {
@@ -468,13 +468,21 @@ const CreateCourse = () => {
   );
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) => (
+  console.log(state),{
+  
 
+  idInst: state.login.id,
+  name: state.login.name,
+  email: state.login.email,
   // instid: state.auth.instId,
 });
 
 CreateCourse.propTypes = {
 
+  idInst: PropTypes.number,
+    name: PropTypes.string,
+    email: PropTypes.string
   // instid: PropTypes.any,
 };
 
