@@ -485,6 +485,8 @@ const ListCourse = (props) => {
                                 </DialogTitle>
                                 <DialogContent dividers>
                                     <Typography gutterBottom>
+                                        
+                                        {courSelected.name}
                                         {"¿Está seguro que desea borrar el curso?"}
                                     </Typography>
                                 </DialogContent>
