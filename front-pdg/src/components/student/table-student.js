@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
@@ -22,8 +22,19 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import EditIcon from "@material-ui/icons/Edit";
-
+import EmailIcon from "@material-ui/icons/Email";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import axios from "../../utils/axios";
+import { useDispatch } from "react-redux";
+import { showMessage } from "../../actions/actionMessage";
 import { connect } from "react-redux";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import DialogEdit from "./dialog-edit";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,9 +66,13 @@ const useStyles = makeStyles((theme) => ({
     padding: "10px",
     margin: "10px",
   },
+  progress: {
+    position: "fixed",
+    zIndex: 50,
+    top: "50%",
+    left: "50%",
+  },
 }));
-
-const rows = [];
 
 const headCells = [
   {
@@ -73,6 +88,18 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "Fecha de nacimiento",
+  },
+  {
+    id: "username",
+    numeric: false,
+    disablePadding: false,
+    label: "Usuario",
+  },
+  {
+    id: "parent",
+    numeric: false,
+    disablePadding: false,
+    label: "Acudiente",
   },
   {
     id: "sendMessage",
@@ -234,15 +261,88 @@ EnhancedTableToolbar.propTypes = {
 
 function EnhancedTable() {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [totalResults, setTotalResults] = React.useState(0);
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories"); ///change by other thing
   const [selected, setSelected] = React.useState([]);
+  const [reload, setReload] = React.useState(false);
+  const [viewProgress, setViewProgress] = React.useState(false);
   const [dense, setDense] = React.useState(true);
+  const [openEdit, setOpenEdit] = React.useState(false);
   //Store all student
   const [students, setStudents] = React.useState([]);
+
+  const [studentSelected, setStudentSelected] = React.useState([]);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleReload = () => {
+    setReload(!reload);
+  };
+
+  const handleClickOpen = (row) => {
+    setStudentSelected(row);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleClickOpenEdit = (row) => {
+    setStudentSelected(row);
+    setOpenEdit(true);
+  };
+
+  const getStudents = () => {
+    setViewProgress(true);
+    axios
+      .get(`/student?page=${page}&&limit=${rowsPerPage}`)
+      .then((res) => {
+        if (res.status === 200) {
+          setStudents(res.data);
+          setViewProgress(false);
+        }
+      })
+      .catch(() => {
+        setViewProgress(false);
+        let message = {
+          errorMsg:
+            "Hubo un error al cargar los estudiantes, por favor intente más tarde.",
+          errorType: "error",
+        };
+        dispatch(showMessage(message));
+      });
+  };
+
+  const getNumOfStudents = () => {
+    let route = `/student/count`;
+    axios
+      .get(route)
+      .then((response) => {
+        setTotalResults(response.data.total);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  useEffect(() => {
+    getNumOfStudents();
+    getStudents();
+  }, [page, rowsPerPage]);
+
+  useEffect(() => {
+    getNumOfStudents();
+    getStudents();
+  }, [reload]);
 
   const numOfPages = () => {
     return Math.ceil(totalResults / rowsPerPage);
@@ -256,7 +356,7 @@ function EnhancedTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = students.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -298,6 +398,52 @@ function EnhancedTable() {
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
+  function deleteStudent() {
+    setViewProgress(true);
+
+    axios
+      .delete(`/student/${studentSelected.id}`)
+      .then((res) => {
+        if (res.status === 200) {
+          let sendmessage = {
+            errorMsg: "Estudiante borrado con éxito",
+            errorType: "success",
+          };
+          setReload(!reload);
+          setViewProgress(false);
+          setOpen(false);
+          dispatch(showMessage(sendmessage));
+        } else {
+          setOpen(false);
+          setViewProgress(false);
+          console.log("hubo un error");
+        }
+      })
+      .catch((error) => {
+        setOpen(false);
+        setViewProgress(false);
+        let message1 = "mensaje";
+        switch (error.response.data.message) {
+          case "The id needs to be specified": {
+            message1 = "Selecciona un estudiante";
+            break;
+          }
+          case "Student probably to have any course": {
+            message1 = "Fue imposible borrar al estudiante. Inténtalo de nuevo";
+            break;
+          }
+          default: {
+            message1 = "Algo salió mal. No fue posible borrar el estudiante";
+          }
+        }
+        let message = {
+          errorMsg: message1,
+          errorType: "error",
+        };
+        dispatch(showMessage(message));
+      });
+  }
+
   return (
     <Grid container>
       <div className={classes.root}>
@@ -316,9 +462,9 @@ function EnhancedTable() {
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                rowCount={students.length}
               />
-              <TableBody onChangePage={handleChangePage}>
+              <TableBody>
                 {stableSort(students, getComparator(order, orderBy)).map(
                   (row, index) => {
                     const isItemSelected = isSelected(students.name);
@@ -328,30 +474,51 @@ function EnhancedTable() {
                       <TableRow
                         hover
                         role="checkbox"
+                        onClick={(event) => handleClick(event, row.id)}
                         tabIndex={-1}
-                        key={row.name}
+                        key={row.id}
                         aria-checked={isItemSelected}
                       >
+                        <TableCell padding="checkbox"></TableCell>
                         <TableCell
                           component="th"
                           id={labelId}
                           scope="row"
                           padding="none"
+                          align="left"
                         >
-                          {row.name}
+                          {row.idDocument}
                         </TableCell>
-                        <TableCell align="right">{row.calories}</TableCell>
-                        <TableCell align="right">{row.fat}</TableCell>
-                        <TableCell align="right">{row.carbs}</TableCell>
-                        <TableCell align="right">{row.protein}</TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.lastname}</TableCell>
+                        <TableCell align="left">{row.dateBirthday}</TableCell>
+                        <TableCell align="left">{row.username}</TableCell>
                         <TableCell align="left">
                           <IconButton>
-                            <EditIcon color="disabled" />
+                            <VisibilityIcon />
                           </IconButton>
                         </TableCell>
                         <TableCell align="left">
                           <IconButton>
-                            <DeleteForeverIcon></DeleteForeverIcon>
+                            <EmailIcon />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton>
+                            <EditIcon
+                              onClick={() => {
+                                handleClickOpenEdit(row);
+                              }}
+                            />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell align="left">
+                          <IconButton>
+                            <DeleteForeverIcon
+                              onClick={() => {
+                                handleClickOpen(row);
+                              }}
+                            ></DeleteForeverIcon>
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -384,6 +551,54 @@ function EnhancedTable() {
           control={<Switch checked={dense} onChange={handleChangeDense} />}
           label="Ajustar tabla"
         />
+        {/* Dialog for delete a student */}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Advertencia"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              ¿Está seguro que desea borrar el estudiante?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleClose} color="primary">
+              NO
+            </Button>
+            <Button onClick={deleteStudent} color="primary" autoFocus>
+              SÍ
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {/* Dialog to edit a student */}
+        <Dialog
+          open={openEdit}
+          onClose={handleCloseEdit}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Editar estudiante"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <DialogEdit
+                closeEdit={handleCloseEdit}
+                reload={reload}
+                handleReload={handleReload}
+                studentSelected={studentSelected}
+              ></DialogEdit>
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
+        {viewProgress ? (
+          <CircularProgress className={classes.progress}></CircularProgress>
+        ) : (
+          <></>
+        )}
       </div>
     </Grid>
   );

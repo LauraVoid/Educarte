@@ -1,5 +1,6 @@
 const Teacher = require("../model/Teacher");
 const Course = require("../model/Course");
+var bcrypt = require("bcryptjs");
 
 const getPagination = (page, size) => {
   const limit = size ? +size : 5;
@@ -36,7 +37,7 @@ exports.create = async function (req, res, next) {
       idDocument: req.body.identification,
       phone: req.body.cellphone,
       email: req.body.email,
-      password: "educarte",
+      password: bcrypt.hashSync("educarte", 8),
       institutionId: req.body.institutionId,
       roleId: 1,
     });

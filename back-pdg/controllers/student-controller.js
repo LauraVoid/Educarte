@@ -1,9 +1,31 @@
 const Student = require("../model/Student");
 const Parent = require("../model/Parent");
+var bcrypt = require("bcryptjs");
 
-exports.index = async function (req, res, next) {
+const getPagination = (page, size) => {
+  const limit = size ? +size : 5;
+  const offset = page ? page * limit : 0;
+
+  return { limit, offset };
+};
+
+exports.index = async function (req, res) {
+  const page = parseInt(req.query.page);
+  const size = parseInt(req.query.limit);
+
+  const { limit, offset } = getPagination(page, size);
+
+  await Student.findAll({ limit, offset }).then((result) => {
+    return res.status(200).send(result);
+  });
+};
+
+exports.count = async function (req, res) {
   await Student.findAll().then((result) => {
-    res.send(result);
+    const total = result.length;
+    return res.status(200).json({
+      total,
+    });
   });
 };
 
@@ -14,7 +36,7 @@ exports.create = async function (req, res, next) {
       lastname: req.body.lastnameParent,
       idDocument: req.body.idDocumentParent,
       email: req.body.email,
-      password: "educarte",
+      password: bcrypt.hashSync("educarte", 8),
       phone: req.body.phone,
       institutionId: req.body.institutionId,
     });
@@ -26,7 +48,7 @@ exports.create = async function (req, res, next) {
       lastname: req.body.lastnameStudent,
       idDocument: req.body.idDocumentStudent,
       username: req.body.username,
-      password: "educarte",
+      password: bcrypt.hashSync("educarte", 8),
       dateBirthday: req.body.dateBirthday,
       parentId: parentId,
       courseId: req.body.courseId,
@@ -41,6 +63,25 @@ exports.create = async function (req, res, next) {
       .status(406) //NOT ACCEPTABLE SINCE THE BODY IS WRONG
       .send({ error: "Ha ocurrido un error, intentalo de nuevo" });
   }
+};
+
+exports.delete = async function (req, res) {
+  await Student.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then(() => {
+      res.status(200).send({ message: "Student was success deleted" });
+    })
+    .catch((error) => {
+      console.log(error);
+      if (req.params.id === undefined) {
+        res.status(406).send("The id needs to be specified");
+      } else {
+        res.status(406).send("Student probably to have any course");
+      }
+    });
 };
 
 exports.assignToCourse = async function (req, res, next) {
@@ -61,4 +102,31 @@ exports.assignToCourse = async function (req, res, next) {
     });
   });
   res.status(200).send({ message: "The students was assigned" });
+};
+
+exports.update = async function (req, res, next) {
+  console.log(req.body);
+  await Student.update(
+    {
+      name: req.body.nameStudent,
+      lastname: req.body.lastnameStudent,
+      idDocument: req.body.idDocumentStudent,
+      dateBirthday: req.body.dateBirthday,
+      courseId: req.body.courseId,
+      username: req.body.idDocumentStudent,
+    },
+    {
+      where: {
+        id: req.params.id,
+      },
+    }
+  )
+    .then(() => res.send("The student was updated"))
+    .catch(function (err) {
+      if (req.body.name === undefined) {
+        res.status(406).send("The student needs a name");
+      } else {
+        res.status(406).send("There is a problem");
+      }
+    });
 };

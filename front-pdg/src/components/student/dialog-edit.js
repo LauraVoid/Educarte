@@ -3,11 +3,11 @@ import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import validate from "validate.js";
+import PropTypes from "prop-types";
 import { showMessage } from "../../actions/actionMessage";
 import {
   Grid,
   TextField,
-  Typography,
   Button,
   InputLabel,
   Select,
@@ -33,10 +33,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     borderRadius: "2em",
   },
-  componentsItems: {
-    marginLeft: "10%",
-    marginBottom: "10%",
-  },
+
   buttonSave: {
     marginLeft: "45%",
     marginBottom: "2%",
@@ -52,15 +49,14 @@ const useStyles = makeStyles((theme) => ({
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: "100%",
+    minWidth: "50%",
   },
   date: {
-    width: "95%",
-    marginLeft: "8%",
+    width: "50%",
   },
 }));
 
-const studentParentValidate = {
+const studentValidate = {
   nameStudent: {
     presence: { allowEmpty: false, message: "El nombre es requerido" },
   },
@@ -74,76 +70,63 @@ const studentParentValidate = {
       minimum: 1,
     },
   },
-  nameParent: {
-    presence: { allowEmpty: false, message: "El nombre es requerido" },
-  },
-  lastNameParent: {
-    presence: { allowEmpty: false, message: "El apellido es requerido" },
-  },
-  documentParent: {
-    presence: { allowEmpty: false, message: "Este campo es requerido" },
-    length: {
-      maximum: 64,
-      minimum: 1,
-    },
-  },
-  email: {
-    presence: { allowEmpty: false, message: "El correo es requerido" },
-    email: true,
-  },
-  phone: {
-    presence: { allowEmpty: false, message: "El correo es requerido" },
-    format: {
-      pattern: /^[+]?([0-9]+(?:[.][0-9]*)?|[0-9]+)$/,
-      message: "Debe ser un número válido",
-    },
-    length: {
-      maximum: 64,
-      minimum: 1,
-    },
-  },
 };
 
-const CreateStudent = () => {
+const EditStudent = (props) => {
+  const { studentSelected, handleReload, closeEdit } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [course, setCourse] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const [courses, setCourses] = React.useState([]);
-  const [studentParent, setStudentParent] = React.useState({
+  const [studentState, setStudentState] = React.useState({
     isValid: false,
-    values: {},
+    values: {
+      id: studentSelected.id,
+      documentStudent: studentSelected.idDocument,
+      nameStudent: studentSelected.name,
+      lastNameStudent: studentSelected.lastname,
+      courseId: studentSelected.courseId,
+    },
     touched: {},
     errors: {},
   });
 
+  useEffect(() => {
+    if (courses.length === 0) {
+      axios.get(`/course/${studentSelected.courseId}`).then((res) => {
+        setCourse(res.data.id);
+      });
+    }
+  }, [studentSelected]);
+
   const handleChange = (event) => {
     event.persist();
 
-    setStudentParent((studentParent) => ({
-      ...studentParent,
+    setStudentState((studentState) => ({
+      ...studentState,
       values: {
-        ...studentParent.values,
+        ...studentState.values,
         [event.target.name]: event.target.value,
       },
       touched: {
-        ...studentParent.touched,
+        ...studentState.touched,
         [event.target.name]: true,
       },
     }));
   };
 
   useEffect(() => {
-    const errors = validate(studentParent.values, studentParentValidate);
-    setStudentParent((studentParent) => ({
-      ...studentParent,
+    const errors = validate(studentState.values, studentValidate);
+    setStudentState((studentState) => ({
+      ...studentState,
       isValid: errors ? false : true,
       errors: errors || {},
     }));
-  }, [studentParent.values]);
+  }, [studentState.values]);
 
   const hasError = (field) => {
-    return studentParent.touched[field] && studentParent.errors[field]
+    return studentState.touched[field] && studentState.errors[field]
       ? true
       : false;
   };
@@ -176,69 +159,66 @@ const CreateStudent = () => {
         setCourses(res.data);
       });
     }
-
-    console.log(courses);
   }, [courses]);
 
   /*  Method to add a student */
   const handleSubmit = (event) => {
     let data = {
-      nameParent: studentParent.values.nameParent,
-      lastnameParent: studentParent.values.lastNameParent,
-      idDocumentParent: studentParent.values.documentParent,
-      email: studentParent.values.email,
-      phone: studentParent.values.phone,
-      institutionId: 1,
-
-      nameStudent: studentParent.values.nameStudent,
-      lastnameStudent: studentParent.values.lastNameStudent,
-      idDocumentStudent: studentParent.values.documentStudent,
-      username: studentParent.values.documentStudent,
+      id: studentState.values.id,
+      nameStudent: studentState.values.nameStudent,
+      lastnameStudent: studentState.values.lastNameStudent,
+      idDocumentStudent: studentState.values.documentStudent,
       dateBirthday: selectedDate,
       courseId: course,
       roleId: 3,
     };
-
+    handleReload();
     axios
-      .post("/student/", data)
+      .put(`/student/${data.id}`, data)
       .then((res) => {
         if (res.status === 200) {
           let message = {
-            errorMsg: "Estudiante y acudiente creado con éxito",
+            errorMsg: "Estudiante actualizado con éxito",
             errorType: "success",
           };
           dispatch(showMessage(message));
+          handleReload();
+          closeEdit();
         }
       })
       .catch((error) => {
         let message2 = {
-          errorMsg: "Ha ocurrido un error",
+          errorMsg: "Ha ocurrido un error. Inténtalo de nuevo",
           errorType: "error",
         };
         dispatch(showMessage(message2));
+        closeEdit();
       });
   };
 
   return (
     <div>
-      <Grid container className={classes.gridContainer}>
-        <Grid item sm={6}>
-          <form className={classes.root}>
-            <Typography
-              className={classes.componentsItems}
-              variant="h6"
-              color="initial"
+      <Grid
+        container
+        alignItems="center"
+        alignContent="center"
+        justify="center"
+      >
+        <Grid item sm={12} className={classes.centrado}>
+          <form>
+            <Grid
+              item
+              xs={12}
+              alignContent="center"
+              className={classes.centrado}
             >
-              Datos del estudiante:
-            </Typography>
-            <Grid item xs={12} className={classes.centrado}>
               <TextField
-                className={classes.componentsItems}
                 id="standard-basic"
                 label="Nombres"
                 name="nameStudent"
                 onChange={handleChange}
                 error={hasError("nameStudent")}
+                defaultValue={studentSelected.name}
                 helperText={
                   hasError("nameStudent") ? "Debes ingresar un nombre" : null
                 }
@@ -246,9 +226,9 @@ const CreateStudent = () => {
             </Grid>
             <Grid item xs={12} className={classes.centrado}>
               <TextField
-                className={classes.componentsItems}
                 id="standard-basic"
                 label="Apellidos"
+                defaultValue={studentSelected.lastname}
                 name="lastNameStudent"
                 onChange={handleChange}
                 error={hasError("lastNameStudent")}
@@ -267,7 +247,7 @@ const CreateStudent = () => {
                   id="date-picker-dialog"
                   label="Fecha de nacimiento"
                   format="dd/MM/yyyy"
-                  value={selectedDate}
+                  value={studentSelected.dateBirthday}
                   onChange={handleDateChange}
                   name="birthdayStudent"
                   invalidDateMessage="Fecha ingresada inválida"
@@ -281,11 +261,11 @@ const CreateStudent = () => {
             </Grid>
             <Grid item xs={12} className={classes.centrado}>
               <TextField
-                className={classes.componentsItems}
                 id="standard-basic"
                 label="Registro de nacimiento"
                 name="documentStudent"
                 type="text"
+                defaultValue={studentSelected.idDocument}
                 onChange={handleChange}
                 error={hasError("documentStudent")}
                 helperText={
@@ -304,6 +284,7 @@ const CreateStudent = () => {
                   labelId="demo-controlled-open-select-label"
                   id="demo-controlled-open-select"
                   open={open}
+                  key={course.id}
                   onClose={handleClose}
                   onOpen={handleOpen}
                   value={course}
@@ -324,98 +305,16 @@ const CreateStudent = () => {
             </Grid>
           </form>
         </Grid>
-        <Grid item sm={6}>
-          <form className={classes.root}>
-            <Typography
-              className={classes.componentsItems}
-              variant="h6"
-              color="initial"
-            >
-              Datos del acudiente:
-            </Typography>
-            <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Nombres"
-                name="nameParent"
-                onChange={handleChange}
-                error={hasError("nameParent")}
-                helperText={
-                  hasError("nameParent") ? "Debes ingresar un nombre" : null
-                }
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Apellidos"
-                name="lastNameParent"
-                onChange={handleChange}
-                error={hasError("lastNameParent")}
-                helperText={
-                  hasError("lastNameParent")
-                    ? "Debes ingresar los apellidos"
-                    : null
-                }
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="N° de identificación"
-                name="documentParent"
-                onChange={handleChange}
-                error={hasError("documentParent")}
-                helperText={
-                  hasError("documentParent")
-                    ? "Debes ingresar un número de identificación"
-                    : null
-                }
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Correo electrónico"
-                name="email"
-                onChange={handleChange}
-                error={hasError("email")}
-                helperText={
-                  hasError("email") ? "Debes ingresar un correo válido" : null
-                }
-              />
-            </Grid>
-            <Grid item xs={12} className={classes.centrado}>
-              <TextField
-                className={classes.componentsItems}
-                id="standard-basic"
-                label="Número teléfonico"
-                name="phone"
-                onChange={handleChange}
-                error={hasError("phone")}
-                helperText={
-                  hasError("phone")
-                    ? "Debes ingresar un número de contacto"
-                    : null
-                }
-              />
-            </Grid>
-          </form>
-        </Grid>
         <Grid item xs={12} className={classes.centrado}>
           <Button
             variant="contained"
             color="primary"
             size="large"
             endIcon={<SaveIcon></SaveIcon>}
-            disabled={!studentParent.isValid}
+            disabled={!studentState.isValid}
             onClick={handleSubmit}
           >
-            Guardar
+            ACTUALIZAR
           </Button>
         </Grid>
       </Grid>
@@ -427,7 +326,10 @@ const mapStateToProps = (state) => ({
   // instid: state.auth.instId,
 });
 
-CreateStudent.propTypes = {
-  // instid: PropTypes.any,
+EditStudent.propTypes = {
+  studentSelected: PropTypes.any,
+  handleReload: PropTypes.func.isRequired,
+  reload: PropTypes.any,
+  closeEdit: PropTypes.func.isRequired,
 };
-export default connect(mapStateToProps)(CreateStudent);
+export default connect(mapStateToProps)(EditStudent);
