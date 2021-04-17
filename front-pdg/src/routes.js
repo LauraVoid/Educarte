@@ -5,11 +5,13 @@ import { Provider } from "react-redux";
 import Login from "./components/Index/Login";
 import Createcourse from "./components/course/create-course";
 import ListCourse from "./components/course/list-course";
-import EditCourse from "./components/course/edit-course"
-import ExampleTeacher from "./components/teacher/main"
+import EditCourse from "./components/course/edit-course";
+import ExampleTeacher from "./components/teacher/main";
 
+//Layouts
 import RouteWithLayout from "./components/configRouter/RouteWithLayout";
 import Minimal from "./layouts/Minimal/Minimal";
+import MainLayout from "./layouts/Main/Main";
 
 //pages for main view
 import Home from "./pages/Home/Home";
@@ -32,7 +34,7 @@ import Feedback from "./components/teacher/feedback";
 import TaskExplorer from "./pages/task/list-task";
 import CreateTask from "./pages/task/add-task";
 
-import {store} from "./store/store";
+import { store } from "./store/store";
 
 export default (
   <Provider store={store}>
@@ -47,42 +49,42 @@ export default (
         <RouteWithLayout exact path="/" layout={Minimal} component={Home} />
         <RouteWithLayout
           path="/createstudent"
-          layout={Minimal}
+          layout={MainLayout}
           component={CreateStudent}
         />
         <RouteWithLayout
           path="/teacher"
-          layout={Minimal}
+          layout={MainLayout}
           component={HomeTeacher}
         />
         <RouteWithLayout
           path="/teachers"
-          layout={Minimal}
+          layout={MainLayout}
           component={TeacherExplorer}
         />
         <RouteWithLayout
           path="/createteacher"
-          layout={Minimal}
+          layout={MainLayout}
           component={CreateTeacher}
         />
         <RouteWithLayout
           path="/students"
-          layout={Minimal}
+          layout={MainLayout}
           component={StudentExplorer}
         />
         <RouteWithLayout
           path="/tasks"
-          layout={Minimal}
+          layout={MainLayout}
           component={TaskExplorer}
         />
         <RouteWithLayout
           path="/createtask"
-          layout={Minimal}
+          layout={MainLayout}
           component={CreateTask}
         />
         <RouteWithLayout
           path="/messagesteacher"
-          layout={Minimal}
+          layout={MainLayout}
           component={MessageTeacher}
         />
       </Switch>
