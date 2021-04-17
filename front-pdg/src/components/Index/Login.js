@@ -3,20 +3,24 @@ import { withRouter } from "react-router-dom";
 import "./styles/Login.css";
 import TextField from "@material-ui/core/TextField";
 import { Card, CardContent, Grid } from "@material-ui/core";
-import PropTypes from "prop-types";
+import Input from '@material-ui/core/Input';
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import Button from "@material-ui/core/Button";
 import axios from "../../utils/axios";
 import { connect } from "react-redux";
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import InputLabel from '@material-ui/core/InputLabel';
 import validate from "validate.js";
 import loginUser from "../../actions/auth";
 
@@ -43,23 +47,18 @@ const loginForm = {
       maximum: 64,
     },
   },
-  // institution: {
-  //     presence: { allowEmpty: false, message: "es requerido" },
-
-  // },
   email: {
-    presence: { allowEmpty: false, message: "es requerido" },
+    presence: { allowEmpty: false},
     length: {
       maximum: 64,
     },
   },
 };
-const Login = (props) => {
+const Login = () => {
   let history = useHistory();
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [institution, setInstitution] = useState([]);
-  const [selInstitution, setSelInstitution] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
   const [typeUser, setTypeUser] = useState("student");
   //const [userType, setUserType] = useState("");
 
@@ -69,25 +68,6 @@ const Login = (props) => {
     touched: {},
     errors: {},
   });
-
-  useEffect(() => {
-    const getinstitutions = () => {
-      if (institution.length === 0) {
-        axios
-          .get("inst/")
-          .then((res) => {
-            if (res.status === 200) {
-              setInstitution(res.data);
-            } else console.log(res.status);
-          })
-          .catch(() => {
-            // dispatch(showMessage(message));
-          });
-      }
-    };
-    getinstitutions();
-  }, [institution]);
-
   useEffect(() => {
     const errors = validate(loginState.values, loginForm);
 
@@ -99,7 +79,7 @@ const Login = (props) => {
   }, [loginState.values]);
 
   const handleChange = (event) => {
-    event.persist();
+    //event.persist();
 
     setLoginState((loginState) => ({
       ...loginState,
@@ -116,14 +96,17 @@ const Login = (props) => {
       },
     }));
   };
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
   const handleSubmit = (event) => {
+   
     let data = {
       is: typeUser,
       email: loginState.values.email,
       password: loginState.values.password,
     };
 
-    console.log("data login", data);
     axios
       .post(`auth/api/auth/signin`, data)
       .then((res) => {
@@ -218,16 +201,17 @@ const Login = (props) => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
+                  <InputLabel >Correo electronico/usuario</InputLabel>
                     <TextField
                       id="standard-basic"
-                      label="Correo Electrónico/Usuario"
+                      label=""
                       fullWidth
                       onChange={handleChange}
                       name="email"
                       error={hasError("email")}
                       type="text"
-                      value={loginState.values.email || ""}
-                      helperText={
+                      value={loginState.values.email|| ""}
+                      helpertext={
                         hasError("email")
                           ? "Debes ingresar el usuario o correo"
                           : null
@@ -239,16 +223,27 @@ const Login = (props) => {
                   </Grid>
 
                   <Grid item xs={12}>
-                    <TextField
-                      id="standard-basic"
-                      label="Contraseña"
+                  <InputLabel htmlFor="standard-adornment-password">Contraseña</InputLabel>
+                    <Input
+                      id="standard-basic"                      
                       fullWidth
                       onChange={handleChange}
                       name="password"
                       error={hasError("password")}
-                      type="text"
-                      value={loginState.values.password || ""}
-                      helperText={
+                      type={showPassword ? "text" : "password"}
+                      //type="password"
+                      value={loginState.values.password|| ""}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      }                                         
+                      helpertext={
                         hasError("password")
                           ? "Debes ingresar la contraseña"
                           : null
@@ -259,25 +254,7 @@ const Login = (props) => {
                     <br></br>
                   </Grid>
                   <Grid item xs={12}>
-                    <Autocomplete
-                      fullWidth
-                      id="combo-box-demo"
-                      options={institution}
-                      name="institution"
-                      clearOnEscape
-                      getOptionLabel={(option) =>
-                        option !== "" ? option.name : option
-                      }
-                      onChange={(event, newVal) => setSelInstitution(newVal)}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Institución"
-                          variant="outlined"
-                          value={selInstitution}
-                        />
-                      )}
-                    />
+                    
                     <Grid item xs={12} md={12}>
                       <br></br>
                       <br></br>

@@ -40,12 +40,28 @@ export default (
   <Provider store={store}>
     <BrowserRouter basename="/">
       <Switch>
-        <Route path="/login" component={Login} />
-        <Route path="/feedback" component={Feedback} />
-        <Route path="/institution" component={MainInstitution} />
-        <Route path="/createcourse" component={Createcourse} />
-        <Route path="/editcourse" component={EditCourse} />
-        <Route path="/courses" component={ListCourse} />
+        <Route path="/login" 
+        component={Login} />
+        <RouteWithLayout 
+        path="/feedback"
+        layout={MainLayout}
+        component={Feedback} />
+        <RouteWithLayout 
+        path="/institution" 
+        layout={MainLayout}
+        component={MainInstitution} />
+        <RouteWithLayout 
+        path="/createcourse"
+        layout={MainLayout} 
+        component={Createcourse} />
+        <RouteWithLayout 
+        path="/editcourse"
+        layout={MainLayout} 
+        component={EditCourse} />
+        <RouteWithLayout 
+        path="/courses"
+        layout={MainLayout}
+        component={ListCourse} />
         <RouteWithLayout exact path="/" layout={Minimal} component={Home} />
         <RouteWithLayout
           path="/createstudent"
