@@ -104,7 +104,7 @@ const TeacherExplorer = () => {
                   size="small"
                   variant="contained"
                   color="primary"
-                  href="/createstudent"
+                  href="/createteacher"
                 >
                   Agregar +
                 </Button>

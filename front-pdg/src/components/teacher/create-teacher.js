@@ -7,6 +7,7 @@ import axios from "../../utils/axios";
 import { useDispatch } from "react-redux";
 import { showMessage } from "../../actions/actionMessage";
 import validate from "validate.js";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,10 +47,10 @@ const teacher = {
   lastname: {
     presence: { allowEmpty: false, message: "El apellido es requerido" },
   },
-  identification: {
+  idDocument: {
     presence: { allowEmpty: false, message: "La identificación es requerida" },
   },
-  cellphone: {
+  phone: {
     presence: { allowEmpty: false, message: "El número es requerido" },
     format: {
       pattern: /^[+]?([0-9]+(?:[.][0-9]*)?|[0-9]+)$/,
@@ -66,7 +67,8 @@ const teacher = {
   },
 };
 
-const CreateTeacher = () => {
+const CreateTeacher = (props) => {
+  const { idInst } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [teacherState, setTeacherState] = useState({
@@ -119,10 +121,14 @@ const CreateTeacher = () => {
   const handleSubmit = (event) => {
     let data = {
       ...teacherState.values,
-      institutionId: 1,
+      institutionId: idInst,
+      is: "teacher",
+      roleId: 1,
+      password: "educarte",
     };
 
-    axios.post(`teacher/`, data).then((res) => {
+    console.log(data);
+    axios.post(`/auth/api/auth/signup`, data).then((res) => {
       if (res.status === 200) {
         let message = {
           errorMsg: "Profesor creado con éxito",
@@ -176,7 +182,7 @@ const CreateTeacher = () => {
                 className={classes.componentsItems}
                 id="standard-basic"
                 label="N° de identificación"
-                name="identification"
+                name="idDocument"
                 onChange={handleChange}
                 error={hasError("identification")}
                 helperText={
@@ -195,7 +201,7 @@ const CreateTeacher = () => {
                 className={classes.componentsItems}
                 id="standard-basic"
                 label="Celular"
-                name="cellphone"
+                name="phone"
                 onChange={handleChange}
                 error={hasError("cellphone")}
                 helperText={
@@ -239,10 +245,10 @@ const CreateTeacher = () => {
 };
 
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  idInst: state.login.id,
 });
 
 CreateTeacher.propTypes = {
-  // instid: PropTypes.any,
+  idInst: PropTypes.number,
 };
 export default connect(mapStateToProps)(CreateTeacher);
