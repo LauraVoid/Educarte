@@ -7,6 +7,16 @@ exports.index = async function (req, res, next) {
     res.send(result);
   });
 };
+exports.findInstitutionCourses = async function (req, res, next) {
+  await Course.findAll({
+    where:{
+      institutionId: req.params.instId
+    }
+  }).then((result) => {
+    res.send(result);
+  });
+};
+
 //Search a course by Id and return the course and the teacher's course
 exports.findById = async function (req, res, next) {
   const teac_course = [];

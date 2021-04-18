@@ -236,29 +236,29 @@ const ListCourse = (props) => {
         errors: {},
     });
     
-    useEffect(() => {
-        if(courses.length !== 0){
+    // useEffect(() => {
+    //     if(courses.length !== 0){
             
-                axios
-                .get(`course/find/`+props.id)
-                .then((res) => {
-                  if (res.status === 200) {
-                    console.log(res.data.teac)
+    //             axios
+    //             .get(`course/find/`+props.id)
+    //             .then((res) => {
+    //               if (res.status === 200) {
+    //                 console.log(res.data.teac)
           
           
-                  } else console.log(res.status);
-                })
-                .catch((err) => console.log(err));          
+    //               } else console.log(res.status);
+    //             })
+    //             .catch((err) => console.log(err));          
               
 
-        }
+    //     }
         
-    }, [courses]);
+    // }, [courses]);
 
     const getCourses = () => {
         // setViewProgress(true);
         axios
-            .get('course/')
+            .get('course/all/'+props.id)
             .then((res) => {
                 if (res.status === 200) {
                     setCourses(res.data)

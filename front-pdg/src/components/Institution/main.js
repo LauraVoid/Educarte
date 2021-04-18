@@ -4,11 +4,16 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 
 import { connect } from "react-redux";
-
 import Typography from "@material-ui/core/Typography";
 import PeopleIcon from "@material-ui/icons/People";
 import SchoolIcon from "@material-ui/icons/School";
-import Button from "@material-ui/core/Button";
+import Paper from '@material-ui/core/Paper';
+import Accordion from '@material-ui/core/Accordion';
+import Button from '@material-ui/core/Button';
+import CardActions from '@material-ui/core/CardActions';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 // import axios from "../../utils/axios";
 import HomeWorkIcon from "@material-ui/icons/HomeWork";
 import IconButton from "@material-ui/core/IconButton";
@@ -146,7 +151,7 @@ const MainInstitution = () => {
                 gutterBottom
                 align="center"
               >
-                Ver estudiantes
+                Ver estudiantes:
               </Typography>
             </Grid>
           </Grid>
@@ -168,6 +173,39 @@ const MainInstitution = () => {
                     >
                       Estadisticas
                     </Typography>
+                    <Paper elevation={3} >
+                      <Accordion>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel1a-content"
+                          id="panel1a-header"
+                        >
+                          <Typography className={classes.heading}>Estudiantes</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Typography>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
+                            sit amet blandit leo lobortis eget.
+          </Typography>
+                        </AccordionDetails>
+                      </Accordion>
+                      <Accordion>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls="panel2a-content"
+                          id="panel2a-header"
+                        >
+                          <Typography className={classes.heading}>Docentes</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Typography>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex,
+                            sit amet blandit leo lobortis eget.
+          </Typography>
+                        </AccordionDetails>
+                      </Accordion>
+
+                    </Paper>
                   </CardContent>
                 </Card>
               </Grid>
@@ -180,7 +218,47 @@ const MainInstitution = () => {
                 wrap="nowrap"
                 className="Grid-main-green"
               >
-                
+                <Card className={classes.card}>
+                  <CardContent>
+                    <Typography
+                      className={classes.title}
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Mensajes pendientes
+                    </Typography>
+                    <Paper elevation={3} >
+                      <Card className={classes.root}>
+                        <CardContent>
+                          <Typography className={classes.title} color="textSecondary" gutterBottom >
+                            Ana maria Restrepo
+                            </Typography>
+                          <Typography className={classes.pos} color="textSecondary">
+                            profesor
+                          </Typography>
+
+                        </CardContent>
+                        
+                      </Card>
+                    </Paper>
+
+                    <Paper elevation={3} >
+                      <Card className={classes.root}>
+                        <CardContent>
+                          <Typography className={classes.title} color="textSecondary" gutterBottom>
+                            Pedro Mejia
+                            </Typography>
+                          <Typography className={classes.pos} color="textSecondary">
+                            acudiente
+                          </Typography>
+
+                        </CardContent>
+                        
+                      </Card>
+                    </Paper>
+                  </CardContent>
+                </Card>
+
               </Grid>
             </Grid>
           </div>
@@ -191,20 +269,20 @@ const MainInstitution = () => {
 };
 
 const mapStateToProps = (state) => (
-  console.log(state),{
-  
+  console.log(state), {
+
     id: state.login.id,
     name: state.login.name,
     email: state.login.email,
-  // instid: state.auth.instId,
-});
+    // instid: state.auth.instId,
+  });
 
 MainInstitution.propTypes = {
-  
+
   id: PropTypes.number,
   name: PropTypes.string,
   email: PropTypes.string,
   //instid: PropTypes.any,
 };
 
-export default connect(mapStateToProps,{})(MainInstitution);
+export default connect(mapStateToProps, {})(MainInstitution);

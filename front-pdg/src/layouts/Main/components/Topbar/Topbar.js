@@ -16,6 +16,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import IconButton from "@material-ui/core/IconButton";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { useDispatch } from "react-redux";
+import logOut from "../../../../actions/singOut";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -56,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Topbar = (props) => {
+  const dispatch = useDispatch();
   const { className, ...rest } = props;
   const classes = useStyles();
 
@@ -67,8 +70,12 @@ const Topbar = (props) => {
   };
 
   const handleClose = () => {
+    
     setAnchorEl(null);
   };
+  const singOut =(event) =>{
+    dispatch(logOut());
+  }
 
   const renderMenu = (
     <Menu
@@ -128,6 +135,7 @@ const Topbar = (props) => {
                 variant="text"
                 color="inherit"
                 component={RouterLink}
+                onClick={singOut}
                 to="/"
               >
                 Cerrar sesión
