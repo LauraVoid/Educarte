@@ -34,6 +34,10 @@ import Feedback from "./components/teacher/feedback";
 import TaskExplorer from "./pages/task/list-task";
 import CreateTask from "./pages/task/add-task";
 
+//pages for messages
+import CreateMessageParent from "./pages/messages/create-message-parent";
+import CreateMessageCourse from "./pages/messages/create-message-course";
+
 import { store } from "./store/store";
 
 export default (
@@ -86,6 +90,16 @@ export default (
           path="/messagesteacher"
           layout={MainLayout}
           component={MessageTeacher}
+        />
+        <RouteWithLayout
+          path="/createmessageparent"
+          layout={MainLayout}
+          component={CreateMessageParent}
+        />
+        <RouteWithLayout
+          path="/createmessagecourse"
+          layout={MainLayout}
+          component={CreateMessageCourse}
         />
       </Switch>
     </BrowserRouter>

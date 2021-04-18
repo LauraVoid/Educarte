@@ -2,19 +2,19 @@ var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
-const bodyParser = require("body-parser")
+const bodyParser = require("body-parser");
 const cors = require("cors");
 var logger = require("morgan");
 require("dotenv").config();
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-var authRouter = require("./routes/auth")
-var instRouter = require("./routes/institution")
-var courseRouter = require("./routes/course")
-var teacherRouter = require("./routes/teacher")
-var studentRouter = require("./routes/student")
-
+var authRouter = require("./routes/auth");
+var instRouter = require("./routes/institution");
+var courseRouter = require("./routes/course");
+var teacherRouter = require("./routes/teacher");
+var studentRouter = require("./routes/student");
+var messageRouter = require("./routes/message");
 
 var app = express();
 
@@ -24,7 +24,7 @@ require("./model/Asociations");
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 var corsOptions = {
-  origin: "http://localhost:3000"
+  origin: "http://localhost:3000",
 };
 
 app.use(logger("dev"));
@@ -36,26 +36,28 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.listen(8000, function () {
-  console.log('Example app listening on port 8000!');
- });
-
+  console.log("Example app listening on port 8000!");
+});
 
 app.use((req, res, next) => {
-	res.header('Access-Control-Allow-Origin', '*');
-	res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method, x-access-token');
-	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-	res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
-	next();
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method, x-access-token"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  res.header("Allow", "GET, POST, OPTIONS, PUT, DELETE");
+  next();
 });
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.use("/auth",authRouter)
-app.use("/inst",instRouter)
-app.use("/course",courseRouter)
-app.use("/teacher",teacherRouter)
-app.use("/student",studentRouter)
-
+app.use("/auth", authRouter);
+app.use("/inst", instRouter);
+app.use("/course", courseRouter);
+app.use("/teacher", teacherRouter);
+app.use("/student", studentRouter);
+app.use("/message", messageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

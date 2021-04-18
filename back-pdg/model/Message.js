@@ -23,4 +23,8 @@ module.exports = sequelize.define("Message", {
     type: Sequelize.SMALLINT,
     allowNull: false,
   },
+  roleReceiver: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
 });

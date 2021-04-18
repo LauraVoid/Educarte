@@ -63,8 +63,20 @@ const NavMessage = () => {
               variant="contained"
               color="primary"
               size="large"
+              href="/createmessagecourse"
             >
-              Enviar mensaje a todos
+              Enviar mensaje al curso
+            </Button>
+          </Grid>
+          <Grid item xs={12} className={classes.centrado}>
+            <Button
+              className={classes.button}
+              variant="contained"
+              color="primary"
+              size="large"
+              href="/createmessageparent"
+            >
+              Enviar mensaje al padre
             </Button>
           </Grid>
           <Grid item xs={12} className={classes.centrado}>

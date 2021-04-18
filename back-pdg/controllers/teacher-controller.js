@@ -1,6 +1,11 @@
 const Teacher = require("../model/Teacher");
+const Parent = require("../model/Parent");
+const TeacherCourse = require("../model/Teacher_Course");
+const Student = require("../model/Student");
 const Course = require("../model/Course");
 var bcrypt = require("bcryptjs");
+const seq = require("sequelize");
+const op = seq.Op;
 
 const getPagination = (page, size) => {
   const limit = size ? +size : 5;
@@ -97,4 +102,83 @@ exports.update = async function (req, res, next) {
         res.status(406).send("There is a problem");
       }
     });
+};
+
+exports.findParentsKnown = async function (req, res, next) {
+  const students = [];
+  const parents = [];
+  const coursesFound = await TeacherCourse.findAll({
+    where: {
+      teacherId: req.params.teacherId,
+      courseId: {
+        [op.ne]: null,
+      },
+    },
+  });
+  if (coursesFound.length !== 0) {
+    await Promise.all(
+      coursesFound.map(async (course) => {
+        await Student.findAll({
+          where: {
+            courseId: course.courseId,
+            parentId: {
+              [op.ne]: null,
+            },
+          },
+        }).then((student) => students.push(student));
+      })
+    );
+  } else {
+    res
+      .status(406)
+      .send({ message: "This teacher doesn't have a course assigned" });
+  }
+
+  if (students.length !== 0) {
+    await Promise.all(
+      students.map(async (student) => {
+        await Promise.all(
+          student.map(async (stu) => {
+            await Parent.findOne({
+              where: {
+                id: stu.parentId,
+              },
+            }).then((parent) => {
+              parents.push(parent);
+            });
+          })
+        );
+      })
+    );
+    res.status(200).send(parents);
+  } else {
+    res
+      .status(406)
+      .send({ message: "This course doesn't have students assigned" });
+  }
+};
+
+exports.findCoursesByTeacher = async function (req, res, next) {
+  const courses = [];
+  const coursesFound = await TeacherCourse.findAll({
+    where: {
+      teacherId: req.params.teacherId,
+      courseId: {
+        [op.ne]: null,
+      },
+    },
+  });
+
+  if (coursesFound !== 0) {
+    await Promise.all(
+      coursesFound.map(async (course) => {
+        await Course.findByPk(course.courseId).then((crs) => courses.push(crs));
+      })
+    );
+    res.status(200).send(courses);
+  } else {
+    res
+      .status(406)
+      .send({ message: "This teacher doesn't have a course assigned" });
+  }
 };
