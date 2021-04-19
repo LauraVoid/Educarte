@@ -3,26 +3,27 @@ import { withRouter } from "react-router-dom";
 import "./styles/Login.css";
 import TextField from "@material-ui/core/TextField";
 import { Card, CardContent, Grid } from "@material-ui/core";
-import Input from '@material-ui/core/Input';
+import Input from "@material-ui/core/Input";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import Button from "@material-ui/core/Button";
 import axios from "../../utils/axios";
 import { connect } from "react-redux";
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import InputLabel from '@material-ui/core/InputLabel';
+import IconButton from "@material-ui/core/IconButton";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import InputLabel from "@material-ui/core/InputLabel";
 import validate from "validate.js";
 import loginUser from "../../actions/auth";
+import bgd from "../../img/backgrounds/paisaje-login-edit.png";
+import logoTitle from "../../img/logos/logo-login.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,6 +39,20 @@ const useStyles = makeStyles((theme) => ({
       marginTop: theme.spacing(3),
     },
   },
+  divContainer: {
+    backgroundImage: `url(${bgd})`,
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+  },
+  title2: {
+    width: "60%",
+    marginLeft: "19%",
+    marginBottom: "2%",
+  },
+  root2: {
+    flexGrow: 1,
+  },
 }));
 
 const loginForm = {
@@ -48,7 +63,7 @@ const loginForm = {
     },
   },
   email: {
-    presence: { allowEmpty: false},
+    presence: { allowEmpty: false },
     length: {
       maximum: 64,
     },
@@ -100,7 +115,6 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
   const handleSubmit = (event) => {
-   
     let data = {
       is: typeUser,
       email: loginState.values.email,
@@ -147,20 +161,33 @@ const Login = () => {
     loginState.touched[field] && loginState.errors[field] ? true : false;
 
   return (
-    <div className=" background">
+    <div className={classes.divContainer}>
       <div style={{ padding: 20 }}>
         <div style={{ padding: 40, margin: 20 }}>
           <Grid container spacing={5} justify="center" alignItems="center">
-            <Card className={classes.card}>
+            <Card
+              className={classes.card}
+              style={{ backgroundColor: "rgba(255, 255, 255, 0.7)" }}
+            >
               <CardContent>
-                <Typography
+                <Grid container className={classes.root2} justify="center">
+                  <Grid item xs={12}>
+                    <img
+                      src={logoTitle}
+                      className={classes.title2}
+                      alt="logoTitle"
+                    ></img>
+                  </Grid>
+                </Grid>
+                {/* <Typography
                   className="title"
                   color="textSecondary"
                   gutterBottom
                   variant="h4"
                 >
                   Educarte
-                </Typography>
+                </Typography> */}
+
                 <form
                   className={classes.root}
                   noValidate
@@ -201,7 +228,7 @@ const Login = () => {
                     </FormControl>
                   </Grid>
                   <Grid item xs={12}>
-                  <InputLabel >Correo electronico/usuario</InputLabel>
+                    <InputLabel>Correo electronico/usuario</InputLabel>
                     <TextField
                       id="standard-basic"
                       label=""
@@ -210,7 +237,7 @@ const Login = () => {
                       name="email"
                       error={hasError("email")}
                       type="text"
-                      value={loginState.values.email|| ""}
+                      value={loginState.values.email || ""}
                       helpertext={
                         hasError("email")
                           ? "Debes ingresar el usuario o correo"
@@ -223,16 +250,18 @@ const Login = () => {
                   </Grid>
 
                   <Grid item xs={12}>
-                  <InputLabel htmlFor="standard-adornment-password">Contraseña</InputLabel>
+                    <InputLabel htmlFor="standard-adornment-password">
+                      Contraseña
+                    </InputLabel>
                     <Input
-                      id="standard-basic"                      
+                      id="standard-basic"
                       fullWidth
                       onChange={handleChange}
                       name="password"
                       error={hasError("password")}
                       type={showPassword ? "text" : "password"}
                       //type="password"
-                      value={loginState.values.password|| ""}
+                      value={loginState.values.password || ""}
                       endAdornment={
                         <InputAdornment position="end">
                           <IconButton
@@ -242,7 +271,7 @@ const Login = () => {
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
                         </InputAdornment>
-                      }                                         
+                      }
                       helpertext={
                         hasError("password")
                           ? "Debes ingresar la contraseña"
@@ -254,7 +283,6 @@ const Login = () => {
                     <br></br>
                   </Grid>
                   <Grid item xs={12}>
-                    
                     <Grid item xs={12} md={12}>
                       <br></br>
                       <br></br>

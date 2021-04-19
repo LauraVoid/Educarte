@@ -127,7 +127,7 @@ const CreateMessageParent = (props) => {
   who have children in some course with this teacher */
   useEffect(() => {
     if (receivers.length === 0) {
-      axios.get(`/teacher/parents/${4}`).then((res) => {
+      axios.get(`/teacher/parents/${user}`).then((res) => {
         console.log(res.data);
         setReceivers(res.data);
       });
