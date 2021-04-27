@@ -11,6 +11,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -55,6 +56,12 @@ const useStyles = makeStyles((theme) => ({
             justifyContent: "center",
         },
     },
+    paper: {
+        width: "100%",
+        marginBottom: theme.spacing(2),
+        marginLeft: theme.spacing(8),
+        marginRight: theme.spacing(8),
+    },
     form: {
         paddingLeft: 100,
         paddingRight: 100,
@@ -87,6 +94,9 @@ const useStyles = makeStyles((theme) => ({
     },
     textField: {
         width: 142,
+    },
+    table: {
+        minWidth: 750,
     },
 }));
 
@@ -214,6 +224,7 @@ const ListCourse = (props) => {
 
 
     const [courses, setCourses] = useState([]);
+    const [teacher, setTeachers] = useState([]);
     const [courSelected, setCourSelected] = React.useState({});
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -235,33 +246,43 @@ const ListCourse = (props) => {
         touched: {},
         errors: {},
     });
-    
-    // useEffect(() => {
-    //     if(courses.length !== 0){
-            
-    //             axios
-    //             .get(`course/find/`+props.id)
-    //             .then((res) => {
-    //               if (res.status === 200) {
-    //                 console.log(res.data.teac)
-          
-          
-    //               } else console.log(res.status);
-    //             })
-    //             .catch((err) => console.log(err));          
-              
 
-    //     }
-        
-    // }, [courses]);
+    useEffect(() => {
+        if (teacher.length === 0) {
+            axios
+                .get(`course/find/` + props.id)
+                .then((res) => {
+                    if (res.status === 200) {
+                        console.log(res.data)
+                        setTeachers(res.data)
+
+                    } else console.log(res.status);
+                })
+                .catch((err) => console.log(err));
+
+        }
+
+    }, [teacher]);
 
     const getCourses = () => {
         // setViewProgress(true);
         axios
-            .get('course/all/'+props.id)
+            .get('course/all/' + props.id)
             .then((res) => {
                 if (res.status === 200) {
-                    setCourses(res.data)
+                    let result = res.data;
+                    result.map((course) => {
+
+                        teacher.find((teac) => {
+                            if (teac.courseId === course.id) {
+                                course.techerName = teac.teacherName;
+
+                            }
+                        })
+                    })
+                    setCourses(result)
+
+
                 } else console.log(res.status);
 
             })
@@ -273,10 +294,10 @@ const ListCourse = (props) => {
 
 
 
-    useEffect(() => {
-        getCourses();
+    // useEffect(() => {
+    //     getCourses();
 
-    }, [page]);
+    // }, [page]);
     useEffect(() => {
         getCourses();
 
@@ -289,7 +310,7 @@ const ListCourse = (props) => {
     };
     const handleCloseActive = () => {
         setActiveOpen(false);
-      };    
+    };
 
 
 
@@ -346,7 +367,7 @@ const ListCourse = (props) => {
                     case "The followuptype doesn't exist": {
                         message1 = "El curso que intentas borrar no existe";
                         break;
-                    }                    
+                    }
                     default: {
                         message1 = "Algo salió mal. No fue posible borrar el curso";
                     }
@@ -360,7 +381,7 @@ const ListCourse = (props) => {
             });
 
     }
-    const handleReload =()=>{
+    const handleReload = () => {
         setReload(!reload);
     }
 
@@ -371,159 +392,147 @@ const ListCourse = (props) => {
 
 
     return (
-        <div className="background1">
-            <div style={{ padding: 20 }}>
-                <h1>Gestionar cursos</h1>
-
-                <div style={{ padding: 40, margin: 50 }}>
-                    <Grid container spacing={5} className="Grid-main-purple">
-                        <Grid item xs={12}>
-                            <Button variant="contained" color="primary" href="/createcourse">
-                                Agregar +
-                            </Button>
-
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TableContainer>
-                                <Table className="table"
-
-                                    aria-labelledby="tableTitle"
-                                    aria-label="enhanced table"
-                                    size={dense ? "small" : "medium"}
-                                >
-                                    <HeadTable
-                                        classes={classes}
-                                        numSelected={selected.length}
-                                        order={order}
-                                        orderBy={orderBy}
-                                        onSelectAllClick={handleSelectAllClick}
-                                        onRequestSort={handleRequestSort}
-                                        rowCount={courses.length}
-                                    >
-                                    </HeadTable >
-                                    {/* onChangePage={handleChangePage} */}
-                                    <TableBody >
-                                        {stableSort(courses, getComparator(order, orderBy)).map(
-                                            (row, index) => {
-                                                const isItemSelected = isSelected(row.id);
-                                                
-                                                return (
-                                                    <TableRow
-                                                        hover
-                                                        // onClick={(event) => handleClick(event, row.id)}
-                                                        role="checkbox"
-                                                        aria-checked={isItemSelected}
-                                                        tabIndex={-1}
-                                                        key={row.id}
-                                                    
+        <Grid container>
+            <div className={classes.root}>
+                <Paper className={classes.paper}>
+                    <TableContainer>
+                        <Table
+                            className={classes.table}
+                            aria-labelledby="tableTitle"
+                            size={dense ? "small" : "medium"}
+                            aria-label="enhanced table"
+                        >
+                            <EnhancedTableHead
+                                classes={classes}
+                                numSelected={selected.length}
+                                order={order}
+                                orderBy={orderBy}
+                                onSelectAllClick={handleSelectAllClick}
+                                onRequestSort={handleRequestSort}
+                                rowCount={teachers.length}
+                            />
+                            <TableBody>
+                                {stableSort(teachers, getComparator(order, orderBy)).map(
+                                    (row, index) => {
+                                        const isItemSelected = isSelected(teachers.name);
+                                        const labelId = `enhanced-table-checkbox-${index}`;
+                                        return (
+                                            <TableRow
+                                                onClick={(event) => handleClick(event, row.id)}
+                                                hover
+                                                role="checkbox"
+                                                tabIndex={-1}
+                                                key={row.id}
+                                                aria-checked={isItemSelected}
+                                            >
+                                                <TableCell padding="checkbox"></TableCell>
+                                                <TableCell
+                                                    component="th"
+                                                    id={labelId}
+                                                    scope="row"
+                                                    align="left"
+                                                >
+                                                    {row.id}
+                                                </TableCell>
+                                                <TableCell
+                                                    component="th"
+                                                    id={labelId}
+                                                    scope="row"
+                                                    align="left"
+                                                >
+                                                    {row.name}
+                                                </TableCell>
+                                                <TableCell align="left">
+                                                    <IconButton
+                                                        aria-label="view"
+                                                    // onClick={() => {
+                                                    //     handleClickOpen(row);
+                                                    // }}
                                                     >
-
-                                                        <TableCell
-                                                            align="right"
-                                                        
-                                                        >
-                                                            {" "}
-                                                            {row.id}
-                                                        </TableCell>
-                                                        <TableCell></TableCell>
-                                                        <TableCell align="left"> {row.name}</TableCell>
-                                                        <TableCell align="left"> 
-                                                        <IconButton
-                                                                aria-label="view"
-                                                            // onClick={() => {
-                                                            //     handleClickOpen(row);
-                                                            // }}
-                                                            >
-                                                                <EyeButton color="disabled" />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                        
-                                                        <TableCell align="left">
-                                                            <IconButton
-                                                                aria-label="view"
-                                                            // onClick={() => {
-                                                            //     handleClickOpen(row);
-                                                            // }}
-                                                            >
-                                                                <EyeButton color="disabled" />
-                                                            </IconButton>
-                                                        </TableCell>
-                                                        <TableCell align="left">
-                                                            <IconButton
-                                                                aria-label="view"
-                                                                onClick={() => {
-                                                                    handleClickActiveOpen(row);
-                                                                }}
-                                                            >
-                                                                <DeleteIcon></DeleteIcon>
-                                                            </IconButton>
-                                                            <IconButton
-                                                                aria-label="view"
-                                                                // onClick={() => {
-                                                                //     handleClickActiveOpen(row);
-                                                                // }}
-                                                            >
-                                                                <EditIcon></EditIcon>
-                                                            </IconButton>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                );
-                                            }
-                                        )}
-
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-
-                            <Dialog
-                                onClose={handleCloseActive}
-                                aria-labelledby="customized-dialog-title"
-                                open={activeOpen}
-                            >
-                                <DialogTitle id="customized-dialog-title" onClose={handleCloseActive}>
-                                    Confirmación
+                                                        <EyeButton color="disabled" />
+                                                    </IconButton>
+                                                </TableCell>
+                                                <TableCell align="left">{row.phone}</TableCell>
+                                                <TableCell align="left">{row.email}</TableCell>
+                                                <TableCell align="left">
+                                                    <IconButton>
+                                                        <EditIcon
+                                                            onClick={() => {
+                                                                handleClickOpenEdit(row);
+                                                            }}
+                                                        />
+                                                    </IconButton>
+                                                </TableCell>
+                                                <TableCell align="left">
+                                                    <IconButton
+                                                        onClick={() => {
+                                                            handleClickOpen(row);
+                                                        }}
+                                                    >
+                                                        <DeleteForeverIcon></DeleteForeverIcon>
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    }
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        style={{ fontSize: "14px" }}
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={totalResults}
+                        labelRowsPerPage="Filas por página:"
+                        labelDisplayedRows={() =>
+                            (totalResults === 0 ? 0 : page + 1) +
+                            " de " +
+                            numOfPages() +
+                            " páginas"
+                        }
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onChangePage={handleChangePage}
+                        onChangeRowsPerPage={handleChangeRowsPerPage}
+                    />
+                </Paper>
+                <Dialog
+                    onClose={handleCloseActive}
+                    aria-labelledby="customized-dialog-title"
+                    open={activeOpen}
+                >
+                    <DialogTitle id="customized-dialog-title" onClose={handleCloseActive}>
+                        Confirmación
                                 </DialogTitle>
-                                <DialogContent dividers>
-                                    <Typography gutterBottom>
-                                        
-                                        {courSelected.name}
-                                        {"¿Está seguro que desea borrar el curso?"}
-                                    </Typography>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button autoFocus onClick={handleCloseActive} color="primary">
-                                        No
+                    <DialogContent dividers>
+                        <Typography gutterBottom>
+
+                            {"¿Está seguro que desea borrar el curso?"}
+                        </Typography>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button autoFocus onClick={handleCloseActive} color="primary">
+                            No
                                     </Button>
-                                    <Button autoFocus onClick={deleteCourse} color="primary">
-                                        Sí
+                        <Button autoFocus onClick={deleteCourse} color="primary">
+                            Sí
                                     </Button>
-                                </DialogActions>
-                            </Dialog>
-
-                        </Grid>
-
-
-
-                    </Grid>
-
-                </div >
-
-
-
-
+                    </DialogActions>
+                </Dialog>
             </div>
-        </div>
+        </Grid>
     );
 };
 
 const mapStateToProps = (state) => (
-    console.log(state),{
+    console.log(state), {
 
-    id: state.login.id,
-    name: state.login.name,
-    email: state.login.email,
-    // instid: state.auth.instId,
-});
+        id: state.login.id,
+        name: state.login.name,
+        email: state.login.email,
+        // instid: state.auth.instId,
+    });
 
 ListCourse.propTypes = {
     id: PropTypes.number,
