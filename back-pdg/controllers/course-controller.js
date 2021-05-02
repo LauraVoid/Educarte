@@ -2,16 +2,35 @@ const Course = require("../model/Course");
 const Teacher_Course = require("../model/Teacher_Course");
 const Teacher = require("../model/Teacher");
 
+const getPagination = (page, size) => {
+  const limit = size ? +size : 5;
+  const offset = page ? page * limit : 0;
+
+  return { limit, offset };
+};
+
 exports.index = async function (req, res, next) {
-  await Course.findAll().then((result) => {
-    res.send(result);
+  const page = parseInt(req.query.page);
+  const size = parseInt(req.query.limit);
+  const { limit, offset } = getPagination(page, size);
+  await Course.findAll({ limit, offset }).then((result) => {
+    res.status(200).send(result);
   });
 };
+exports.count = async function (req, res) {
+  await Course.findAll().then((result) => {
+    const total = result.length;
+    return res.status(200).json({
+      total,
+    });
+  });
+}
 exports.findInstitutionCourses = async function (req, res, next) {
   await Course.findAll({
     where: {
       institutionId: req.params.instId
     }
+    
   }).then((result) => {
     res.send(result);
   });

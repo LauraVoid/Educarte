@@ -1,7 +1,8 @@
 import { Grid } from '@material-ui/core'
 import React, { useState, useEffect } from 'react'
 import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/styles";
+import clsx from "clsx";
+import { makeStyles, lighten } from "@material-ui/core/styles";
 import { useDispatch } from "react-redux";
 import { connect } from "react-redux";
 import Table from '@material-ui/core/Table';
@@ -10,7 +11,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import TablePagination from "@material-ui/core/TablePagination";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Toolbar from "@material-ui/core/Toolbar";
+import Tooltip from "@material-ui/core/Tooltip";
 import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -22,82 +26,47 @@ import axios from '../../utils/axios';
 import EyeButton from '@material-ui/icons/Visibility';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Create';
+import FilterListIcon from "@material-ui/icons/FilterList";
 import IconButton from '@material-ui/core/IconButton';
 import { useHistory } from "react-router-dom";
 import './style/create-course.css';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        backgroundColor: theme.palette.background.default,
-        height: "100%",
-    },
-    grid: {
-        height: "100%",
-    },
-    content: {
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-    },
-    contentHeader: {
-        display: "flex",
-        alignItems: "center",
-        paddingTop: theme.spacing(5),
-        paddingBottom: theme.spacing(2),
-        paddingLeft: theme.spacing(2),
-        paddingRight: theme.spacing(2),
-    },
-    contentBody: {
-        flexGrow: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        [theme.breakpoints.down("md")]: {
-            justifyContent: "center",
-        },
-    },
-    paper: {
+        width: "100%",
+      },
+      paper: {
         width: "100%",
         marginBottom: theme.spacing(2),
-        marginLeft: theme.spacing(8),
-        marginRight: theme.spacing(8),
-    },
-    form: {
-        paddingLeft: 100,
-        paddingRight: 100,
-        paddingBottom: 125,
-        flexBasis: 700,
-        [theme.breakpoints.down("sm")]: {
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2),
-        },
-    },
-    title: {
-        marginTop: theme.spacing(3),
-    },
-    createButton: {
-        marginTop: theme.spacing(20),
-        width: 200,
-        // marginLeft: theme.spacing(25),
-    },
-    gridForm: {
-        marginTop: theme.spacing(20),
-    },
-    gridButton: {
-        marginTop: theme.spacing(10),
-        [theme.breakpoints.down("md")]: {
-            justifyContent: "center",
-        },
-        [theme.breakpoints.down("xs")]: {
-            justifyContent: "center",
-        },
-    },
-    textField: {
-        width: 142,
-    },
-    table: {
+      },
+      table: {
         minWidth: 750,
-    },
+      },
+      visuallyHidden: {
+        border: 0,
+        clip: "rect(0 0 0 0)",
+        height: 1,
+        margin: -1,
+        overflow: "hidden",
+        padding: 0,
+        position: "absolute",
+        top: 20,
+        width: 1,
+      },
+      container: {
+        overflow: "auto",
+        marginRight: "auto",
+        marginLeft: "auto",
+        marginTop: "50px",
+        padding: "10px",
+        margin: "10px",
+      },
+      progress: {
+        position: "fixed",
+        zIndex: 50,
+        top: "50%",
+        left: "50%",
+      },
 }));
 
 const course = {
@@ -115,7 +84,7 @@ const course = {
 
 };
 
-const cellsHead = [
+const headCells = [
     {
         id: "id",
         numeric: true,
@@ -141,15 +110,19 @@ const cellsHead = [
         label: "Profesor",
     },
     {
-        id: "functions",
+        id: "edit",
         numeric: false,
         disablePadding: false,
-        label: "+",
+        label: "Editar",
+    },
+    {
+        id: "delete",
+        numeric: false,
+        disablePadding: false,
+        label: "Borrar",
     },
 
 ];
-
-
 
 function HeadTable(props) {
     const { order, orderBy, onRequestSort } = props;
@@ -161,7 +134,7 @@ function HeadTable(props) {
         <TableHead>
             <TableRow>
                 <TableCell padding="checkbox"></TableCell>
-                {cellsHead.map((headCell) => (
+                {headCells.map((headCell) => (
                     <TableCell
                         key={headCell.id}
                         align={headCell.numeric ? "left" : "left"}
@@ -215,6 +188,116 @@ function getComparator(order, orderBy) {
         ? (a, b) => descendingComparator(a, b, orderBy)
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
+const useToolbarStyles = makeStyles((theme) => ({
+    root: {
+      paddingLeft: theme.spacing(2),
+      paddingRight: theme.spacing(1),
+    },
+    highlight:
+      theme.palette.type === "light"
+        ? {
+            color: theme.palette.secondary.main,
+            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+          }
+        : {
+            color: theme.palette.text.primary,
+            backgroundColor: theme.palette.secondary.dark,
+          },
+    title: {
+      flex: "1 1 100%",
+    },
+  }));
+const EnhancedTableToolbar = (props) => {
+    const classes = useToolbarStyles();
+    const { numSelected } = props;
+  
+    return (
+      <Toolbar
+        className={clsx(classes.root, {
+          [classes.highlight]: numSelected > 0,
+        })}
+      >
+        {numSelected > 0 ? (
+          <Typography
+            className={classes.title}
+            color="inherit"
+            variant="subtitle1"
+            component="div"
+          >
+            {numSelected} selected
+          </Typography>
+        ) : (
+          <Typography
+            className={classes.title}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            Nutrition
+          </Typography>
+        )}
+  
+        {numSelected > 0 ? (
+          <Tooltip title="Delete">
+            <IconButton aria-label="delete">
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <Tooltip title="Filter list">
+            <IconButton aria-label="filter list">
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Toolbar>
+    );
+  };
+  function EnhancedTableHead(props) {
+    const { order, orderBy, onRequestSort } = props;
+    const createSortHandler = (property) => (event) => {
+      onRequestSort(event, property);
+    };
+  
+    return (
+      <TableHead>
+        <TableRow>
+          <TableCell padding="checkbox"></TableCell>
+          {headCells.map((headCell) => (
+            <TableCell
+              key={headCell.id}
+              align={headCell.numeric ? "left" : "left"}
+              padding={headCell.disablePadding ? "none" : "default"}
+              sortDirection={orderBy === headCell.id ? order : false}
+            >
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : "asc"}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+              </TableSortLabel>
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableHead>
+    );
+  }
+  EnhancedTableHead.propTypes = {
+    classes: PropTypes.object.isRequired,
+    numSelected: PropTypes.number.isRequired,
+    onRequestSort: PropTypes.func.isRequired,
+    onSelectAllClick: PropTypes.func.isRequired,
+    order: PropTypes.oneOf(["asc", "desc"]).isRequired,
+    orderBy: PropTypes.string.isRequired,
+    rowCount: PropTypes.number.isRequired,
+  };
+  
+  
+EnhancedTableToolbar.propTypes = {
+    numSelected: PropTypes.number.isRequired,
+  };
+  
 
 
 const ListCourse = (props) => {
@@ -235,9 +318,6 @@ const ListCourse = (props) => {
     const [orderBy, setOrderBy] = React.useState("id");
     const [selected, setSelected] = React.useState([]);
     const [activeOpen, setActiveOpen] = React.useState(false);
-
-
-
 
 
     const [courseState, setCourseState] = useState({
@@ -302,8 +382,9 @@ const ListCourse = (props) => {
         getCourses();
 
     }, [reload]);
-
-
+    const numOfPages = () => {
+        return Math.ceil(totalResults / rowsPerPage);
+    };
     const handleClickActiveOpen = (row) => {
         setCourSelected(row);
         setActiveOpen(true);
@@ -311,15 +392,13 @@ const ListCourse = (props) => {
     const handleCloseActive = () => {
         setActiveOpen(false);
     };
-
-
-
+    
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(property);
     };
-
+  
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
             const newSelecteds = course.map((n) => n.name);
@@ -409,12 +488,12 @@ const ListCourse = (props) => {
                                 orderBy={orderBy}
                                 onSelectAllClick={handleSelectAllClick}
                                 onRequestSort={handleRequestSort}
-                                rowCount={teachers.length}
+                                rowCount={courses.length}
                             />
                             <TableBody>
-                                {stableSort(teachers, getComparator(order, orderBy)).map(
+                                {stableSort(courses, getComparator(order, orderBy)).map(
                                     (row, index) => {
-                                        const isItemSelected = isSelected(teachers.name);
+                                        const isItemSelected = isSelected(courses.name);
                                         const labelId = `enhanced-table-checkbox-${index}`;
                                         return (
                                             <TableRow
@@ -452,13 +531,13 @@ const ListCourse = (props) => {
                                                         <EyeButton color="disabled" />
                                                     </IconButton>
                                                 </TableCell>
-                                                <TableCell align="left">{row.phone}</TableCell>
-                                                <TableCell align="left">{row.email}</TableCell>
+                                              
+                                                <TableCell align="left">{row.techerName}</TableCell>
                                                 <TableCell align="left">
                                                     <IconButton>
                                                         <EditIcon
                                                             onClick={() => {
-                                                                handleClickOpenEdit(row);
+                                                                //handleClickOpenEdit(row);
                                                             }}
                                                         />
                                                     </IconButton>
@@ -466,10 +545,10 @@ const ListCourse = (props) => {
                                                 <TableCell align="left">
                                                     <IconButton
                                                         onClick={() => {
-                                                            handleClickOpen(row);
+                                                            handleClickActiveOpen(row);
                                                         }}
                                                     >
-                                                        <DeleteForeverIcon></DeleteForeverIcon>
+                                                        <DeleteIcon></DeleteIcon>
                                                     </IconButton>
                                                 </TableCell>
                                             </TableRow>
@@ -479,23 +558,7 @@ const ListCourse = (props) => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <TablePagination
-                        style={{ fontSize: "14px" }}
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={totalResults}
-                        labelRowsPerPage="Filas por página:"
-                        labelDisplayedRows={() =>
-                            (totalResults === 0 ? 0 : page + 1) +
-                            " de " +
-                            numOfPages() +
-                            " páginas"
-                        }
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onChangePage={handleChangePage}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
+                    
                 </Paper>
                 <Dialog
                     onClose={handleCloseActive}
