@@ -2,61 +2,88 @@ const Course = require("../model/Course");
 const Teacher_Course = require("../model/Teacher_Course");
 const Teacher = require("../model/Teacher");
 
+const getPagination = (page, size) => {
+  const limit = size ? +size : 5;
+  const offset = page ? page * limit : 0;
+
+  return { limit, offset };
+};
+
 exports.index = async function (req, res, next) {
-  await Course.findAll().then((result) => {
-    res.send(result);
+  const page = parseInt(req.query.page);
+  const size = parseInt(req.query.limit);
+  const { limit, offset } = getPagination(page, size);
+  await Course.findAll({ limit, offset }).then((result) => {
+    res.status(200).send(result);
   });
 };
+exports.count = async function (req, res) {
+  await Course.findAll().then((result) => {
+    const total = result.length;
+    return res.status(200).json({
+      total,
+    });
+  });
+}
 exports.findInstitutionCourses = async function (req, res, next) {
   await Course.findAll({
-    where:{
+    where: {
       institutionId: req.params.instId
     }
+    
   }).then((result) => {
     res.send(result);
   });
 };
 
-//Search a course by Id and return the course and the teacher's course
-exports.findById = async function (req, res, next) {
-  const teac_course = [];
+//Search by institution Id and return the course and the teacher's course
+exports.findTeacherByInstitutionId = async function (req, res, next) {
+  const final = [];
   const result = await Course.findAll({
     where: {
       institutionId: req.params.instId,
     },
   });
-   
-    await Promise.all( 
-        result.map(async (course)=>{
-       
-            await Teacher_Course.findOne({
-                where:{
-                    courseId: course.id
-                }
-            }).then((tc)=> teac_course.push(tc))
-    
-           
-        })
-    )
 
-     res.send(teac_course)
+  await Promise.all(
+    result.map(async (course) => {
 
-    
+      await Teacher_Course.findOne({
+        where: {
+          courseId: course.id
+        }
+      }).then((tc) => {
+        if (tc !== null) {
+          
+            const data = {
+              nameCourse: course.name,
+              courseId: tc.courseId,
+              teacherId: tc.teacherId
+            }
+            final.push(data)  
+          
+        }
 
-    
-    // res.send({teac: teac_course})
+      });
 
-    // await Teacher.findOne({
-    //     where: {
-    //         id: result2.teacherId  
-    //       }
-    // }).then((teacherf) => res.send({course:result, teacher:teacherf}))
 
-  // await Teacher.findOne({
-  //     where: {
-  //         id: result2.teacherId
-  //       }
-  // }).then((teacherf) => res.send({course:result, teacher:teacherf}))
+    })
+  )
+  await Promise.all(
+    final.map(async (teach)=>{
+      await Teacher.findOne({
+        where: {
+            id: teach.teacherId
+          }
+    }).then((teacherf) => {
+      teach.teacherName = teacherf.name
+    })
+
+    })
+  )
+
+  res.status(200).send(final)
+
 };
 exports.create = async function (req, res, next) {
   const result = await Course.create({
