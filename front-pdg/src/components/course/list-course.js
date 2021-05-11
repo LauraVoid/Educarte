@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { makeStyles, lighten } from "@material-ui/core/styles";
-import { useDispatch } from "react-redux";
 import { connect } from "react-redux";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,7 +10,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TablePagination from "@material-ui/core/TablePagination";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tooltip from "@material-ui/core/Tooltip";
@@ -28,21 +26,22 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Create';
 import FilterListIcon from "@material-ui/icons/FilterList";
 import IconButton from '@material-ui/core/IconButton';
-import { useHistory } from "react-router-dom";
+import DialogEdit from "./dialog-edit";
+import DialogContentText from "@material-ui/core/DialogContentText";
 import './style/create-course.css';
 
 const useStyles = makeStyles((theme) => ({
     root: {
         width: "100%",
-      },
-      paper: {
+    },
+    paper: {
         width: "100%",
         marginBottom: theme.spacing(2),
-      },
-      table: {
+    },
+    table: {
         minWidth: 750,
-      },
-      visuallyHidden: {
+    },
+    visuallyHidden: {
         border: 0,
         clip: "rect(0 0 0 0)",
         height: 1,
@@ -52,21 +51,21 @@ const useStyles = makeStyles((theme) => ({
         position: "absolute",
         top: 20,
         width: 1,
-      },
-      container: {
+    },
+    container: {
         overflow: "auto",
         marginRight: "auto",
         marginLeft: "auto",
         marginTop: "50px",
         padding: "10px",
         margin: "10px",
-      },
-      progress: {
+    },
+    progress: {
         position: "fixed",
         zIndex: 50,
         top: "50%",
         left: "50%",
-      },
+    },
 }));
 
 const course = {
@@ -144,7 +143,7 @@ function HeadTable(props) {
                         <TableSortLabel
                             active={orderBy === headCell.id}
                             direction={orderBy === headCell.id ? order : "asc"}
-                            onClick={createSortHandler(headCell.id)}
+                            
                         >
                             {headCell.label}
                         </TableSortLabel>
@@ -190,134 +189,130 @@ function getComparator(order, orderBy) {
 }
 const useToolbarStyles = makeStyles((theme) => ({
     root: {
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(1),
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(1),
     },
     highlight:
-      theme.palette.type === "light"
-        ? {
-            color: theme.palette.secondary.main,
-            backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-          }
-        : {
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.secondary.dark,
-          },
+        theme.palette.type === "light"
+            ? {
+                color: theme.palette.secondary.main,
+                backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+            }
+            : {
+                color: theme.palette.text.primary,
+                backgroundColor: theme.palette.secondary.dark,
+            },
     title: {
-      flex: "1 1 100%",
+        flex: "1 1 100%",
     },
-  }));
+}));
 const EnhancedTableToolbar = (props) => {
     const classes = useToolbarStyles();
     const { numSelected } = props;
-  
+
     return (
-      <Toolbar
-        className={clsx(classes.root, {
-          [classes.highlight]: numSelected > 0,
-        })}
-      >
-        {numSelected > 0 ? (
-          <Typography
-            className={classes.title}
-            color="inherit"
-            variant="subtitle1"
-            component="div"
-          >
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography
-            className={classes.title}
-            variant="h6"
-            id="tableTitle"
-            component="div"
-          >
-            Nutrition
-          </Typography>
-        )}
-  
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton aria-label="delete">
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Filter list">
-            <IconButton aria-label="filter list">
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-      </Toolbar>
+        <Toolbar
+            className={clsx(classes.root, {
+                [classes.highlight]: numSelected > 0,
+            })}
+        >
+            {numSelected > 0 ? (
+                <Typography
+                    className={classes.title}
+                    color="inherit"
+                    variant="subtitle1"
+                    component="div"
+                >
+                    {numSelected} selected
+                </Typography>
+            ) : (
+                <Typography
+                    className={classes.title}
+                    variant="h6"
+                    id="tableTitle"
+                    component="div"
+                >
+                    Nutrition
+                </Typography>
+            )}
+
+            {numSelected > 0 ? (
+                <Tooltip title="Delete">
+                    <IconButton aria-label="delete">
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+            ) : (
+                <Tooltip title="Filter list">
+                    <IconButton aria-label="filter list">
+                        <FilterListIcon />
+                    </IconButton>
+                </Tooltip>
+            )}
+        </Toolbar>
     );
-  };
-  function EnhancedTableHead(props) {
+};
+function EnhancedTableHead(props) {
     const { order, orderBy, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
-      onRequestSort(event, property);
+        onRequestSort(event, property);
     };
-  
+
     return (
-      <TableHead>
-        <TableRow>
-          <TableCell padding="checkbox"></TableCell>
-          {headCells.map((headCell) => (
-            <TableCell
-              key={headCell.id}
-              align={headCell.numeric ? "left" : "left"}
-              padding={headCell.disablePadding ? "none" : "default"}
-              sortDirection={orderBy === headCell.id ? order : false}
-            >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : "asc"}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
+        <TableHead>
+            <TableRow>
+                <TableCell padding="checkbox"></TableCell>
+                {headCells.map((headCell) => (
+                    <TableCell
+                        key={headCell.id}
+                        align={headCell.numeric ? "left" : "left"}
+                        padding={headCell.disablePadding ? "none" : "default"}
+                        sortDirection={orderBy === headCell.id ? order : false}
+                    >
+                        <TableSortLabel
+                            active={orderBy === headCell.id}
+                            direction={orderBy === headCell.id ? order : "asc"}
+                            onClick={createSortHandler(headCell.id)}
+                        >
+                            {headCell.label}
+                        </TableSortLabel>
+                    </TableCell>
+                ))}
+            </TableRow>
+        </TableHead>
     );
-  }
-  EnhancedTableHead.propTypes = {
+}
+EnhancedTableHead.propTypes = {
     classes: PropTypes.object.isRequired,
     numSelected: PropTypes.number.isRequired,
     onRequestSort: PropTypes.func.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
     order: PropTypes.oneOf(["asc", "desc"]).isRequired,
     orderBy: PropTypes.string.isRequired,
     rowCount: PropTypes.number.isRequired,
-  };
-  
-  
+};
+
+
 EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
-  };
-  
+};
+
 
 
 const ListCourse = (props) => {
-    const dispatch = useDispatch();
-    let history = useHistory();
+
     const classes = useStyles();
 
 
     const [courses, setCourses] = useState([]);
-    const [teacher, setTeachers] = useState([]);
     const [courSelected, setCourSelected] = React.useState({});
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
-    const [totalResults, setTotalResults] = React.useState(0);
+    const [courseSelected, setCourseSelected] = React.useState({});
     const [dense, setDense] = React.useState(true);
     const [order, setOrder] = React.useState("asc");
     const [reload, setReload] = React.useState(false);
     const [orderBy, setOrderBy] = React.useState("id");
     const [selected, setSelected] = React.useState([]);
     const [activeOpen, setActiveOpen] = React.useState(false);
+    const [editCourseOpen, setEditCourseOpen] = React.useState(false);
 
 
     const [courseState, setCourseState] = useState({
@@ -328,63 +323,21 @@ const ListCourse = (props) => {
     });
 
     useEffect(() => {
-        if (teacher.length === 0) {
+        
             axios
                 .get(`course/find/` + props.id)
                 .then((res) => {
                     if (res.status === 200) {
-                        console.log(res.data)
-                        setTeachers(res.data)
+                        
+                        setCourses(res.data)
+                        
 
                     } else console.log(res.status);
                 })
-                .catch((err) => console.log(err));
-
-        }
-
-    }, [teacher]);
-
-    const getCourses = () => {
-        // setViewProgress(true);
-        axios
-            .get('course/all/' + props.id)
-            .then((res) => {
-                if (res.status === 200) {
-                    let result = res.data;
-                    result.map((course) => {
-
-                        teacher.find((teac) => {
-                            if (teac.courseId === course.id) {
-                                course.techerName = teac.teacherName;
-
-                            }
-                        })
-                    })
-                    setCourses(result)
-
-
-                } else console.log(res.status);
-
-            })
-            .catch(() => {
-
-                // dispatch(showMessage(message));
-            });
-    };
-
-
-
-    // useEffect(() => {
-    //     getCourses();
-
-    // }, [page]);
-    useEffect(() => {
-        getCourses();
+                .catch((err) => console.log(err));        
 
     }, [reload]);
-    const numOfPages = () => {
-        return Math.ceil(totalResults / rowsPerPage);
-    };
+
     const handleClickActiveOpen = (row) => {
         setCourSelected(row);
         setActiveOpen(true);
@@ -392,44 +345,30 @@ const ListCourse = (props) => {
     const handleCloseActive = () => {
         setActiveOpen(false);
     };
-    
+
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(property);
     };
-  
-    const handleSelectAllClick = (event) => {
-        if (event.target.checked) {
-            const newSelecteds = course.map((n) => n.name);
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
+    const handleClickOpenEdit = (row) => {
+        setCourseSelected(row);
+        setEditCourseOpen(true);
 
-        if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
-        } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
-        } else if (selectedIndex > 0) {
-            newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1)
-            );
-        }
+    }    
+    const handleReload = () => {
+        setReload(!reload);
+    }
+    const handleCloseEdit = () => {
+        setEditCourseOpen(false);
 
-        setSelected(newSelected);
-    };
+    }
+
+   
     function deleteCourse() {
         axios
-            .delete(`course/` + courSelected.id)
+            .delete(`course/` + courSelected.courseId)
             .then((res) => {
                 if (res.status >= 200 && res.status < 300) {
                     console.log("borrado con éxito");
@@ -460,9 +399,6 @@ const ListCourse = (props) => {
             });
 
     }
-    const handleReload = () => {
-        setReload(!reload);
-    }
 
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
@@ -486,7 +422,6 @@ const ListCourse = (props) => {
                                 numSelected={selected.length}
                                 order={order}
                                 orderBy={orderBy}
-                                onSelectAllClick={handleSelectAllClick}
                                 onRequestSort={handleRequestSort}
                                 rowCount={courses.length}
                             />
@@ -497,11 +432,11 @@ const ListCourse = (props) => {
                                         const labelId = `enhanced-table-checkbox-${index}`;
                                         return (
                                             <TableRow
-                                                onClick={(event) => handleClick(event, row.id)}
+                                                
                                                 hover
                                                 role="checkbox"
                                                 tabIndex={-1}
-                                                key={row.id}
+                                                key={row.courseId}
                                                 aria-checked={isItemSelected}
                                             >
                                                 <TableCell padding="checkbox"></TableCell>
@@ -511,7 +446,7 @@ const ListCourse = (props) => {
                                                     scope="row"
                                                     align="left"
                                                 >
-                                                    {row.id}
+                                                    {row.courseId}
                                                 </TableCell>
                                                 <TableCell
                                                     component="th"
@@ -519,7 +454,7 @@ const ListCourse = (props) => {
                                                     scope="row"
                                                     align="left"
                                                 >
-                                                    {row.name}
+                                                    {row.nameCourse}
                                                 </TableCell>
                                                 <TableCell align="left">
                                                     <IconButton
@@ -531,13 +466,13 @@ const ListCourse = (props) => {
                                                         <EyeButton color="disabled" />
                                                     </IconButton>
                                                 </TableCell>
-                                              
-                                                <TableCell align="left">{row.techerName}</TableCell>
+
+                                                <TableCell align="left">{row.teacherName}</TableCell>
                                                 <TableCell align="left">
                                                     <IconButton>
                                                         <EditIcon
                                                             onClick={() => {
-                                                                //handleClickOpenEdit(row);
+                                                                handleClickOpenEdit(row);
                                                             }}
                                                         />
                                                     </IconButton>
@@ -558,7 +493,6 @@ const ListCourse = (props) => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    
                 </Paper>
                 <Dialog
                     onClose={handleCloseActive}
@@ -583,13 +517,37 @@ const ListCourse = (props) => {
                                     </Button>
                     </DialogActions>
                 </Dialog>
+
+                <Dialog
+          open={editCourseOpen}
+          onClose={handleCloseEdit}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Editar profesor"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <DialogEdit
+                closeEdit={handleCloseEdit}
+                reload={reload}
+                handleReload={handleReload}
+                instId={props.id}
+                courseSelected={courseSelected}
+              ></DialogEdit>
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
+                
+
+              
             </div>
         </Grid>
     );
 };
 
 const mapStateToProps = (state) => (
-    console.log(state), {
+    {
 
         id: state.login.id,
         name: state.login.name,

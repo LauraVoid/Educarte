@@ -24,6 +24,17 @@ exports.index = async function (req, res) {
     return res.status(200).send(result);
   });
 };
+exports.all = async function(req,res){
+  
+  await Teacher.findAll({
+    where: {
+      institutionId: req.params.id
+    }
+  }).then((result) => {
+    return res.status(200).send(result);
+  });
+
+}
 
 exports.count = async function (req, res) {
   await Teacher.findAll().then((result) => {
