@@ -115,6 +115,7 @@ const CreateCourse = (props) => {
   const [courseCreated, setCourseCreated] = useState(0) 
   const [teachers, setTeachers] = useState([]);
   const [students, setStudents] = useState([]);
+  const [error, setError]= useState()
 
   const [teacherCourse, setTeacherCourse] = useState([]);
   const [studentsCourse, setStudentsCourse] = useState([]);
@@ -130,13 +131,26 @@ const CreateCourse = (props) => {
   useEffect(() => {
     if (teachers.length === 0) {
       axios
-        .get(`teacher/`)
+        .get(`teacher/`, {
+          headers: {
+            'x-access-token': props.token
+          }
+        })
         .then((res) => {
 
           if (res.status === 200) setTeachers(res.data);
           else console.log(res.status);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          if (err.message.includes("403")) {
+            setError("Forbidden")       
+
+          } 
+          else if(err.message.includes("401")){
+            setError("Unauthorized") 
+
+          }
+        });
     }
 
   });
@@ -475,6 +489,7 @@ const mapStateToProps = (state) => (
   idInst: state.login.id,
   name: state.login.name,
   email: state.login.email,
+  token: state.login.accessToken,
   // instid: state.auth.instId,
 });
 
@@ -482,7 +497,8 @@ CreateCourse.propTypes = {
 
   idInst: PropTypes.number,
     name: PropTypes.string,
-    email: PropTypes.string
+    email: PropTypes.string,
+    token: PropTypes.string
   // instid: PropTypes.any,
 };
 

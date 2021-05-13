@@ -1,5 +1,6 @@
-import React from "react";
+import React , { useState, useEffect } from "react";
 import { Grid, Paper } from "@material-ui/core/";
+import axios from '../../utils/axios';
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
@@ -97,9 +98,46 @@ const useStyles = makeStyles((theme) => ({
 
 const HomeInstitution = (props) => {
   const classes = useStyles();
+  const [reload, setReload] = useState(false);
+  const [error, setError]= useState()
+
+
+  useEffect(() => {
+    
+        
+    axios
+        .get(`inst/`, {
+          headers: {
+            'x-access-token': props.token
+          }
+        })
+        .then((res) => {
+           if(res.status === 200){
+              setError("No Error")
+            }
+            
+        })
+        .catch((err) => {
+          if (err.message.includes("403")) {
+            setError("Forbidden")          
+
+          } 
+          else if(err.message.includes("401")){
+            setError("Unauthorized") 
+
+          }
+
+        });   
+             
+
+}, [reload]);
+
+
+
+
   return (
     <div className={classes.divContainer}>
-          { (props.token !== undefined && props.token !== null)? (
+          { (error === "No Error")? (
       <Grid container className={classes.root} justify="center">
         <Paper className={classes.paperBanner} elevation={10}>
           <BannerInstitution></BannerInstitution>
@@ -116,7 +154,16 @@ const HomeInstitution = (props) => {
         </Grid>
       </Grid>    
     ):(
-        <h1>Ha ocurrido un error intenta más tarde</h1>
+      <div>      
+        <Grid>
+        <h1>{error}</h1>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+        </Grid>
+      
+      </div>
       )}
     </div>
   );
@@ -132,7 +179,7 @@ HomeInstitution.propTypes = {
     id: PropTypes.number,
   name: PropTypes.string,
   email: PropTypes.string,
-  toke: PropTypes.string
+  token: PropTypes.string
   // instid: PropTypes.any,
 };
 export default connect(mapStateToProps)(HomeInstitution);

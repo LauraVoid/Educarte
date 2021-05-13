@@ -144,7 +144,11 @@ const EditCourse = (props) => {
     // handleReload();
    
     axios
-      .put(`/course/${data.id}`, data)
+      .put(`/course/${data.id}`, data, {
+        headers: {
+          'x-access-token': props.token
+        }
+      })
       .then((res) => {
         if (res.status >= 200 && res.status <300) {
           let message = {
@@ -156,11 +160,30 @@ const EditCourse = (props) => {
           closeEdit();
         }
       })
-      .catch((error) => {
+      .catch((err) => {
         let message2 = {
-          errorMsg: "Ha ocurrido un error. Inténtalo de nuevo",
+          errorMsg: "",
           errorType: "error",
         };
+        {
+          if (err.message.includes("403")) {
+             message2 = {
+              errorMsg: "Forbidden",
+            };         
+
+          } 
+          else if(err.message.includes("401")){
+             message2 = {
+              errorMsg: "Unauthorized",
+            }; 
+
+          }
+          else{
+            message2 = {
+              errorMsg: "Ha ocurrido un error",
+            }; 
+          }
+        }        
         dispatch(showMessage(message2));
         closeEdit();
       });
@@ -243,11 +266,12 @@ const EditCourse = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  token: state.login.accessToken
 });
 
 EditCourse.propTypes = {
   courseState: PropTypes.any,
   closeEdit: PropTypes.func.isRequired,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(EditCourse);

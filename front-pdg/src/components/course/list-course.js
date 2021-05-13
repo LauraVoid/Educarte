@@ -313,6 +313,7 @@ const ListCourse = (props) => {
     const [selected, setSelected] = React.useState([]);
     const [activeOpen, setActiveOpen] = React.useState(false);
     const [editCourseOpen, setEditCourseOpen] = React.useState(false);
+    const [error, setError]= useState()
 
 
     const [courseState, setCourseState] = useState({
@@ -325,7 +326,11 @@ const ListCourse = (props) => {
     useEffect(() => {
         
             axios
-                .get(`course/find/` + props.id)
+                .get(`course/find/` + props.id, {
+                    headers: {
+                      'x-access-token': props.token
+                    }
+                  })
                 .then((res) => {
                     if (res.status === 200) {
                         
@@ -334,7 +339,16 @@ const ListCourse = (props) => {
 
                     } else console.log(res.status);
                 })
-                .catch((err) => console.log(err));        
+                .catch((err) => {
+                    if (err.message.includes("403")) {
+                      setError("Forbidden")       
+          
+                    } 
+                    else if(err.message.includes("401")){
+                      setError("Unauthorized") 
+          
+                    }
+                  });        
 
     }, [reload]);
 
@@ -547,20 +561,20 @@ const ListCourse = (props) => {
     );
 };
 
-const mapStateToProps = (state) => (
-    {
+const mapStateToProps = (state) => ({
+    id: state.login.id,
+    name: state.login.name,
+    email: state.login.email,
+    token: state.login.accessToken
 
-        id: state.login.id,
-        name: state.login.name,
-        email: state.login.email,
-        // instid: state.auth.instId,
-    });
+});
 
 ListCourse.propTypes = {
     id: PropTypes.number,
     name: PropTypes.string,
     email: PropTypes.string,
-    //instid: PropTypes.any,
+    token: PropTypes.string,
+
 };
 
 export default connect(mapStateToProps)(ListCourse);
