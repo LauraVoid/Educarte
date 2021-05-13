@@ -172,7 +172,11 @@ const CreateStudent = () => {
   /* All courses */
   useEffect(() => {
     if (courses.length === 0) {
-      axios.get("/course/").then((res) => {
+      axios.get("/course/", {
+        headers: {
+          'x-access-token': props.token
+        }
+      }).then((res) => {
         setCourses(res.data);
       });
     }
@@ -424,10 +428,18 @@ const CreateStudent = () => {
 };
 
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  idInst: state.login.id,
+  name: state.login.name,
+  email: state.login.email,
+  token: state.login.accessToken,
+  
 });
 
 CreateStudent.propTypes = {
-  // instid: PropTypes.any,
+  idInst: PropTypes.number,
+  name: PropTypes.string,
+  email: PropTypes.string,
+  token: PropTypes.string
+
 };
 export default connect(mapStateToProps)(CreateStudent);
