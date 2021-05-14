@@ -76,7 +76,7 @@ exports.findTeacherByInstitutionId = async function (req, res, next) {
             id: teach.teacherId
           }
     }).then((teacherf) => {
-      teach.teacherName = teacherf.name
+      teach.teacherName = teacherf.name + " " +teacherf.lastname
     })
 
     })
@@ -112,8 +112,18 @@ exports.update = async function (req, res, next) {
     },
     {
       where: {
-        id: req.body.id,
+        id: req.params.id,
       },
+    }
+  )
+  await Teacher_Course.update(
+    {
+      teacherId: req.body.teacherId
+    },
+    {
+      where:{
+        courseId:req.params.id,
+      }
     }
   )
     .then(() => res.send("The course was updated"))

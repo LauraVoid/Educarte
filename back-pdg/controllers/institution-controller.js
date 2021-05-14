@@ -1,12 +1,9 @@
 const Institution = require("../model/Institution");
 var bcrypt = require("bcryptjs");
 
-exports.index = async function (req, res, next) {
+exports.index =  function (req, res, next) {
 
-    await Institution.findAll()
-    .then(result =>{
-        res.send(result)
-    })   
+    res.status(200).send({message:"Access"})   
   };
   exports.create = async function (req, res, next) {
     await Institution.create({

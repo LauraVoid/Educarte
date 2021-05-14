@@ -194,8 +194,7 @@ const EditCourse = (props) => {
     setCreateOpen(false);
   };  
   const handleSubmitStudents = (event) => {
-    console.log("STATE",studentsCourse)
-    console.log("STATE ID",courseCreated)
+
     let data = {
       students: studentsCourse,
       institutionId: 1,

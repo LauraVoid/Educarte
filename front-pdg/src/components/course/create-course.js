@@ -17,6 +17,7 @@ import validate from "validate.js";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import "./style/create-course.css";
+import { showMessage } from "../../actions/actionMessage";
 //import { useHistory } from "react-router-dom";
 import axios from "../../utils/axios";
 
@@ -115,6 +116,7 @@ const CreateCourse = (props) => {
   const [courseCreated, setCourseCreated] = useState(0) 
   const [teachers, setTeachers] = useState([]);
   const [students, setStudents] = useState([]);
+  const [error, setError]= useState()
 
   const [teacherCourse, setTeacherCourse] = useState([]);
   const [studentsCourse, setStudentsCourse] = useState([]);
@@ -130,13 +132,43 @@ const CreateCourse = (props) => {
   useEffect(() => {
     if (teachers.length === 0) {
       axios
-        .get(`teacher/`)
-        .then((res) => {
-
-          if (res.status === 200) setTeachers(res.data);
-          else console.log(res.status);
+        .get(`teacher/`, {
+          headers: {
+            'x-access-token': props.token
+          }
         })
-        .catch((err) => console.log(err));
+        .then((res) => {
+          if (res.status >= 200 && res.status <300){
+            setTeachers(res.data);
+          } 
+        })
+        .catch((err) => {
+          let message = {
+            errorMsg: "",
+            errorType: "error",
+          };
+          if (err.message.includes("403")) {
+             message = {
+              errorMsg: "Forbidden",
+              errorType: "error",
+            };  
+          } 
+          else if(err.message.includes("401")){
+            message = {
+              errorMsg: "Unauthorized",
+              errorType: "error",
+            };
+        
+          }else{
+            message = {
+              errorMsg: "Ha ocurrido un error. Intenta más tarde",
+              errorType: "error",
+            };
+          }
+          dispatch(showMessage(message));
+          history.push("/courses");
+
+        });
     }
 
   });
@@ -146,13 +178,39 @@ const CreateCourse = (props) => {
       axios
       .get(`student/`)
       .then((res) => {
-        if (res.status === 200) {
+        if (res.status >= 200 && res.status <300) {
           setStudents(res.data);
 
 
-        } else console.log(res.status);
+        } 
       })
-      .catch((err) => console.log(err));          
+      .catch((err) => {
+        let message = {
+          errorMsg: "",
+          errorType: "error",
+        };
+        if (err.message.includes("403")) {
+           message = {
+            errorMsg: "Forbidden",
+            errorType: "error",
+          };  
+        } 
+        else if(err.message.includes("401")){
+          message = {
+            errorMsg: "Unauthorized",
+            errorType: "error",
+          };      
+        }
+        else{
+          message = {
+            errorMsg: "Ha ocurrido un error. Intenta más tarde",
+            errorType: "error",
+          };
+        }
+        dispatch(showMessage(message));
+        history.push("/courses");
+
+      });          
     }
 });
 
@@ -475,6 +533,7 @@ const mapStateToProps = (state) => (
   idInst: state.login.id,
   name: state.login.name,
   email: state.login.email,
+  token: state.login.accessToken,
   // instid: state.auth.instId,
 });
 
@@ -482,7 +541,8 @@ CreateCourse.propTypes = {
 
   idInst: PropTypes.number,
     name: PropTypes.string,
-    email: PropTypes.string
+    email: PropTypes.string,
+    token: PropTypes.string
   // instid: PropTypes.any,
 };
 

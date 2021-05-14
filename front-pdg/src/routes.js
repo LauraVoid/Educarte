@@ -3,10 +3,9 @@ import { Route, Switch } from "react-router";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import Login from "./components/Index/Login";
-import Createcourse from "./components/course/create-course";
+import Createcourse from "./pages/courses/create";
 import ListCourse from "./pages/courses/list-courses";
 import EditCourse from "./components/course/edit-course";
-import ExampleTeacher from "./components/teacher/main";
 
 //Layouts
 import RouteWithLayout from "./components/configRouter/RouteWithLayout";
@@ -17,7 +16,7 @@ import MainLayout from "./layouts/Main/Main";
 import Home from "./pages/Home/Home";
 
 //pages for institution
-import MainInstitution from "./components/Institution/main";
+import MainInstitution from "./pages/Institution/home";
 
 //pages for student
 import StudentExplorer from "./pages/student/list-student";

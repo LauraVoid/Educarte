@@ -3,20 +3,20 @@ const config = require("../config/auth-config");
 const db = require("../model/index");
 const User = db.user;
 const Student = db.student;
+const Institution = db.institution
 
 verifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"];
- 
+  let token = req.headers["x-access-token"]; 
   if (!token) {
     return res.status(403).send({
-      message: "No token provided!"
+      message: "No token provided"
     });
   }
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
       return res.status(401).send({
-        message: "Unauthorized!"
+        message: "Unauthorized"
       });
     }
     req.userId = decoded.id;
@@ -26,7 +26,7 @@ verifyToken = (req, res, next) => {
   });
 };
 
- //User.GetRoles() ? verificar como funciona
+
 isAdmin = (req, res, next) => { 
   User.findByPk(req.userId).then(user => {   
      
@@ -41,6 +41,22 @@ isAdmin = (req, res, next) => {
       return;
     
   });
+};
+
+isInst = (req, res, next) => {
+  Institution.findByPk(req.userId).then(user => {   
+     
+    if (user.institutionId !== 0) {
+      next();
+      return;
+    }      
+
+  res.status(403).send({
+    message: "Require institution Role!"
+  });
+  return;
+
+});
 };
 
 isModerator = (req, res, next) => {
@@ -82,6 +98,7 @@ const authJwt = {
   isAdmin: isAdmin,
   isModerator: isModerator,
   isStudent: isStudent,
+  isInst: isInst
  // isModeratorOrAdmin: isModeratorOrAdmin
 };
 module.exports = authJwt;

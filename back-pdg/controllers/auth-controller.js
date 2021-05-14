@@ -77,7 +77,7 @@ exports.signin = (req, res) => {
           });
         }
 
-        var token = jwt.sign({ id: user.id }, config.secret, {
+        var token = jwt.sign({ id: user.id, role:"teacher", name:user.name}, config.secret, {
           expiresIn: 86400, // 24 hours
         });
 
@@ -117,7 +117,7 @@ exports.signin = (req, res) => {
           });
         }
 
-        var token = jwt.sign({ id: user.id }, config.secret, {
+        var token = jwt.sign({ id: user.id, role:"student", name:user.name }, config.secret, {
           expiresIn: 86400, // 24 hours
         });
 
@@ -154,7 +154,7 @@ exports.signin = (req, res) => {
           });
         }
 
-        var token = jwt.sign({ id: user.id }, config.secret, {
+        var token = jwt.sign({ id: user.id, role:"institution", name:user.name }, config.secret, {
           expiresIn: 86400, // 24 hours
         });
 
