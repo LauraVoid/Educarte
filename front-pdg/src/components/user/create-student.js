@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/styles";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import validate from "validate.js";
@@ -104,7 +105,7 @@ const studentParentValidate = {
   },
 };
 
-const CreateStudent = () => {
+const CreateStudent = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [course, setCourse] = React.useState(0);
@@ -172,13 +173,15 @@ const CreateStudent = () => {
   /* All courses */
   useEffect(() => {
     if (courses.length === 0) {
-      axios.get("/course/", {
-        headers: {
-          'x-access-token': props.token
-        }
-      }).then((res) => {
-        setCourses(res.data);
-      });
+      axios
+        .get("/course/", {
+          headers: {
+            "x-access-token": props.token,
+          },
+        })
+        .then((res) => {
+          setCourses(res.data);
+        });
     }
 
     console.log(courses);
@@ -432,14 +435,12 @@ const mapStateToProps = (state) => ({
   name: state.login.name,
   email: state.login.email,
   token: state.login.accessToken,
-  
 });
 
 CreateStudent.propTypes = {
   idInst: PropTypes.number,
   name: PropTypes.string,
   email: PropTypes.string,
-  token: PropTypes.string
-
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(CreateStudent);
