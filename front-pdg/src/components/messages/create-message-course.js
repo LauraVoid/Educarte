@@ -11,6 +11,8 @@ import validate from "validate.js";
 import axios from "../../utils/axios";
 import GroupIcon from "@material-ui/icons/Group";
 import { showMessage } from "../../actions/actionMessage";
+//import { DropzoneArea } from "material-ui-dropzone";
+import { DropzoneDialog } from "material-ui-dropzone";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -83,6 +85,9 @@ const CreateMessageCourse = (props) => {
   /* Serve for setting select */
   const [receiver, setReceiver] = React.useState("");
   const [receivers, setReceivers] = React.useState([]);
+  const [wasFound, setWasFound] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [file, setFile] = React.useState([]);
   const dispatch = useDispatch();
   const [messageState, setMessageState] = React.useState({
     isValid: false,
@@ -90,6 +95,23 @@ const CreateMessageCourse = (props) => {
     touched: {},
     errors: {},
   });
+
+  /* Init the method to save an image */
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleSave = (file) => {
+    setFile(file);
+    setOpen(false);
+  };
+
+  /* End to save image file */
 
   const handleChange = (event) => {
     event.persist();
@@ -126,10 +148,10 @@ const CreateMessageCourse = (props) => {
   That's mean that he only can see the parent 
   who have children in some course with this teacher */
   useEffect(() => {
-    if (receivers.length === 0) {
+    if (receivers.length === 0 && !wasFound) {
       axios.get(`/teacher/courses/${user}`).then((res) => {
-        console.log(res.data);
         setReceivers(res.data);
+        setWasFound(true);
       });
     }
   }, [receivers]);
@@ -216,6 +238,7 @@ const CreateMessageCourse = (props) => {
                 <Autocomplete
                   id="clear-on-escape"
                   options={getReceivers()}
+                  noOptionsText="No tiene cursos asociados"
                   getOptionLabel={(option) =>
                     option !== "" ? option.name : option
                   }
@@ -254,7 +277,7 @@ const CreateMessageCourse = (props) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} className={classes.centrado}>
-              <input
+              {/*  <input
                 accept="image/*"
                 className={classes.input}
                 id="contained-button-file"
@@ -272,7 +295,34 @@ const CreateMessageCourse = (props) => {
                 >
                   Adjuntar imagen
                 </Button>
-              </label>
+              </label> */}
+              <div>
+                <Button
+                  startIcon={<AddToPhotosIcon />}
+                  variant="contained"
+                  color="primary"
+                  component="span"
+                  className={classes.upload}
+                  size="small"
+                  onClick={handleOpen.bind(this)}
+                >
+                  Adjuntar imagen
+                </Button>
+                <DropzoneDialog
+                  filesLimit={1}
+                  dialogTitle="Cargar imagen"
+                  cancelButtonText="Cancelar"
+                  submitButtonText="Cargar"
+                  dropzoneText="Arrastre y suelte un archivo aquí o haga clic"
+                  previewText="Previsualización:"
+                  open={open}
+                  onSave={handleSave.bind(this)}
+                  acceptedFiles={["image/jpeg", "image/png", "image/bmp"]}
+                  showPreviews={true}
+                  maxFileSize={5000000}
+                  onClose={handleClose.bind(this)}
+                />
+              </div>
             </Grid>
           </form>
         </Grid>
