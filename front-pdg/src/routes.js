@@ -14,7 +14,7 @@ import MainLayout from "./layouts/Main/Main";
 
 //pages for main view
 import Home from "./pages/Home/Home";
-
+import Content from "./pages/Home/Content"
 //pages for institution
 import MainInstitution from "./pages/Institution/home";
 
@@ -70,6 +70,11 @@ export default (
           path="/createstudent"
           layout={MainLayout}
           component={CreateStudent}
+        />
+        <RouteWithLayout
+          path="/content"
+          layout={MainLayout}
+          component={Content}
         />
         <RouteWithLayout
           path="/teacher"

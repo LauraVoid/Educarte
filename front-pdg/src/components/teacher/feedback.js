@@ -10,6 +10,11 @@ import validate from "validate.js"
 import Box from '@material-ui/core/Box';
 import TextField from "@material-ui/core/TextField";
 import Button from '@material-ui/core/Button';
+import DateFnsUtils from "@date-io/date-fns";
+import {
+    KeyboardDatePicker,
+    MuiPickersUtilsProvider,
+} from "@material-ui/pickers";
 import axios from '../../utils/axios';
 
 import { useHistory } from "react-router-dom";
@@ -79,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
         width: 200,
-      },
+    },
 }));
 
 const feedback = {
@@ -112,6 +117,15 @@ const FeedbackStudent = () => {
     const dispatch = useDispatch();
     let history = useHistory();
     const classes = useStyles();
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = mm + '/' + dd + '/' + yyyy;
+    const [selectedDate, setSelectedDate] = React.useState(
+        new Date(today)
+    );
 
     const [valueRating, setValueRating] = React.useState(0);
 
@@ -151,6 +165,9 @@ const FeedbackStudent = () => {
                 [event.target.name]: true,
             },
         }));
+    };
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
     };
 
     const handleSubmit = (event) => {
@@ -222,25 +239,29 @@ const FeedbackStudent = () => {
             <div style={{ padding: 20 }}>
                 <h1>Retroalimentación de pepita</h1>
 
-                <div style={{ padding: 40, margin: 20 }} className={classes.root}>
+                <div style={{ padding: 40, margin: 10 }} className={classes.root}>
                     <Grid container spacing={5} className="Grid-main-green">
+
                         <Grid
                             item
                             md={12}
                             xs={12}
                         >
-
                             <div >
+                                <Grid item md={12} xs={12}>
+                                    <br></br>
+
+                                </Grid>
                                 <form className="background-form" autoComplete="off" onSubmit={handleSubmit}
                                 >
                                     <Grid className={classes.gridForm} container
-                                    alignItems="center"
-                                    style={ {margin:30}}>
+                                        alignItems="center"
+                                        style={{ margin: 30 }}>
 
                                         <Grid item xs={12} sm={6}>
                                             <TextField id="standard-basic" label="Título"
                                                 onChange={handleChange}
-                                                
+
                                                 name="title"
                                                 error={hasError("title")}
                                                 type="text"
@@ -255,23 +276,24 @@ const FeedbackStudent = () => {
                                         </Grid>
 
                                         <Grid item xs={12} sm={6}>
-                                            <TextField 
-                                                id="date"
-                                                label="Fecha"
-                                                
-                                                onChange={handleChange}
-                                                className={classes.textField}
-                                                name="date"
-                                                error={hasError("date")}
-                                                type="date"
-                                                value={feedbackState.values.date || " "}
-                                                helperText={
-                                                    hasError("date")
-                                                        ? "Debes ingresar una fecha"
-                                                        : null
-                                                }
-
-                                            />
+                                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                                <KeyboardDatePicker
+                                                    className={classes.date}
+                                                    margin="normal"
+                                                    id="date-picker-dialog"
+                                                    label="Fecha"
+                                                    format="dd/MM/yyyy"
+                                                    value={selectedDate}
+                                                    onChange={handleDateChange}
+                                                    name="date"
+                                                    invalidDateMessage="Fecha ingresada inválida"
+                                                    maxDateMessage="La fecha ingresada es mayor a la fecha actual"
+                                                    minDateMessage="La fecha ingresada es muy antigua"
+                                                    KeyboardButtonProps={{
+                                                        "aria-label": "change date",
+                                                    }}
+                                                />
+                                            </MuiPickersUtilsProvider>
                                         </Grid>
 
                                         <Grid item xs={12} md={12}>
@@ -316,7 +338,7 @@ const FeedbackStudent = () => {
 
                                         <Grid item xs={12} sm={6}>
                                             <Button variant="contained" color="primary"
-                                            style={{ margin: 20 }}
+                                                style={{ margin: 20 }}
                                             >
                                                 Guardar Desempeño
                                         </Button>

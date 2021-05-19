@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import validate from "validate.js";
+import PropTypes from "prop-types";
 import { showMessage } from "../../actions/actionMessage";
 import {
   Grid,
@@ -104,7 +105,7 @@ const studentParentValidate = {
   },
 };
 
-const CreateStudent = () => {
+const CreateStudent = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [course, setCourse] = React.useState(0);

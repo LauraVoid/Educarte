@@ -224,6 +224,14 @@ const Login = () => {
                             label="Institución"
                           />
                         </Grid>
+
+                        <Grid item xs={6} sm={4} container direction="row">
+                          <FormControlLabel
+                            value="parent"
+                            control={<Radio />}
+                            label="Acudiente"
+                          />
+                        </Grid>
                       </RadioGroup>
                     </FormControl>
                   </Grid>
