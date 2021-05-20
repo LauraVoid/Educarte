@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { useDispatch } from "react-redux";
 import validate from "validate.js";
+import PropTypes from "prop-types";
 import { showMessage } from "../../actions/actionMessage";
 import {
   Grid,
