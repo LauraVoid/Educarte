@@ -9,6 +9,7 @@ const Homework = require("./Homework");
 const Teacher_Course = require("./Teacher_Course");
 const Message = require("./Message");
 const Competence = require("./Competence");
+const Feedback = require("./Feedback");
 
 //Institution --> Courses
 
@@ -138,18 +139,17 @@ Role.hasMany(Teacher, {
   onDelete: "CASCADE",
   foreignKey: {
     allowNull: false,
-    name:"roleId" 
-  }
+    name: "roleId",
+  },
 });
 
 Teacher.belongsTo(Role, {
   onDelete: "CASCADE",
   foreignKey: {
     allowNull: false,
-    name:"roleId" 
-  }
+    name: "roleId",
+  },
 });
-
 
 //Role many Student
 Role.hasMany(Student, {
@@ -165,4 +165,24 @@ Competence.hasMany(Content, {
 });
 Content.belongsTo(Competence, {
   foreignKey: "competenceId",
+});
+
+//*************************
+//Association of Feedback
+//*************************
+
+//Teacher many Feedback
+Teacher.hasMany(Feedback, {
+  foreignKey: "teacherId",
+});
+Feedback.belongsTo(Teacher, {
+  foreignKey: "teacherId",
+});
+
+//Student many Feedback
+Student.hasMany(Feedback, {
+  foreignKey: "studentId",
+});
+Feedback.belongsTo(Student, {
+  foreignKey: "studentId",
 });
