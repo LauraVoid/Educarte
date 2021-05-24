@@ -133,8 +133,6 @@ const HomeInstitution = (props) => {
 }, [reload]);
 
 
-
-
   return (
     <div className={classes.divContainer}>
           { (error === "No Error")? (
