@@ -121,13 +121,13 @@ const HomeInstitution = (props) => {
                     <Resource
                       title={res.title}
                       url={res.link}
-                      image={res.description}
+                      description={res.description}
+                      image={res.category}                      
                     ></Resource>
                     </Paper>
                     </Grid>
                 );
-              })}
-
+              })}        
         
         <Grid item xs={6} sm={3}>
           <Paper className={classes.paperStudents} elevation={10}>
@@ -138,24 +138,7 @@ const HomeInstitution = (props) => {
             ></Resource>
           </Paper>
         </Grid>
-        <Grid item xs={6} sm={3}>
-          <Paper className={classes.paperStudents} elevation={10}>
-            <Resource
-            title="Cuerpo"
-            url="www.google.com"
-            image="mi imagen"
-            ></Resource>
-          </Paper>
-        </Grid>
-        <Grid item xs={6} sm={3}>
-          <Paper className={classes.paperStudents} elevation={10}>
-            <Resource
-            title="Cuerpo"
-            url="www.google.com"
-            image="mi imagen"
-            ></Resource>
-          </Paper>
-        </Grid>
+        
         
       </Grid> 
      

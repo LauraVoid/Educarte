@@ -9,7 +9,9 @@ import {
   Card,
   CardContent,
 } from "@material-ui/core/";
+import CardMedia from '@material-ui/core/CardMedia';
 import AddIcon from "@material-ui/icons/Add";
+import ImgCiencia from "../../img/logos/Ciencia.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,14 +34,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "3%",
     marginTop: "2%",
   },
+  media: {
+    height: 100,
+     // 16:9
+  },
 }));
 
-const meetingTest = [
-  { id: "1", title: "Matemáticas", date: "10/10/2021 7:00 am" },
-];
-
 const MeetingTeacher = (props) => {
-    const { title, url, image } = props;
+  const { title, url, image, description } = props;
   const classes = useStyles();
   return (
     <div>
@@ -55,26 +57,28 @@ const MeetingTeacher = (props) => {
               {title}
             </Typography>
           </Grid>
-          <Grid item xs={12}>
-            {meetingTest.map((meet) => {
-              return (
-                <Card className={classes.card}>
-                  <Grid container>                   
-                    <Grid item xs={12} sm={12}>
-                      <CardContent>
-                        <Typography
-                          className={classes.title}
-                          color="textSecondary"
-                          gutterBottom
-                        >
-                          {image}
-                        </Typography>
-                      </CardContent>
-                    </Grid>
-                  </Grid>
-                </Card>
-              );
-            })}
+          <Grid item xs={12} sm={12}>
+            <Card className={classes.card}>
+              <Grid container>
+                <CardMedia
+                  component="img"
+                  className={classes.media}
+                  image= {ImgCiencia}
+                  title={image}
+                />
+
+                <CardContent>
+                  <Typography
+                    className={classes.title}
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    {description}
+                  </Typography>
+                </CardContent>
+
+              </Grid>
+            </Card>
           </Grid>
           <Grid item xs={12} className={classes.centrado}>
             <Button
@@ -82,9 +86,10 @@ const MeetingTeacher = (props) => {
               color="primary"
               size="small"
               href={url}
+              target="_blank"
               endIcon={<AddIcon />}
             >
-              Ver más
+              Ver
             </Button>
           </Grid>
         </Grid>
