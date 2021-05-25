@@ -113,7 +113,7 @@ const feedback = {
     }
 
 };
-const FeedbackStudent = () => {
+const FeedbackStudent = (props) => {
     const dispatch = useDispatch();
     let history = useHistory();
     const classes = useStyles();
@@ -172,9 +172,13 @@ const FeedbackStudent = () => {
 
     const handleSubmit = (event) => {
 
-        let data = {
-            ...feedbackState.values,
-
+        let data = {            
+            title: feedbackState.values.title,
+            message: feedbackState.values.message,
+            date:selectedDate,
+            qualification:valueRating,
+            teacherId: props.id,
+            // studentId: req.body.studentId,
         };
         console.log(data);
 
@@ -191,36 +195,7 @@ const FeedbackStudent = () => {
                 }
             })
             .catch((error) => {
-                let message1 = "Error";
-                switch (error.response.data.message) {
-                    case "The person doesn't exist": {
-                        message1 = "El host de la comunidad no existe";
-                        break;
-                    }
-                    case "The community is full": {
-                        message1 =
-                            "No es posible crear la comunidad, porque se ha alcanzado el aforo máximo permitido en ese espacio.";
-                        break;
-                    }
-                    case "The person is not community host": {
-                        message1 =
-                            "La persona que intenta crear la comunidad no es el host";
-                        break;
-                    }
-                    case "The person status is not authorized to create communities": {
-                        message1 =
-                            "Tu estado no es apto para crear comunidades ni para ingresar a ellas. Si te encuentras en la institución, por favor repórtate ante el personal de bioseguridad.";
-                        break;
-                    }
-                    default: {
-                        message1 = "Algo salió mal. No fue posible crear la comunidad";
-                    }
-                }
-                let message = {
-                    errorMsg: message1,
-                    errorType: "error",
-                };
-                // dispatch(showMessage(message));
+                console.log(error)
             });
 
         event.preventDefault();
@@ -229,9 +204,6 @@ const FeedbackStudent = () => {
         feedbackState.touched[field] && feedbackState.errors[field]
             ? true
             : false;
-
-
-
 
 
     return (
@@ -371,10 +343,17 @@ const FeedbackStudent = () => {
 };
 
 const mapStateToProps = (state) => ({
+    id: state.login.id,
+    name: state.login.name,
+    email: state.login.email,
+    token: state.login.accessToken
 
-    // instid: state.auth.instId,
 });
 FeedbackStudent.propTypes = {
+    id: PropTypes.number,
+    name: PropTypes.string,
+    email: PropTypes.string,
+    token: PropTypes.string,
 
     //instid: PropTypes.any,
 };

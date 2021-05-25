@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 const MeetingTeacher = (props) => {
   const { title, url, image, description } = props;
+  const ruta="../../img/logos/Ciencia.png"
   const classes = useStyles();
   return (
     <div>
@@ -63,7 +64,7 @@ const MeetingTeacher = (props) => {
                 <CardMedia
                   component="img"
                   className={classes.media}
-                  image= {ImgCiencia}
+                  image='https://pdg-educarte.s3.amazonaws.com/Estrellas.jpg'
                   title={image}
                 />
 
