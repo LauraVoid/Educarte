@@ -59,19 +59,8 @@ const MeetingTeacher = (props) => {
             {meetingTest.map((meet) => {
               return (
                 <Card className={classes.card}>
-                  <Grid container>
-                    <Grid item xs={12} sm={6}>
-                      <CardContent>
-                        <Typography
-                          className={classes.title}
-                          color="textSecondary"
-                          gutterBottom
-                        >
-                          {url}
-                        </Typography>
-                      </CardContent>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
+                  <Grid container>                   
+                    <Grid item xs={12} sm={12}>
                       <CardContent>
                         <Typography
                           className={classes.title}
@@ -92,6 +81,7 @@ const MeetingTeacher = (props) => {
               variant="contained"
               color="primary"
               size="small"
+              href={url}
               endIcon={<AddIcon />}
             >
               Ver más
