@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core/";
 import CardMedia from '@material-ui/core/CardMedia';
 import AddIcon from "@material-ui/icons/Add";
-import ImgCiencia from "../../img/logos/Ciencia.png";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,20 +35,20 @@ const useStyles = makeStyles((theme) => ({
     marginTop: "2%",
   },
   media: {
-    height: 100,
+    height: 180,
      // 16:9
   },
 }));
 
 const MeetingTeacher = (props) => {
-  const { title, url, image, description } = props;
-  const ruta="../../img/logos/Ciencia.png"
+  const { title, url, image, description,category } = props;
+  
   const classes = useStyles();
   return (
     <div>
       <Paper>
         <Grid container>
-          <Grid item xs={12} alignContent="center" alignItems="center">
+          <Grid item xs={12} alignContent="center" container alignItems="center">
             <Typography
               variant="h5"
               style={{ color: "black" }}
@@ -64,8 +64,8 @@ const MeetingTeacher = (props) => {
                 <CardMedia
                   component="img"
                   className={classes.media}
-                  image='https://pdg-educarte.s3.amazonaws.com/Estrellas.jpg'
-                  title={image}
+                  image={'https://pdg-educarte.s3.amazonaws.com/'+image}
+                  title={category}
                 />
 
                 <CardContent>

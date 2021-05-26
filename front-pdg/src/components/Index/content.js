@@ -4,12 +4,12 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import { Grid ,Typography} from "@material-ui/core/";
+import { useDispatch } from "react-redux";
 // import axios from "../../utils/axios";
 import Avatar from '@material-ui/core/Avatar'
-import imgCience from '../../img/logos/Ciencia.png'
-import imgSpanish from '../../img/logos/letras.png'
-import imgMath from '../../img/logos/calculador.png'
-import imgBody from '../../img/logos/cuerpo.png'
+import Button from '@material-ui/core/Button';
+import filterContent from "../../actions/actionContent";
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
         
       },
       item: {
-        marginLeft: "5%",
+        marginLeft: "1%",
       }
       
       
@@ -32,38 +32,61 @@ const useStyles = makeStyles((theme) => ({
 
 const Content = (props) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const handleSubmit = (event) => {
+
+    let filter= event.target.alt    
+    dispatch(filterContent(filter));
+      
+   
+
+  }
 
   return (
       <div >         
         
         <Grid container alignItems="center" justify="center" spacing={5} className={classes.item}>
         <Grid item xs={6} sm={3} container direction="column">
-        <Avatar alt="Remy Sharp"  className={classes.icon} src={imgSpanish}/>
+        <Button
+        name="Lenguaje"
+        onClick={handleSubmit}>
+        <Avatar alt="Lenguaje"  className={classes.icon} src='https://pdg-educarte.s3.amazonaws.com/let.png'/>        
+          </Button>
           <Typography
             className="title"
             color="inherit"
             style={{ color: "white" }}
+            align='center'
             gutterBottom            
           >
             Lenguaje
           </Typography>
         </Grid>        
         <Grid item xs={6} sm={3} container direction="column" >
-        <Avatar alt="Remy Sharp"  className={classes.icon} src={imgCience}/>        
+        <Button
+        onClick={handleSubmit}>
+        <Avatar alt="Ciencia"  className={classes.icon} src='https://pdg-educarte.s3.amazonaws.com/cie.png'/>
+        </Button>       
           <Typography            
             color="inherit"
             style={{ color: "white" }}
+            align='center'
             gutterBottom
           >
             Ciencia
           </Typography>
         </Grid>
         <Grid item xs={6} sm={3} container direction="column">
-        <Avatar alt="Remy Sharp"  className={classes.icon} src={imgMath}/>
+        <Button
+        onClick={handleSubmit}>
+        <Avatar alt="Matematicas"  className={classes.icon} src='https://pdg-educarte.s3.amazonaws.com/mat.png'/>
+        </Button>
           <Typography
             className="title"
             color="inherit"
             style={{ color: "white" }}
+            align='center'
             gutterBottom            
           >
             Matematicas
@@ -71,11 +94,15 @@ const Content = (props) => {
         </Grid>
 
         <Grid item xs={6} sm={3} container direction="column">
-        <Avatar alt="Remy Sharp"  className={classes.icon} src={imgBody}/>
+        <Button 
+        onClick={handleSubmit}>
+        <Avatar alt="Cuerpo"  className={classes.icon} src='https://pdg-educarte.s3.amazonaws.com/body.png'/>
+        </Button>
           <Typography
             className="title"
             color="inherit"
             style={{ color: "white" }}
+            align='center'
             gutterBottom            
           >
             Cuerpo

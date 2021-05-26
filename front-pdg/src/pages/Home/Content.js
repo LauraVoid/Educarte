@@ -7,6 +7,9 @@ import { connect } from "react-redux";
 import bgd from "../../img/backgrounds/B7.png";
 import ContentBanner from "../../components/Index/content";
 import Resource from "../../components/Index/resource";
+import { useDispatch } from "react-redux";
+import Button from '@material-ui/core/Button';
+import filterContent from "../../actions/actionContent";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -76,16 +79,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const HomeInstitution = (props) => {
+  
 
   const classes = useStyles();
   const [reload, setReload] = useState(false);
   const [error, setError]= useState()
+  const dispatch = useDispatch();
 
   const [resources, setResources]= useState([])
 
 
-  useEffect(() => {        
-    axios
+  useEffect(() => {   
+    console.log(props.filter)
+    if(props.filter === "no"){
+      axios
         .get(`content/`)
         .then((res) => {
            if(res.status === 200){
@@ -101,10 +108,37 @@ const HomeInstitution = (props) => {
           else if(err.message.includes("401")){
             setError("Unauthorized")
           }
+        });
+    }else{
+      axios
+        .get(`content/filter/`+props.filter)
+        .then((res) => {
+           if(res.status === 200){
+              setError("No Error")
+              setResources(res.data)
+            }            
+        })
+        .catch((err) => {
+          if (err.message.includes("403")) {
+            setError("Forbidden")          
+
+          } 
+          else if(err.message.includes("401")){
+            setError("Unauthorized")
+          }
         });   
+    } 
              
 
-}, [reload]);
+}, [props.filter]);
+
+const handleSubmit = (event) => {
+  console.log(event)
+
+  //dispatch(filterContent("no"));
+
+}
+
 
   return (
     <div className={classes.divContainer}>
@@ -113,33 +147,31 @@ const HomeInstitution = (props) => {
         <Paper className={classes.paperBanner} elevation={10}>
           <ContentBanner></ContentBanner>
         </Paper>
-
-        {resources.map((res) => {
-                return (
-                  <Grid item xs={6} sm={3}>
-                  <Paper className={classes.paperStudents} elevation={10}>
-                    <Resource
-                      title={res.title}
-                      url={res.link}
-                      description={res.description}
-                      image={res.category}                      
-                    ></Resource>
-                    </Paper>
-                    </Grid>
-                );
-              })}        
-        
-        <Grid item xs={6} sm={3}>
-          <Paper className={classes.paperStudents} elevation={10}>
-            <Resource
-            title="Cuerpo"
-            url="www.google.com"
-            image="mi imagen"
-            ></Resource>
-          </Paper>
-        </Grid>
-        
-        
+        {/* <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              name= "no"
+              OnClick={handleSubmit}             
+            >
+              Ver todos
+          </Button>      */}
+                   
+          {resources.map((res) => {
+            return (
+              <Grid item xs={6} sm={3}>
+              <Paper className={classes.paperStudents} elevation={10}>
+                <Resource
+                  title={res.title}
+                  url={res.link}
+                  description={res.description}
+                  image={res.image}
+                  category= {res.category}                      
+                ></Resource>
+                </Paper>
+                </Grid>
+            );
+          })}        
       </Grid> 
      
        
@@ -151,14 +183,16 @@ const mapStateToProps = (state) => ({
     id: state.login.id,
     name: state.login.name,
     email: state.login.email,
-    token: state.login.accessToken
+    token: state.login.accessToken,
+    filter: state.content.value
 });
 
 HomeInstitution.propTypes = {
     id: PropTypes.number,
   name: PropTypes.string,
   email: PropTypes.string,
-  token: PropTypes.string
+  token: PropTypes.string,
+  filter: PropTypes.string,
   // instid: PropTypes.any,
 };
 export default connect(mapStateToProps)(HomeInstitution);
