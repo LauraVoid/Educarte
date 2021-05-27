@@ -17,17 +17,15 @@ import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
 import Typography from "@material-ui/core/Typography";
 import Button from '@material-ui/core/Button';
 import axios from '../../utils/axios';
 import EyeButton from '@material-ui/icons/Visibility';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Create';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import FilterListIcon from "@material-ui/icons/FilterList";
 import IconButton from '@material-ui/core/IconButton';
-import DialogEdit from "./dialog-edit";
-import DialogContentText from "@material-ui/core/DialogContentText";
+
+
 import './style/create-course.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -281,8 +279,8 @@ const ListFeedback = (props) => {
     const classes = useStyles();
 
 
-    const [courses, setCourses] = useState([]);
-    const [courSelected, setCourSelected] = React.useState({});
+    const [feedbacks, setFeed] = useState([]);
+    const [feedSelected, setFeedSelected] = React.useState({});
     const [dense, setDense] = React.useState(true);
     const [order, setOrder] = React.useState("asc");
     const [reload, setReload] = React.useState(false);
@@ -301,17 +299,15 @@ const ListFeedback = (props) => {
     useEffect(() => {
 
         axios
-            .get(`feed/` + props.id, {
+            .get(`feed/` + props.studentId, {
                 headers: {
                     'x-access-token': props.token
                 }
             })
             .then((res) => {
                 if (res.status === 200) {
-
-                    setCourses(res.data)
+                    setFeed(res.data)
                     setError("No error")
-
 
                 } else console.log(res.status);
             })
@@ -332,7 +328,7 @@ const ListFeedback = (props) => {
     }, [reload]);
 
     const handleClickActiveOpen = (row) => {
-        setCourSelected(row);
+        setFeedSelected(row);
         setActiveOpen(true);
     };
     const handleCloseActive = () => {
@@ -382,20 +378,19 @@ const ListFeedback = (props) => {
                                     order={order}
                                     orderBy={orderBy}
                                     onRequestSort={handleRequestSort}
-                                    rowCount={courses.length}
+                                    rowCount={feedbacks.length}
                                 />
                                 <TableBody>
-                                    {stableSort(courses, getComparator(order, orderBy)).map(
+                                    {stableSort(feedbacks, getComparator(order, orderBy)).map(
                                         (row, index) => {
-                                            const isItemSelected = isSelected(courses.name);
+                                            const isItemSelected = isSelected(feedbacks.title);
                                             const labelId = `enhanced-table-checkbox-${index}`;
                                             return (
                                                 <TableRow
-
                                                     hover
                                                     role="checkbox"
                                                     tabIndex={-1}
-                                                    key={row.courseId}
+                                                    key={row.feedbackId}
                                                     aria-checked={isItemSelected}
                                                 >
                                                     <TableCell padding="checkbox"></TableCell>
@@ -405,7 +400,7 @@ const ListFeedback = (props) => {
                                                         scope="row"
                                                         align="left"
                                                     >
-                                                        {row.courseId}
+                                                        {row.feedbackId}
                                                     </TableCell>
                                                     <TableCell
                                                         component="th"
@@ -413,7 +408,7 @@ const ListFeedback = (props) => {
                                                         scope="row"
                                                         align="left"
                                                     >
-                                                        {row.nameCourse}
+                                                        {row.title}
                                                     </TableCell>
                                                     <TableCell align="left">
                                                         <IconButton
@@ -426,7 +421,7 @@ const ListFeedback = (props) => {
                                                         </IconButton>
                                                     </TableCell>
 
-                                                    <TableCell align="left">{row.teacherName}</TableCell>
+                                                    <TableCell align="left">{row.date}</TableCell>
                                                     
                                                     <TableCell align="left">
                                                         <IconButton
@@ -434,7 +429,7 @@ const ListFeedback = (props) => {
                                                                 handleClickActiveOpen(row);
                                                             }}
                                                         >
-                                                            <DeleteIcon></DeleteIcon>
+                                                            <VisibilityIcon></VisibilityIcon>
                                                         </IconButton>
                                                     </TableCell>
                                                 </TableRow>
@@ -455,8 +450,7 @@ const ListFeedback = (props) => {
                 </DialogTitle>
                         <DialogContent dividers>
                             <Typography gutterBottom>
-
-                                {"¿Está seguro que desea borrar el curso?"}
+                                {feedSelected.message}
                             </Typography>
                         </DialogContent>
                         
