@@ -123,9 +123,7 @@ const FeedbackStudent = (props) => {
     var yyyy = today.getFullYear();
 
     today = mm + '/' + dd + '/' + yyyy;
-    const [selectedDate, setSelectedDate] = React.useState(
-        new Date(today)
-    );
+    const [selectedDate, setSelectedDate] = React.useState(today);
 
     const [valueRating, setValueRating] = React.useState(0);
 
@@ -165,6 +163,7 @@ const FeedbackStudent = (props) => {
                 [event.target.name]: true,
             },
         }));
+        
     };
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -178,20 +177,20 @@ const FeedbackStudent = (props) => {
             date:selectedDate,
             qualification:valueRating,
             teacherId: props.id,
-            // studentId: req.body.studentId,
+            //PENDIENTE: debe llegar por props
+            studentId: 3,
         };
         console.log(data);
 
         axios
-            .post(`/course`, data)
+            .post(`feed/`, data)
             .then((res) => {
                 if (res.status >= 200 && res.status < 300) {
-                    console.log("Comunidad guardada con éxito");
-
-                    history.push("/courses");
+                    console.log("Retroalimentaciòn enviada con exito");
+                    history.push("/teacher");
                 } else {
                     console.log("hubo un error");
-                    console.log(res);
+                    
                 }
             })
             .catch((error) => {
@@ -213,7 +212,6 @@ const FeedbackStudent = (props) => {
 
                 <div style={{ padding: 40, margin: 10 }} className={classes.root}>
                     <Grid container spacing={5} className="Grid-main-green">
-
                         <Grid
                             item
                             md={12}
@@ -222,10 +220,8 @@ const FeedbackStudent = (props) => {
                             <div >
                                 <Grid item md={12} xs={12}>
                                     <br></br>
-
                                 </Grid>
-                                <form className="background-form" autoComplete="off" onSubmit={handleSubmit}
-                                >
+                                <form className="background-form" autoComplete="off" >
                                     <Grid className={classes.gridForm} container
                                         alignItems="center"
                                         style={{ margin: 30 }}>
@@ -243,7 +239,6 @@ const FeedbackStudent = (props) => {
                                                         ? "Debes darle un título"
                                                         : null
                                                 }
-
                                             />
                                         </Grid>
 
@@ -303,14 +298,11 @@ const FeedbackStudent = (props) => {
                                                         : null
                                                 }
                                             />
-
                                         </Grid>
-
-
-
                                         <Grid item xs={12} sm={6}>
                                             <Button variant="contained" color="primary"
                                                 style={{ margin: 20 }}
+                                                onClick={handleSubmit}
                                             >
                                                 Guardar Desempeño
                                         </Button>
@@ -318,15 +310,6 @@ const FeedbackStudent = (props) => {
                                         </Grid>
 
                                     </Grid>
-
-
-
-
-
-
-
-
-
                                 </form>
                             </div>
                         </Grid>

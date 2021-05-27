@@ -11,7 +11,7 @@ exports.index = async function (req, res, next) {
 };
 
 exports.create = async function (req, res, next) {
-    const result = await Feedback.create({
+    await Feedback.create({
       title: req.body.title,
       message: req.body.message,
       date: req.body.date,
@@ -20,12 +20,8 @@ exports.create = async function (req, res, next) {
       studentId: req.body.studentId,
 
     })
-      .then(() => res.send(result))
+      .then((result) => res.send(result))
       .catch(function (err) {
-        if (req.body.courseId === undefined) {
-          res.status(500).send("The course needs a name");
-        } else {
-          res.status(500).send("There is a problem");
-        }
+       console.log(err)
       });
   };

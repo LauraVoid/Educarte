@@ -75,7 +75,7 @@ const CourseExplorer = (props) => {
   const classes = useStyles();
   return (
     <div className={classes.divContainer}>
-      { (props.token !== undefined && props.token !== null)? (
+      
         <div>
          <Grid container>
          <Grid item xs={12} sm={12}>
@@ -90,15 +90,7 @@ const CourseExplorer = (props) => {
              justifyContent="center"
            >
              <div className={classes.sectionDesktop}>
-               <Grid item xs={12} className={classes.createStudent}>
-                 <Button
-                   variant="contained"
-                   color="primary"
-                   href="/createcourse"
-                 >
-                   Agregar +
-                 </Button>
-               </Grid>
+               
              </div>
              <div className={classes.sectionMobile}>
                <Grid item xs={12} className={classes.createStudent}>
@@ -118,10 +110,7 @@ const CourseExplorer = (props) => {
            </Box>
          </Grid>
        </Grid>
-       </div>  
-      ):(
-        <h1>Ha ocurrido un error intenta más tarde</h1>
-      )}
+       </div>       
   </div>
       
      

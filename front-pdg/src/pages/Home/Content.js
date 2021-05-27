@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
   },
   iconButton: {
-    padding: 10,
+    padding: 5,
+    marginLeft: "8%"
   },
   divider: {
     height: 28,
@@ -90,7 +91,7 @@ const HomeInstitution = (props) => {
 
 
   useEffect(() => {   
-    console.log(props.filter)
+  
     if(props.filter === "no"){
       axios
         .get(`content/`)
@@ -133,9 +134,9 @@ const HomeInstitution = (props) => {
 }, [props.filter]);
 
 const handleSubmit = (event) => {
-  console.log(event)
-
-  //dispatch(filterContent("no"));
+  //console.log(event.target.name)
+  let result= "no";
+  dispatch(filterContent(result));
 
 }
 
@@ -147,15 +148,18 @@ const handleSubmit = (event) => {
         <Paper className={classes.paperBanner} elevation={10}>
           <ContentBanner></ContentBanner>
         </Paper>
-        {/* <Button
+        <Grid  item xs={12} sm={12}>
+          <Button
+              className={classes.iconButton}
               variant="contained"
               color="primary"
               size="small"
               name= "no"
-              OnClick={handleSubmit}             
+              onClick={handleSubmit}             
             >
               Ver todos
-          </Button>      */}
+          </Button>
+        </Grid>
                    
           {resources.map((res) => {
             return (

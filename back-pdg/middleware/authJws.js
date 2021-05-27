@@ -45,12 +45,20 @@ isAdmin = (req, res, next) => {
 
 isInst = (req, res, next) => {
   Institution.findByPk(req.userId).then(user => {   
-     
-    if (user.institutionId !== 0) {
-      next();
-      return;
-    }      
+    try{
+      if (user.institutionId !== 0) {
+        next();
+        return;
+      }      
+  
 
+    }catch{
+      res.status(403).send({
+        message: "Require institution Role!"
+      });
+      return;
+    } 
+    
   res.status(403).send({
     message: "Require institution Role!"
   });
