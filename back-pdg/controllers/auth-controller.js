@@ -5,6 +5,7 @@ const Op = Sequelize.Op;
 const Teacher = db.user;
 const Student = db.student;
 const Institution = db.institution;
+const Parent= db.parent;
 const Role = db.role;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -168,5 +169,51 @@ exports.signin = (req, res) => {
       .catch((err) => {
         res.status(500).send({ message: err.message });
       });
+  }else if(req.body.is === "parent"){
+
+    Parent.findOne({
+      where: {
+        email: req.body.email,
+      },
+    })
+      .then((user) => {
+        if (!user) {
+          return res.status(404).send({ message: "Institution Not found." });
+        }
+
+        var passwordIsValid = bcrypt.compareSync(
+          req.body.password,
+          user.password
+        );
+
+        if (!passwordIsValid) {
+          return res.status(401).send({
+            accessToken: null,
+            message: "Invalid Password!",
+          });
+        }
+
+        var token = jwt.sign({ id: user.id, role:"parent", name:user.name+" "+ user.lastname }, config.secret, {
+          expiresIn: 86400, // 24 hours
+        });
+
+      const stud = await Student.findOne({
+          where:{
+            parentId: user.parentId
+          }
+        })
+
+        res.status(200).send({
+          id: user.parentId,
+          email: user.email,
+          name: user.name+" "+ user.lastname,
+          accessToken: token,
+          studentId: stud.id,
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({ message: err.message });
+      });
+
   }
 };

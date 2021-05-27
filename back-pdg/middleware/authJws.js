@@ -4,6 +4,7 @@ const db = require("../model/index");
 const User = db.user;
 const Student = db.student;
 const Institution = db.institution
+const Parent= db.parent;
 
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"]; 
@@ -20,8 +21,6 @@ verifyToken = (req, res, next) => {
       });
     }
     req.userId = decoded.id;
-    
-
     next();
   });
 };
@@ -101,12 +100,31 @@ isStudent = (req, res, next) => {
 });
 };
 
+isParent = (req, res, next) => {
+  Parent.findByPk(req.userId).then(user => {   
+     
+    if (user.parentId !== 0) {
+      next();
+      return;
+    }
+  
+
+  res.status(403).send({
+    message: "Require parent Role!"
+  });
+  return;
+
+});
+};
+
+
 const authJwt = {
   verifyToken: verifyToken,
   isAdmin: isAdmin,
   isModerator: isModerator,
   isStudent: isStudent,
-  isInst: isInst
+  isInst: isInst,
+  isParent: isParent,
  // isModeratorOrAdmin: isModeratorOrAdmin
 };
 module.exports = authJwt;
