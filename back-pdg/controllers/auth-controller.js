@@ -197,7 +197,7 @@ exports.signin = (req, res) => {
           expiresIn: 86400, // 24 hours
         });
 
-      const stud = await Student.findOne({
+      const stud = Student.findOne({
           where:{
             parentId: user.parentId
           }

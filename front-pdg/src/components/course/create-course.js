@@ -312,7 +312,7 @@ const CreateCourse = (props) => {
       .then((res) => {
          if (res.status >= 200 && res.status < 300) {
           setCreateOpen(true);      
-          setCourseCreated(res.data.course.id)
+          setCourseCreated(res.body.course.id)
           console.log("Curso guardado con éxito");
 
           
