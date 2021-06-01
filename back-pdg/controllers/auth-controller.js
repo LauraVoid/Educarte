@@ -197,19 +197,22 @@ exports.signin = (req, res) => {
           expiresIn: 86400, // 24 hours
         });
 
-      const stud = Student.findOne({
+       Student.findOne({
           where:{
-            parentId: user.parentId
+            parentId: user.id
           }
         })
+        .then((stud)=>{
+          res.status(200).send({
+            id: user.id,
+            email: user.email,
+            name: user.name+" "+ user.lastname,
+            accessToken: token,
+            studentId: stud.id,
+          })
+        })
 
-        res.status(200).send({
-          id: user.parentId,
-          email: user.email,
-          name: user.name+" "+ user.lastname,
-          accessToken: token,
-          studentId: stud.id,
-        });
+        ;
       })
       .catch((err) => {
         res.status(500).send({ message: err.message });

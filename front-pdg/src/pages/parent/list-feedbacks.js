@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import bgd from "../../img/backgrounds/B7.png";
-import ListCourses from "../../components/course/list-course";
+import ListFeedback from "../../components/parent/list-feedback";
 
 // CSS OF THIS TEMPLATE
 const useStyles = makeStyles((theme) => ({
@@ -79,7 +79,7 @@ const CourseExplorer = (props) => {
         <div>
          <Grid container>
          <Grid item xs={12} sm={12}>
-           <h1 className={classes.title}>Gestionar Cursos</h1>
+           <h1 className={classes.title}>Desempeños</h1>
          </Grid>
        </Grid>
        <Grid container className={classes.root} justify="center">
@@ -98,14 +98,14 @@ const CourseExplorer = (props) => {
                    size="small"
                    variant="contained"
                    color="primary"
-                   href="/createteacher"
+                   href="/parent"
                  >
-                   Agregar +
+                   Volver
                  </Button>
                </Grid>
              </div>
              <Grid item xs={12} sm={12}>
-               <ListCourses></ListCourses>
+               <ListFeedback></ListFeedback>
              </Grid>
            </Box>
          </Grid>

@@ -12,7 +12,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
-import Tooltip from "@material-ui/core/Tooltip";
 import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -20,13 +19,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import Typography from "@material-ui/core/Typography";
 import Button from '@material-ui/core/Button';
 import axios from '../../utils/axios';
-import EyeButton from '@material-ui/icons/Visibility';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import FilterListIcon from "@material-ui/icons/FilterList";
 import IconButton from '@material-ui/core/IconButton';
-
-
-import './style/create-course.css';
+import Rating from '@material-ui/lab/Rating';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -90,10 +85,16 @@ const headCells = [
         label: "Fecha",
     },
     {
-        id: "teacher",
+        id: "qualification",
         numeric: false,
         disablePadding: false,
-        label: "Profesor",
+        label: "Desempeño",
+    },
+    {
+        id: "message",
+        numeric: false,
+        disablePadding: false,
+        label: "Mensaje",
     }
     
 
@@ -101,9 +102,7 @@ const headCells = [
 
 function HeadTable(props) {
     const { order, orderBy, onRequestSort } = props;
-    const createSortHandler = (property) => (event) => {
-        onRequestSort(event, property);
-    };
+    
 
     return (
         <TableHead>
@@ -212,19 +211,7 @@ const EnhancedTableToolbar = (props) => {
                 </Typography>
             )}
 
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton aria-label="delete">
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title="Filter list">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
+            
         </Toolbar>
     );
 };
@@ -289,21 +276,11 @@ const ListFeedback = (props) => {
     const [activeOpen, setActiveOpen] = React.useState(false);
     const [error, setError] = useState();
 
-    const [courseState, setCourseState] = useState({
-        isValid: false,
-        values: {},
-        touched: {},
-        errors: {},
-    });
-
+    
     useEffect(() => {
 
         axios
-            .get(`feed/` + props.studentId, {
-                headers: {
-                    'x-access-token': props.token
-                }
-            })
+            .get(`feed/` + props.studentId)
             .then((res) => {
                 if (res.status === 200) {
                     setFeed(res.data)
@@ -339,10 +316,7 @@ const ListFeedback = (props) => {
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(property);
-    };
-    const handleReload = () => {
-        setReload(!reload);
-    }
+    }; 
 
 
 
@@ -358,9 +332,9 @@ const ListFeedback = (props) => {
                  <Button
                    variant="contained"
                    color="primary"
-                   href="/createcourse"
+                   href="/parent"
                  >
-                   Agregar +
+                   Volver
                  </Button>
                </Grid>
 
@@ -400,7 +374,7 @@ const ListFeedback = (props) => {
                                                         scope="row"
                                                         align="left"
                                                     >
-                                                        {row.feedbackId}
+                                                        {row.id}
                                                     </TableCell>
                                                     <TableCell
                                                         component="th"
@@ -409,19 +383,13 @@ const ListFeedback = (props) => {
                                                         align="left"
                                                     >
                                                         {row.title}
-                                                    </TableCell>
-                                                    <TableCell align="left">
-                                                        <IconButton
-                                                            aria-label="view"
-                                                        // onClick={() => {
-                                                        //     handleClickOpen(row);
-                                                        // }}
-                                                        >
-                                                            <EyeButton color="disabled" />
-                                                        </IconButton>
-                                                    </TableCell>
+                                                    </TableCell>                                                  
 
                                                     <TableCell align="left">{row.date}</TableCell>
+                                                    <Rating
+                                                    name="simple-controlled"
+                                                    value={row.qualification}                                                    
+                                                />
                                                     
                                                     <TableCell align="left">
                                                         <IconButton
