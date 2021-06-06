@@ -230,7 +230,20 @@ function EnhancedTable() {
   const [selected, setSelected] = React.useState([]);
   const [dense, setDense] = React.useState(true);
   //Store all student
-  const [students, setStudents] = React.useState([]);
+  const [students, setStudents] = React.useState([
+    {
+      id: 1,
+      name: "vocales",
+      curso: "2A",
+      limitdate: "20/11/2021",
+    },
+    {
+      id: 2,
+      name: "numeros",
+      curso: "1B",
+      limitdate: "20/10/2021",
+    },
+  ]);
 
   const numOfPages = () => {
     return Math.ceil(totalResults / rowsPerPage);
@@ -320,23 +333,18 @@ function EnhancedTable() {
                         key={row.name}
                         aria-checked={isItemSelected}
                       >
+                        <TableCell padding="checkbox"></TableCell>
                         <TableCell
                           component="th"
                           id={labelId}
                           scope="row"
                           padding="none"
                         >
-                          {row.name}
+                          {row.id}
                         </TableCell>
-                        <TableCell align="right">{row.calories}</TableCell>
-                        <TableCell align="right">{row.fat}</TableCell>
-                        <TableCell align="right">{row.carbs}</TableCell>
-                        <TableCell align="right">{row.protein}</TableCell>
-                        <TableCell align="left">
-                          <IconButton>
-                            <EditIcon color="disabled" />
-                          </IconButton>
-                        </TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.curso}</TableCell>
+                        <TableCell align="left">{row.limitdate}</TableCell>
                         <TableCell align="left">
                           <IconButton>
                             <DeleteForeverIcon></DeleteForeverIcon>
