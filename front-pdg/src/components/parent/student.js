@@ -5,19 +5,8 @@ import {
   Grid,
   Typography,
   Paper,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  ListItemSecondaryAction,
-  IconButton,
-  Divider,
-  Button,
 } from "@material-ui/core/";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import CommentIcon from "@material-ui/icons/Comment";
-import ForumIcon from "@material-ui/icons/Forum";
-import AddIcon from "@material-ui/icons/Add";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,16 +23,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const studentTest = [
-  { id: "1", name: "Pepito", lastname: "Perez" },
-  { id: "2", name: "Laura Eustaquia", lastname: "Rubio" },
-  { id: "3", name: "David Pancrasio", lastname: "Huertas" },
-  { id: "4", name: "Douglas", lastname: "Lopez" },
-  { id: "5", name: "Juanma", lastname: "Cecilia" },
-  { id: "6", name: "David Fides", lastname: "Obando" },
-];
 
-const StudentsTeacher = () => {
+
+const Student = () => {
   const classes = useStyles();
   return (
     <div>
@@ -56,58 +38,41 @@ const StudentsTeacher = () => {
               className={classes.title}
               align="center"
             >
-              Mis estudiantes
+              Información de
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <List className={classes.root}>
-              {studentTest.map((stud) => {
-                return (
-                  <ListItem key={`${stud.id}`} button alignItems="center">
-                    <Grid container>
-                      <Grid container xs={6}>
-                        <Grid item xs={4}>
-                          <ListItemIcon>
-                            <AccountCircleIcon></AccountCircleIcon>
-                          </ListItemIcon>
-                        </Grid>
-                        <Grid item xs={8}>
-                          <ListItemText
-                            id={`${stud.id}`}
-                            primary={`${stud.name} ${stud.lastname}`}
-                          />
-                        </Grid>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <ListItemSecondaryAction>
-                          <IconButton edge="end" aria-label="comments">
-                            <CommentIcon />
-                          </IconButton>
-                          <IconButton edge="end" aria-label="comments">
-                            <ForumIcon />
-                          </IconButton>
-                          <IconButton edge="end" aria-label="comments">
-                            <AddIcon />
-                          </IconButton>
-                        </ListItemSecondaryAction>
-                      </Grid>
+          <Card className={classes.card}>
+                  <Grid container>
+                    <Grid item xs={12} sm={6}>
+                      <CardContent>
+                        <Typography
+                          className={classes.title}
+                          color="textSecondary"
+                          gutterBottom
+                        >
+                          Titulo
+                        </Typography>
+                      </CardContent>
                     </Grid>
-                    <Divider></Divider>
-                  </ListItem>
-                );
-              })}
-            </List>
+                    <Grid item xs={12} sm={6}>
+                      <CardContent>
+                        <Typography
+                          className={classes.title}
+                          color="textSecondary"
+                          gutterBottom
+                        >
+                          Nombre
+                        </Typography>
+                      
+                      </CardContent>
+                    </Grid>
+                    
+                  </Grid>
+                </Card>
+            
           </Grid>
-          <Grid item xs={12} className={classes.centrado}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              endIcon={<AddIcon />}
-            >
-              Ver más
-            </Button>
-          </Grid>
+          
         </Grid>
       </Paper>
     </div>
@@ -115,10 +80,18 @@ const StudentsTeacher = () => {
 };
 
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  id: state.login.id,
+    name: state.login.name,
+    email: state.login.email,
+    token: state.login.accessToken,
+    studentId: state.login.studentId,
 });
 
-StudentsTeacher.propTypes = {
-  // instid: PropTypes.any,
+Student.propTypes = {
+  id: PropTypes.number,
+  name: PropTypes.string,
+  email: PropTypes.string,
+  token: PropTypes.string,
+  studentId: PropTypes.number,
 };
-export default connect(mapStateToProps)(StudentsTeacher);
+export default connect(mapStateToProps)(Student);
