@@ -131,6 +131,8 @@ const Login = () => {
             history.push(`/teacher`);
           } else if (data.is === "institution") {
             history.push(`/institution`);
+          }else if (data.is === "parent") {
+            history.push(`/parent`);
           }
         } else {
           console.log("hubo un error");

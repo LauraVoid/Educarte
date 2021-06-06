@@ -1,12 +1,12 @@
-import React , { useState, useEffect } from "react";
+import React from "react";
 import { Grid, Paper } from "@material-ui/core/";
-import axios from '../../utils/axios';
-import PropTypes from "prop-types";
+//import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import bgd from "../../img/backgrounds/B7.png";
-import BannerInstitution from "../../components/Institution/main";
-import Teachers from "../../components/Institution/meetings";
+import BannerParent from "../../components/parent/banner";
+import StudentsTeacher from "../../components/teacher/home/students-teacher";
+import Meeting from "../../components/parent/meeting";
 
 // CSS OF THIS TEMPLATE
 const useStyles = makeStyles((theme) => ({
@@ -96,88 +96,33 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const HomeInstitution = (props) => {
+const HomeParent = () => {
   const classes = useStyles();
-  const [reload, setReload] = useState(false);
-  const [error, setError]= useState()
-
-
-  useEffect(() => {
-    
-        
-    axios
-        .get(`inst/`, {
-          headers: {
-            'x-access-token': props.token
-          }
-        })
-        .then((res) => {
-           if(res.status === 200){
-              setError("No Error")
-            }
-            
-        })
-        .catch((err) => {
-          if (err.message.includes("403")) {
-            setError("Forbidden")          
-
-          } 
-          else if(err.message.includes("401")){
-            setError("Unauthorized") 
-
-          }
-
-        });   
-             
-
-}, [reload]);
-
-
   return (
     <div className={classes.divContainer}>
-          { (error === "No Error")? (
       <Grid container className={classes.root} justify="center">
         <Paper className={classes.paperBanner} elevation={10}>
-          <BannerInstitution></BannerInstitution>
+          <BannerParent></BannerParent>
         </Paper>
         <Grid item xs={12} sm={6}>
           <Paper className={classes.paperStudents} elevation={10}>
-            <Teachers></Teachers>
+            <StudentsTeacher></StudentsTeacher>
           </Paper>
         </Grid>
         <Grid item xs={12} sm={6}>
           <Paper className={classes.paperMeeting} elevation={10}>
-            <Teachers></Teachers>
+            <Meeting></Meeting>
           </Paper>
         </Grid>
-      </Grid>    
-    ):(
-      <div>      
-        <Grid>
-        <h1>{error}</h1>
-        <br></br>
-        <br></br>
-        <br></br>
-        <br></br>
-        </Grid>
-      
-      </div>
-      )}
+      </Grid>
     </div>
   );
 };
 const mapStateToProps = (state) => ({
-    id: state.login.id,
-    name: state.login.name,
-    email: state.login.email,
-    token: state.login.accessToken
+
 });
 
-HomeInstitution.propTypes = {
-    id: PropTypes.number,
-  name: PropTypes.string,
-  email: PropTypes.string,
-  token: PropTypes.string
-  // instid: PropTypes.any,
+HomeParent.propTypes = {
+  
 };
-export default connect(mapStateToProps)(HomeInstitution);
+export default connect(mapStateToProps)(HomeParent);

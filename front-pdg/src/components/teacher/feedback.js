@@ -113,7 +113,7 @@ const feedback = {
     }
 
 };
-const FeedbackStudent = () => {
+const FeedbackStudent = (props) => {
     const dispatch = useDispatch();
     let history = useHistory();
     const classes = useStyles();
@@ -122,10 +122,8 @@ const FeedbackStudent = () => {
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
 
-    today = mm + '/' + dd + '/' + yyyy;
-    const [selectedDate, setSelectedDate] = React.useState(
-        new Date(today)
-    );
+    today =   dd+ '/' + mm+ '/' + yyyy;
+    const [selectedDate, setSelectedDate] = React.useState(today);
 
     const [valueRating, setValueRating] = React.useState(0);
 
@@ -165,6 +163,7 @@ const FeedbackStudent = () => {
                 [event.target.name]: true,
             },
         }));
+        
     };
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -172,55 +171,30 @@ const FeedbackStudent = () => {
 
     const handleSubmit = (event) => {
 
-        let data = {
-            ...feedbackState.values,
-
+        let data = {            
+            title: feedbackState.values.title,
+            message: feedbackState.values.message,
+            date:selectedDate,
+            qualification:valueRating,
+            teacherId: props.id,
+            //PENDIENTE: debe llegar por props
+            studentId: 3,
         };
         console.log(data);
 
         axios
-            .post(`/course`, data)
+            .post(`feed/`, data)
             .then((res) => {
                 if (res.status >= 200 && res.status < 300) {
-                    console.log("Comunidad guardada con éxito");
-
-                    history.push("/courses");
+                    console.log("Retroalimentaciòn enviada con exito");
+                    history.push("/teacher");
                 } else {
                     console.log("hubo un error");
-                    console.log(res);
+                    
                 }
             })
             .catch((error) => {
-                let message1 = "Error";
-                switch (error.response.data.message) {
-                    case "The person doesn't exist": {
-                        message1 = "El host de la comunidad no existe";
-                        break;
-                    }
-                    case "The community is full": {
-                        message1 =
-                            "No es posible crear la comunidad, porque se ha alcanzado el aforo máximo permitido en ese espacio.";
-                        break;
-                    }
-                    case "The person is not community host": {
-                        message1 =
-                            "La persona que intenta crear la comunidad no es el host";
-                        break;
-                    }
-                    case "The person status is not authorized to create communities": {
-                        message1 =
-                            "Tu estado no es apto para crear comunidades ni para ingresar a ellas. Si te encuentras en la institución, por favor repórtate ante el personal de bioseguridad.";
-                        break;
-                    }
-                    default: {
-                        message1 = "Algo salió mal. No fue posible crear la comunidad";
-                    }
-                }
-                let message = {
-                    errorMsg: message1,
-                    errorType: "error",
-                };
-                // dispatch(showMessage(message));
+                console.log(error)
             });
 
         event.preventDefault();
@@ -231,9 +205,6 @@ const FeedbackStudent = () => {
             : false;
 
 
-
-
-
     return (
         <div className="background1">
             <div style={{ padding: 20 }}>
@@ -241,7 +212,6 @@ const FeedbackStudent = () => {
 
                 <div style={{ padding: 40, margin: 10 }} className={classes.root}>
                     <Grid container spacing={5} className="Grid-main-green">
-
                         <Grid
                             item
                             md={12}
@@ -250,10 +220,8 @@ const FeedbackStudent = () => {
                             <div >
                                 <Grid item md={12} xs={12}>
                                     <br></br>
-
                                 </Grid>
-                                <form className="background-form" autoComplete="off" onSubmit={handleSubmit}
-                                >
+                                <form className="background-form" autoComplete="off" >
                                     <Grid className={classes.gridForm} container
                                         alignItems="center"
                                         style={{ margin: 30 }}>
@@ -271,7 +239,6 @@ const FeedbackStudent = () => {
                                                         ? "Debes darle un título"
                                                         : null
                                                 }
-
                                             />
                                         </Grid>
 
@@ -331,14 +298,11 @@ const FeedbackStudent = () => {
                                                         : null
                                                 }
                                             />
-
                                         </Grid>
-
-
-
                                         <Grid item xs={12} sm={6}>
                                             <Button variant="contained" color="primary"
                                                 style={{ margin: 20 }}
+                                                onClick={handleSubmit}
                                             >
                                                 Guardar Desempeño
                                         </Button>
@@ -346,15 +310,6 @@ const FeedbackStudent = () => {
                                         </Grid>
 
                                     </Grid>
-
-
-
-
-
-
-
-
-
                                 </form>
                             </div>
                         </Grid>
@@ -371,10 +326,17 @@ const FeedbackStudent = () => {
 };
 
 const mapStateToProps = (state) => ({
+    id: state.login.id,
+    name: state.login.name,
+    email: state.login.email,
+    token: state.login.accessToken
 
-    // instid: state.auth.instId,
 });
 FeedbackStudent.propTypes = {
+    id: PropTypes.number,
+    name: PropTypes.string,
+    email: PropTypes.string,
+    token: PropTypes.string,
 
     //instid: PropTypes.any,
 };

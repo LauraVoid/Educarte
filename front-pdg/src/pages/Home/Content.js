@@ -6,9 +6,12 @@ import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import bgd from "../../img/backgrounds/B7.png";
 import ContentBanner from "../../components/Index/content";
+import Resource from "../../components/Index/resource";
+import { useDispatch } from "react-redux";
+import Button from '@material-ui/core/Button';
+import filterContent from "../../actions/actionContent";
 
 
-// CSS OF THIS TEMPLATE
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -24,7 +27,8 @@ const useStyles = makeStyles((theme) => ({
     flex: 1,
   },
   iconButton: {
-    padding: 10,
+    padding: 5,
+    marginLeft: "8%"
   },
   divider: {
     height: 28,
@@ -51,19 +55,7 @@ const useStyles = makeStyles((theme) => ({
   createStudent: {
     marginBottom: "3%",
   },
-  sectionMobile: {
-    display: "flex",
-    [theme.breakpoints.up("md")]: {
-      display: "none",
-    },
-    marginLeft: "4%",
-  },
-  sectionDesktop: {
-    display: "none",
-    [theme.breakpoints.up("md")]: {
-      display: "flex",
-    },
-  },
+
   paperBanner: {
     backgroundColor: "#2196f3",
     marginLeft: "5%",
@@ -76,46 +68,38 @@ const useStyles = makeStyles((theme) => ({
   },
   paperStudents: {
     backgroundColor: "#d500f9",
-    marginLeft: "5%",
-    marginRight: "5%",
-    marginBottom: "3%",
+    marginLeft: "10%",
+    marginRight: "10%",
+    marginBottom: "10%",
     borderRadius: "2em",
-    marginTop: "2%",
-    padding: "2%",
-    width: "90%",
+    marginTop: "5%",
+    padding: "5%",
+    width: "80%",
   },
-  paperMeeting: {
-    backgroundColor: "#00e676",
-    marginLeft: "5%",
-    marginRight: "5%",
-    marginBottom: "3%",
-    borderRadius: "2em",
-    marginTop: "2%",
-    padding: "2%",
-    width: "90%",
-  },
+ 
 }));
 
 const HomeInstitution = (props) => {
+  
+
   const classes = useStyles();
   const [reload, setReload] = useState(false);
   const [error, setError]= useState()
+  const dispatch = useDispatch();
+
+  const [resources, setResources]= useState([])
 
 
-  useEffect(() => {
-    
-        
-    axios
-        .get(`inst/`, {
-          headers: {
-            'x-access-token': props.token
-          }
-        })
+  useEffect(() => {   
+  
+    if(props.filter === "no"){
+      axios
+        .get(`content/`)
         .then((res) => {
            if(res.status === 200){
               setError("No Error")
-            }
-            
+              setResources(res.data)
+            }            
         })
         .catch((err) => {
           if (err.message.includes("403")) {
@@ -123,39 +107,79 @@ const HomeInstitution = (props) => {
 
           } 
           else if(err.message.includes("401")){
-            setError("Unauthorized") 
-
+            setError("Unauthorized")
           }
+        });
+    }else{
+      axios
+        .get(`content/filter/`+props.filter)
+        .then((res) => {
+           if(res.status === 200){
+              setError("No Error")
+              setResources(res.data)
+            }            
+        })
+        .catch((err) => {
+          if (err.message.includes("403")) {
+            setError("Forbidden")          
 
+          } 
+          else if(err.message.includes("401")){
+            setError("Unauthorized")
+          }
         });   
+    } 
              
 
-}, [reload]);
+}, [props.filter]);
 
+const handleSubmit = (event) => {
+  //console.log(event.target.name)
+  let result= "no";
+  dispatch(filterContent(result));
 
+}
 
 
   return (
     <div className={classes.divContainer}>
-          {/* { (error === "No Error")? ( */}
+         
       <Grid container className={classes.root} justify="center">
         <Paper className={classes.paperBanner} elevation={10}>
           <ContentBanner></ContentBanner>
         </Paper>
-        
-      </Grid>    
-    {/* ):( */}
-      {/* <div>      
-        <Grid>
-        <h1>{error}</h1>
-        <br></br>
-        <br></br>
-        <br></br>
-        <br></br>
+        <Grid  item xs={12} sm={12}>
+          <Button
+              className={classes.iconButton}
+              variant="contained"
+              color="primary"
+              size="small"
+              name= "no"
+              onClick={handleSubmit}             
+            >
+              Ver todos
+          </Button>
         </Grid>
-      
-      </div>
-      )} */}
+                   
+          {resources.map((res) => {
+            return (
+              <Grid item xs={6} sm={3}>
+              <Paper className={classes.paperStudents} elevation={10}>
+                <Resource
+                  title={res.title}
+                  url={res.link}
+                  description={res.description}
+                  image={res.image}
+                  category= {res.category}                      
+                ></Resource>
+                </Paper>
+                </Grid>
+            );
+          })}        
+      </Grid> 
+     
+       
+    
     </div>
   );
 };
@@ -163,14 +187,16 @@ const mapStateToProps = (state) => ({
     id: state.login.id,
     name: state.login.name,
     email: state.login.email,
-    token: state.login.accessToken
+    token: state.login.accessToken,
+    filter: state.content.value
 });
 
 HomeInstitution.propTypes = {
     id: PropTypes.number,
   name: PropTypes.string,
   email: PropTypes.string,
-  token: PropTypes.string
+  token: PropTypes.string,
+  filter: PropTypes.string,
   // instid: PropTypes.any,
 };
 export default connect(mapStateToProps)(HomeInstitution);

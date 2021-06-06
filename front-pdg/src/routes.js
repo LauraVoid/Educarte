@@ -37,6 +37,10 @@ import CreateTask from "./pages/task/add-task";
 import CreateMessageParent from "./pages/messages/create-message-parent";
 import CreateMessageCourse from "./pages/messages/create-message-course";
 
+//pages for parents
+import MainParent from "./pages/parent/main"
+import FeedExplorer from "./pages/parent/list-feedbacks";
+
 import { store } from "./store/store";
 
 export default (
@@ -49,6 +53,17 @@ export default (
         path="/feedback"
         layout={MainLayout}
         component={Feedback} />
+
+        <RouteWithLayout 
+        path="/feed"
+        layout={MainLayout}
+        component={FeedExplorer} />
+
+        <RouteWithLayout 
+        path="/parent"
+        layout={MainLayout}
+        component={MainParent} />
+
         <RouteWithLayout 
         path="/institution" 
         layout={MainLayout}

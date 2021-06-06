@@ -43,8 +43,10 @@ exports.findTeacherByInstitutionId = async function (req, res, next) {
     where: {
       institutionId: req.params.instId,
     },
-  });
-
+  }).catch(function(err){
+    console.log(err)
+    res.status(403)
+  })
   await Promise.all(
     result.map(async (course) => {
 
@@ -60,13 +62,12 @@ exports.findTeacherByInstitutionId = async function (req, res, next) {
               courseId: tc.courseId,
               teacherId: tc.teacherId
             }
-            final.push(data)  
-          
+            final.push(data)          
         }
-
-      });
-
-
+      }).catch(function(err){
+        console.log(err)
+        res.status(403)
+      })
     })
   )
   await Promise.all(
@@ -77,11 +78,13 @@ exports.findTeacherByInstitutionId = async function (req, res, next) {
           }
     }).then((teacherf) => {
       teach.teacherName = teacherf.name + " " +teacherf.lastname
+    }).catch(function(err){
+      console.log(err)
+      res.status(403)
     })
 
     })
   )
-
   res.status(200).send(final)
 
 };

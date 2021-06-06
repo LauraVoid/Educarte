@@ -12,23 +12,16 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
-import Tooltip from "@material-ui/core/Tooltip";
 import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
 import Typography from "@material-ui/core/Typography";
 import Button from '@material-ui/core/Button';
 import axios from '../../utils/axios';
-import EyeButton from '@material-ui/icons/Visibility';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Create';
-import FilterListIcon from "@material-ui/icons/FilterList";
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import IconButton from '@material-ui/core/IconButton';
-import DialogEdit from "./dialog-edit";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import './style/create-course.css';
+import Rating from '@material-ui/lab/Rating';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -71,20 +64,6 @@ const useStyles = makeStyles((theme) => ({
       },
 }));
 
-const course = {
-    id: {
-        length: {
-            maximum: 64,
-        },
-    },
-    name: {
-        presence: { allowEmpty: false, message: "es requerido" },
-        length: {
-            maximum: 64,
-        },
-    }
-
-};
 
 const headCells = [
     {
@@ -97,40 +76,33 @@ const headCells = [
         id: "name",
         numeric: false,
         disablePadding: false,
-        label: "Nombre",
+        label: "Title",
     },
     {
-        id: "students",
+        id: "date",
         numeric: false,
         disablePadding: false,
-        label: "Estudiantes",
+        label: "Fecha",
     },
     {
-        id: "teacher",
+        id: "qualification",
         numeric: false,
         disablePadding: false,
-        label: "Profesor",
+        label: "Desempeño",
     },
     {
-        id: "edit",
+        id: "message",
         numeric: false,
         disablePadding: false,
-        label: "Editar",
-    },
-    {
-        id: "delete",
-        numeric: false,
-        disablePadding: false,
-        label: "Borrar",
-    },
+        label: "Mensaje",
+    }
+    
 
 ];
 
 function HeadTable(props) {
     const { order, orderBy, onRequestSort } = props;
-    const createSortHandler = (property) => (event) => {
-        onRequestSort(event, property);
-    };
+    
 
     return (
         <TableHead>
@@ -239,19 +211,7 @@ const EnhancedTableToolbar = (props) => {
                 </Typography>
             )}
 
-            {numSelected > 0 ? (
-                <Tooltip title="Delete">
-                    <IconButton aria-label="delete">
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            ) : (
-                <Tooltip title="Filter list">
-                    <IconButton aria-label="filter list">
-                        <FilterListIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
+            
         </Toolbar>
     );
 };
@@ -301,45 +261,30 @@ EnhancedTableToolbar.propTypes = {
 
 
 
-const ListCourse = (props) => {
+const ListFeedback = (props) => {
 
     const classes = useStyles();
 
 
-    const [courses, setCourses] = useState([]);
-    const [courSelected, setCourSelected] = React.useState({});
-    const [courseSelected, setCourseSelected] = React.useState({});
+    const [feedbacks, setFeed] = useState([]);
+    const [feedSelected, setFeedSelected] = React.useState({});
     const [dense, setDense] = React.useState(true);
     const [order, setOrder] = React.useState("asc");
     const [reload, setReload] = React.useState(false);
     const [orderBy, setOrderBy] = React.useState("id");
     const [selected, setSelected] = React.useState([]);
     const [activeOpen, setActiveOpen] = React.useState(false);
-    const [editCourseOpen, setEditCourseOpen] = React.useState(false);
-    const [error, setError] = useState()
+    const [error, setError] = useState();
 
-
-    const [courseState, setCourseState] = useState({
-        isValid: false,
-        values: {},
-        touched: {},
-        errors: {},
-    });
-
+    
     useEffect(() => {
 
         axios
-            .get(`course/find/` + props.id, {
-                headers: {
-                    'x-access-token': props.token
-                }
-            })
+            .get(`feed/` + props.studentId)
             .then((res) => {
                 if (res.status === 200) {
-
-                    setCourses(res.data)
+                    setFeed(res.data)
                     setError("No error")
-
 
                 } else console.log(res.status);
             })
@@ -360,7 +305,7 @@ const ListCourse = (props) => {
     }, [reload]);
 
     const handleClickActiveOpen = (row) => {
-        setCourSelected(row);
+        setFeedSelected(row);
         setActiveOpen(true);
     };
     const handleCloseActive = () => {
@@ -371,55 +316,8 @@ const ListCourse = (props) => {
         const isAsc = orderBy === property && order === "asc";
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(property);
-    };
+    }; 
 
-    const handleClickOpenEdit = (row) => {
-        setCourseSelected(row);
-        setEditCourseOpen(true);
-
-    }
-    const handleReload = () => {
-        setReload(!reload);
-    }
-    const handleCloseEdit = () => {
-        setEditCourseOpen(false);
-
-    }
-
-
-    function deleteCourse() {
-        axios
-            .delete(`course/` + courSelected.courseId)
-            .then((res) => {
-                if (res.status >= 200 && res.status < 300) {
-                    console.log("borrado con éxito");
-                    setActiveOpen(false);
-                    handleReload();
-
-                } else {
-                    console.log("Hubo un error");
-                }
-            })
-            .catch((error) => {
-                let message1 = "Error";
-                switch (error.response.data.message) {
-                    case "The followuptype doesn't exist": {
-                        message1 = "El curso que intentas borrar no existe";
-                        break;
-                    }
-                    default: {
-                        message1 = "Algo salió mal. No fue posible borrar el curso";
-                    }
-                }
-                //   let message = {
-                //     errorMsg: message1,
-                //     errorType: "error",
-                //   };
-                console.log(message1)
-                //   dispatch(showMessage(message));
-            });
-
-    }
 
 
     const isSelected = (name) => selected.indexOf(name) !== -1;
@@ -434,9 +332,9 @@ const ListCourse = (props) => {
                  <Button
                    variant="contained"
                    color="primary"
-                   href="/createcourse"
+                   href="/parent"
                  >
-                   Agregar +
+                   Volver
                  </Button>
                </Grid>
 
@@ -454,20 +352,19 @@ const ListCourse = (props) => {
                                     order={order}
                                     orderBy={orderBy}
                                     onRequestSort={handleRequestSort}
-                                    rowCount={courses.length}
+                                    rowCount={feedbacks.length}
                                 />
                                 <TableBody>
-                                    {stableSort(courses, getComparator(order, orderBy)).map(
+                                    {stableSort(feedbacks, getComparator(order, orderBy)).map(
                                         (row, index) => {
-                                            const isItemSelected = isSelected(courses.name);
+                                            const isItemSelected = isSelected(feedbacks.title);
                                             const labelId = `enhanced-table-checkbox-${index}`;
                                             return (
                                                 <TableRow
-
                                                     hover
                                                     role="checkbox"
                                                     tabIndex={-1}
-                                                    key={row.courseId}
+                                                    key={row.feedbackId}
                                                     aria-checked={isItemSelected}
                                                 >
                                                     <TableCell padding="checkbox"></TableCell>
@@ -477,7 +374,7 @@ const ListCourse = (props) => {
                                                         scope="row"
                                                         align="left"
                                                     >
-                                                        {row.courseId}
+                                                        {row.id}
                                                     </TableCell>
                                                     <TableCell
                                                         component="th"
@@ -485,36 +382,22 @@ const ListCourse = (props) => {
                                                         scope="row"
                                                         align="left"
                                                     >
-                                                        {row.nameCourse}
-                                                    </TableCell>
-                                                    <TableCell align="left">
-                                                        <IconButton
-                                                            aria-label="view"
-                                                        // onClick={() => {
-                                                        //     handleClickOpen(row);
-                                                        // }}
-                                                        >
-                                                            <EyeButton color="disabled" />
-                                                        </IconButton>
-                                                    </TableCell>
+                                                        {row.title}
+                                                    </TableCell>                                                  
 
-                                                    <TableCell align="left">{row.teacherName}</TableCell>
-                                                    <TableCell align="left">
-                                                        <IconButton>
-                                                            <EditIcon
-                                                                onClick={() => {
-                                                                    handleClickOpenEdit(row);
-                                                                }}
-                                                            />
-                                                        </IconButton>
-                                                    </TableCell>
+                                                    <TableCell align="left">{row.date}</TableCell>
+                                                    <Rating
+                                                    name="simple-controlled"
+                                                    value={row.qualification}                                                    
+                                                />
+                                                    
                                                     <TableCell align="left">
                                                         <IconButton
                                                             onClick={() => {
                                                                 handleClickActiveOpen(row);
                                                             }}
                                                         >
-                                                            <DeleteIcon></DeleteIcon>
+                                                            <VisibilityIcon></VisibilityIcon>
                                                         </IconButton>
                                                     </TableCell>
                                                 </TableRow>
@@ -531,47 +414,15 @@ const ListCourse = (props) => {
                         open={activeOpen}
                     >
                         <DialogTitle id="customized-dialog-title" onClose={handleCloseActive}>
-                            Confirmación
+                            Mensaje
                 </DialogTitle>
                         <DialogContent dividers>
                             <Typography gutterBottom>
-
-                                {"¿Está seguro que desea borrar el curso?"}
+                                {feedSelected.message}
                             </Typography>
                         </DialogContent>
-                        <DialogActions>
-                            <Button autoFocus onClick={handleCloseActive} color="primary">
-                                No
-                    </Button>
-                            <Button autoFocus onClick={deleteCourse} color="primary">
-                                Sí
-                    </Button>
-                        </DialogActions>
+                        
                     </Dialog>
-
-                    <Dialog
-                        open={editCourseOpen}
-                        onClose={handleCloseEdit}
-                        aria-labelledby="responsive-dialog-title"
-                    >
-                        <DialogTitle id="responsive-dialog-title">
-                            {"Editar profesor"}
-                        </DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                <DialogEdit
-                                    closeEdit={handleCloseEdit}
-                                    reload={reload}
-                                    handleReload={handleReload}
-                                    instId={props.id}
-                                    courseSelected={courseSelected}
-                                ></DialogEdit>
-                            </DialogContentText>
-                        </DialogContent>
-                    </Dialog>
-
-
-
                 </div>
 
             ) : (
@@ -589,17 +440,19 @@ const mapStateToProps = (state) => ({
     id: state.login.id,
     name: state.login.name,
     email: state.login.email,
-    token: state.login.accessToken
+    token: state.login.accessToken,
+    studentId: state.login.studentId,
 
 });
 
-ListCourse.propTypes = {
+ListFeedback.propTypes = {
     id: PropTypes.number,
     name: PropTypes.string,
     email: PropTypes.string,
     token: PropTypes.string,
+    studentId: PropTypes.number,
 
 };
 
-export default connect(mapStateToProps)(ListCourse);
+export default connect(mapStateToProps)(ListFeedback);
 
