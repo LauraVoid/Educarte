@@ -21,6 +21,7 @@ import MainInstitution from "./pages/Institution/home";
 //pages for student
 import StudentExplorer from "./pages/student/list-student";
 import CreateStudent from "./pages/user/add-student";
+import MainStudent from "./pages/student/main";
 
 //pages for teacher
 import HomeTeacher from "./pages/teacher/home-teacher";
@@ -47,65 +48,79 @@ export default (
   <Provider store={store}>
     <BrowserRouter basename="/">
       <Switch>
-        <Route path="/login" 
-        component={Login} />
-        <RouteWithLayout 
-        path="/feedback"
-        layout={MainLayout}
-        component={Feedback} />
+        <Route path="/login"
+          component={Login} />
+        <RouteWithLayout
+          path="/feedback"
+          layout={MainLayout}
+          component={Feedback} />
 
-        <RouteWithLayout 
-        path="/feed"
-        layout={MainLayout}
-        component={FeedExplorer} />
+        <RouteWithLayout
+          path="/feed"
+          layout={MainLayout}
+          component={FeedExplorer} />
 
-        <RouteWithLayout 
-        path="/parent"
-        layout={MainLayout}
-        component={MainParent} />
+        <RouteWithLayout
+          path="/parent"
+          layout={MainLayout}
+          component={MainParent} />
 
-        <RouteWithLayout 
-        path="/institution" 
-        layout={MainLayout}
-        component={MainInstitution} />
-        <RouteWithLayout 
-        path="/createcourse"
-        layout={MainLayout} 
-        component={Createcourse} />
-        <RouteWithLayout 
-        path="/editcourse"
-        layout={MainLayout} 
-        component={EditCourse} />
-        <RouteWithLayout 
-        path="/courses"
-        layout={MainLayout}
-        component={ListCourse} />
+        <RouteWithLayout
+          path="/student"
+          layout={MainLayout}
+          component={MainStudent} />
+
+        <RouteWithLayout
+          path="/institution"
+          layout={MainLayout}
+          component={MainInstitution} />
+
+        <RouteWithLayout
+          path="/createcourse"
+          layout={MainLayout}
+          component={Createcourse} />
+
+        <RouteWithLayout
+          path="/editcourse"
+          layout={MainLayout}
+          component={EditCourse} />
+
+        <RouteWithLayout
+          path="/courses"
+          layout={MainLayout}
+          component={ListCourse} />
         <RouteWithLayout exact path="/" layout={Minimal} component={Home} />
+
         <RouteWithLayout
           path="/createstudent"
           layout={MainLayout}
           component={CreateStudent}
         />
+
         <RouteWithLayout
           path="/content"
           layout={MainLayout}
           component={Content}
         />
+
         <RouteWithLayout
           path="/teacher"
           layout={MainLayout}
           component={HomeTeacher}
         />
+
         <RouteWithLayout
           path="/teachers"
           layout={MainLayout}
           component={TeacherExplorer}
         />
+
         <RouteWithLayout
           path="/createteacher"
           layout={MainLayout}
           component={CreateTeacher}
         />
+
         <RouteWithLayout
           path="/students"
           layout={MainLayout}
