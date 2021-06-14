@@ -5,8 +5,11 @@ import {
   Grid,
   Typography,
   Paper,
+  Button,
+  Card,
+  CardContent,
 } from "@material-ui/core/";
-
+import AddIcon from "@material-ui/icons/Add";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,11 +24,23 @@ const useStyles = makeStyles((theme) => ({
     justifyItems: "center",
     marginBottom: "2%",
   },
+  card: {
+    width: "80%",
+    justifyItems: "center",
+    justifyContent: "center",
+    marginLeft: "10%",
+    marginBottom: "3%",
+    marginTop: "2%",
+  },
 }));
 
+const meetingTest = [
+  { id: "1", title: "Matemáticas", date: "10/10/2021 7:00 am", presencial:true },
+  { id: "2", title: "Español", date: "10/10/2021 9:00 am",presencial:true },
+  { id: "3", title: "Naturales", date: "10/10/2021 11:00 am",presencial:false },
+];
 
-
-const Student = () => {
+const MeetingStudent = () => {
   const classes = useStyles();
   return (
     <div>
@@ -38,11 +53,13 @@ const Student = () => {
               className={classes.title}
               align="center"
             >
-              Información de
+              Reuniones 
             </Typography>
           </Grid>
           <Grid item xs={12}>
-          <Card className={classes.card}>
+            {meetingTest.map((meet) => {
+              return (
+                <Card className={classes.card}>
                   <Grid container>
                     <Grid item xs={12} sm={6}>
                       <CardContent>
@@ -51,7 +68,7 @@ const Student = () => {
                           color="textSecondary"
                           gutterBottom
                         >
-                          Titulo
+                          {`${meet.title}`}
                         </Typography>
                       </CardContent>
                     </Grid>
@@ -62,17 +79,33 @@ const Student = () => {
                           color="textSecondary"
                           gutterBottom
                         >
-                          Nombre
+                          {`${meet.date}`}
                         </Typography>
-                      
+                        <Typography
+                          className={classes.title}
+                          color="textSecondary"
+                          gutterBottom
+                        >
+                          {(meet.presencial)?("Presencial"):("Virtual")}
+                        </Typography>
                       </CardContent>
                     </Grid>
                     
                   </Grid>
                 </Card>
-            
+              );
+            })}
           </Grid>
-          
+          <Grid item xs={12} className={classes.centrado}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              endIcon={<AddIcon />}
+            >
+              Ver más
+            </Button>
+          </Grid>
         </Grid>
       </Paper>
     </div>
@@ -80,18 +113,10 @@ const Student = () => {
 };
 
 const mapStateToProps = (state) => ({
-  id: state.login.id,
-    name: state.login.name,
-    email: state.login.email,
-    token: state.login.accessToken,
-    studentId: state.login.studentId,
+  // instid: state.auth.instId,
 });
 
-Student.propTypes = {
-  id: PropTypes.number,
-  name: PropTypes.string,
-  email: PropTypes.string,
-  token: PropTypes.string,
-  studentId: PropTypes.number,
+MeetingStudent.propTypes = {
+  // instid: PropTypes.any,
 };
-export default connect(mapStateToProps)(Student);
+export default connect(mapStateToProps)(MeetingStudent);
