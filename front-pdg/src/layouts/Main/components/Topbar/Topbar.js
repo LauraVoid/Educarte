@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { Link as RouterLink } from "react-router-dom";
@@ -18,6 +18,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { useDispatch } from "react-redux";
 import logOut from "../../../../actions/singOut";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -58,9 +59,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Topbar = (props) => {
+  const { user } = props;
   const dispatch = useDispatch();
   const { className, ...rest } = props;
   const classes = useStyles();
+  const { redirect, setRedirect } = useState("/");
 
   const [anchorEl, setAnchorEl] = useState(null);
   //const [anchorDesktop, serAnchorDesktop] = useState(null);
@@ -70,12 +73,20 @@ const Topbar = (props) => {
   };
 
   const handleClose = () => {
-    
     setAnchorEl(null);
   };
-  const singOut =(event) =>{
+  const singOut = (event) => {
     dispatch(logOut());
-  }
+  };
+
+  //Queda pendiente roleId de parent y admin
+  const redirectHome = () => {
+    if (user === 1) {
+      return "/teacher";
+    } else if (user === 3) {
+      return "/student";
+    }
+  };
 
   const renderMenu = (
     <Menu
@@ -110,7 +121,7 @@ const Topbar = (props) => {
         color="inherit"
       >
         <Toolbar variant="dense">
-          <RouterLink to="/">
+          <RouterLink to={redirectHome}>
             <img height="55px" alt="logo" src={logo192} />
           </RouterLink>
           <div className={classes.grow}>
@@ -160,8 +171,12 @@ const Topbar = (props) => {
   );
 };
 
+const mapStateToProps = (state) => ({
+  user: state.login.roles,
+});
+
 Topbar.propTypes = {
   className: PropTypes.string,
+  user: PropTypes.number,
 };
-
-export default Topbar;
+export default connect(mapStateToProps)(Topbar);

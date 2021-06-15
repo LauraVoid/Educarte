@@ -12,6 +12,8 @@ exports.create = async function (req, res, next) {
       roleReceiver: req.body.roleReceiver,
       receiver: req.body.receiver,
       teacherId: req.body.teacher,
+      parentId: req.body.parent,
+      courseId: req.body.course,
     });
     //console.log(teacher.dataValues.id);
     return res.status(200).json({

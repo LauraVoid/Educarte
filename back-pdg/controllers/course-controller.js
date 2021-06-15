@@ -24,13 +24,12 @@ exports.count = async function (req, res) {
       total,
     });
   });
-}
+};
 exports.findInstitutionCourses = async function (req, res, next) {
   await Course.findAll({
     where: {
-      institutionId: req.params.instId
-    }
-    
+      institutionId: req.params.instId,
+    },
   }).then((result) => {
     res.send(result);
   });
@@ -43,50 +42,50 @@ exports.findTeacherByInstitutionId = async function (req, res, next) {
     where: {
       institutionId: req.params.instId,
     },
-  }).catch(function(err){
-    console.log(err)
-    res.status(403)
-  })
+  }).catch(function (err) {
+    console.log(err);
+    res.status(403);
+  });
   await Promise.all(
     result.map(async (course) => {
-
       await Teacher_Course.findOne({
         where: {
-          courseId: course.id
-        }
-      }).then((tc) => {
-        if (tc !== null) {
-          
+          courseId: course.id,
+        },
+      })
+        .then((tc) => {
+          if (tc !== null) {
             const data = {
               nameCourse: course.name,
               courseId: tc.courseId,
-              teacherId: tc.teacherId
-            }
-            final.push(data)          
-        }
-      }).catch(function(err){
-        console.log(err)
-        res.status(403)
-      })
+              teacherId: tc.teacherId,
+            };
+            final.push(data);
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+          res.status(403);
+        });
     })
-  )
+  );
   await Promise.all(
-    final.map(async (teach)=>{
+    final.map(async (teach) => {
       await Teacher.findOne({
         where: {
-            id: teach.teacherId
-          }
-    }).then((teacherf) => {
-      teach.teacherName = teacherf.name + " " +teacherf.lastname
-    }).catch(function(err){
-      console.log(err)
-      res.status(403)
+          id: teach.teacherId,
+        },
+      })
+        .then((teacherf) => {
+          teach.teacherName = teacherf.name + " " + teacherf.lastname;
+        })
+        .catch(function (err) {
+          console.log(err);
+          res.status(403);
+        });
     })
-
-    })
-  )
-  res.status(200).send(final)
-
+  );
+  res.status(200).send(final);
 };
 exports.create = async function (req, res, next) {
   const result = await Course.create({
@@ -118,15 +117,15 @@ exports.update = async function (req, res, next) {
         id: req.params.id,
       },
     }
-  )
+  );
   await Teacher_Course.update(
     {
-      teacherId: req.body.teacherId
+      teacherId: req.body.teacherId,
     },
     {
-      where:{
-        courseId:req.params.id,
-      }
+      where: {
+        courseId: req.params.id,
+      },
     }
   )
     .then(() => res.send("The course was updated"))
@@ -158,6 +157,28 @@ exports.findByCourseId = async function (req, res) {
   if (req.params.id !== undefined) {
     await Course.findByPk(req.params.id).then((resp) => {
       res.status(200).send(resp.dataValues);
+    });
+  } else {
+    res.status(200).send({ message: "id" });
+  }
+};
+
+exports.findCoursesByTeacher = async function (req, res) {
+  const coursesId = [];
+  if (req.params.id !== undefined) {
+    await Teacher_Course.findAll({
+      where: {
+        teacherId: req.params.id,
+      },
+    }).then(async (resp) => {
+      await Promise.all(
+        resp.map(async (row, index) => {
+          await Course.findByPk(row.dataValues.courseId).then((res) => {
+            coursesId.push(res);
+          });
+        })
+      );
+      return res.status(200).send(coursesId);
     });
   } else {
     res.status(200).send({ message: "id" });

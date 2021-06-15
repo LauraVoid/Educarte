@@ -13,6 +13,7 @@ import GroupIcon from "@material-ui/icons/Group";
 import { showMessage } from "../../actions/actionMessage";
 //import { DropzoneArea } from "material-ui-dropzone";
 import { DropzoneDialog } from "material-ui-dropzone";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -164,6 +165,7 @@ const CreateMessageCourse = (props) => {
 
   const handleSubmit = (event) => {
     var fdate = new Date();
+
     var data = {
       title: messageState.values.title,
       date:
@@ -171,11 +173,16 @@ const CreateMessageCourse = (props) => {
       message: messageState.values.message,
       roleReceiver: "course",
       receiver: receiver.id,
-      teacher: user.id, //como obtener el Id del teacher
+      teacher: user, //como obtener el Id del teacher
+      course: receiver.id,
     };
 
     axios
-      .post("/message/", data)
+      .post("/message/", data, {
+        headers: {
+          "x-access-token": props.token,
+        },
+      })
       .then((res) => {
         if (res.status === 200) {
           let message = {
@@ -187,7 +194,7 @@ const CreateMessageCourse = (props) => {
       })
       .catch((error) => {
         let message2 = {
-          errorMsg: "Ha ocurrido un error",
+          errorMsg: "Ha ocurrido un error. Inténtalo nuevamente",
           errorType: "error",
         };
         dispatch(showMessage(message2));
@@ -367,9 +374,12 @@ const CreateMessageCourse = (props) => {
 
 const mapStateToProps = (state) => ({
   user: state.login.id,
+  token: state.login.accessToken,
 });
 
 CreateMessageCourse.propTypes = {
   // instid: PropTypes.any,
+  user: PropTypes.number,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(CreateMessageCourse);

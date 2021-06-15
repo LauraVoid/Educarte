@@ -17,6 +17,7 @@ var studentRouter = require("./routes/student");
 var messageRouter = require("./routes/message");
 var contentRouter = require("./routes/content");
 var feedbackRouter = require("./routes/feedback");
+var homeworkRouter = require("./routes/homework");
 
 var app = express();
 
@@ -62,6 +63,7 @@ app.use("/student", studentRouter);
 app.use("/message", messageRouter);
 app.use("/content", contentRouter);
 app.use("/feed", feedbackRouter);
+app.use("/homework", homeworkRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

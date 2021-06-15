@@ -3,21 +3,21 @@ const config = require("../config/auth-config");
 const db = require("../model/index");
 const User = db.user;
 const Student = db.student;
-const Institution = db.institution
-const Parent= db.parent;
+const Institution = db.institution;
+const Parent = db.parent;
 
 verifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"]; 
+  let token = req.headers["x-access-token"];
   if (!token) {
     return res.status(403).send({
-      message: "No token provided"
+      message: "No token provided",
     });
   }
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
       return res.status(401).send({
-        message: "Unauthorized"
+        message: "Unauthorized",
       });
     }
     req.userId = decoded.id;
@@ -25,98 +25,82 @@ verifyToken = (req, res, next) => {
   });
 };
 
-
-isAdmin = (req, res, next) => { 
-  User.findByPk(req.userId).then(user => {   
-     
-        if (user.roleId === 1) {
-          next();
-          return;
-        }      
-
-      res.status(403).send({
-        message: "Require teacher Role!"
-      });
+isAdmin = (req, res, next) => {
+  User.findByPk(req.userId).then((user) => {
+    if (user.roleId === 1) {
+      next();
       return;
-    
+    }
+
+    res.status(403).send({
+      message: "Require teacher Role!",
+    });
+    return;
   });
 };
 
 isInst = (req, res, next) => {
-  Institution.findByPk(req.userId).then(user => {   
-    try{
+  Institution.findByPk(req.userId).then((user) => {
+    try {
       if (user.institutionId !== 0) {
         next();
         return;
-      }      
-  
-
-    }catch{
+      }
+    } catch {
       res.status(403).send({
-        message: "Require institution Role!"
+        message: "Require institution Role!",
       });
       return;
-    } 
-    
-  res.status(403).send({
-    message: "Require institution Role!"
-  });
-  return;
+    }
 
-});
+    res.status(403).send({
+      message: "Require institution Role!",
+    });
+    return;
+  });
 };
 
 isModerator = (req, res, next) => {
-  User.findByPk(req.userId).then(user => {   
-     
+  User.findByPk(req.userId).then((user) => {
     if (user.roleId === 2) {
       next();
       return;
     }
-  
 
-  res.status(403).send({
-    message: "Require teacher assistant Role!"
+    res.status(403).send({
+      message: "Require teacher assistant Role!",
+    });
+    return;
   });
-  return;
-
-});
 };
 
 isStudent = (req, res, next) => {
-  Student.findByPk(req.userId).then(user => {   
-     
+  Student.findByPk(req.userId).then((user) => {
     if (user.roleId === 3) {
       next();
       return;
     }
-  
 
-  res.status(403).send({
-    message: "Require student Role!"
+    res.status(403).send({
+      message: "Require student Role!",
+    });
+    return;
   });
-  return;
-
-});
 };
 
 isParent = (req, res, next) => {
-  Parent.findByPk(req.userId).then(user => {   
-     
+  Parent.findByPk(req.userId).then((user) => {
     if (user.parentId !== 0) {
       next();
       return;
     }
-  
 
-  res.status(403).send({
-    message: "Require parent Role!"
+    res.status(403).send({
+      message: "Require parent Role!",
+    });
+    return;
   });
-  return;
-
-});
 };
-
 
 const authJwt = {
   verifyToken: verifyToken,
@@ -125,6 +109,6 @@ const authJwt = {
   isStudent: isStudent,
   isInst: isInst,
   isParent: isParent,
- // isModeratorOrAdmin: isModeratorOrAdmin
+  // isModeratorOrAdmin: isModeratorOrAdmin
 };
 module.exports = authJwt;

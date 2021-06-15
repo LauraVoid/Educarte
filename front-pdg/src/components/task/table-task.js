@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
+import { showMessage } from "../../actions/actionMessage";
+import axios from "../../utils/axios";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -21,7 +24,12 @@ import Switch from "@material-ui/core/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import EditIcon from "@material-ui/icons/Edit";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 import { connect } from "react-redux";
 
@@ -55,9 +63,13 @@ const useStyles = makeStyles((theme) => ({
     padding: "10px",
     margin: "10px",
   },
+  progress: {
+    position: "fixed",
+    zIndex: 50,
+    top: "50%",
+    left: "50%",
+  },
 }));
-
-const rows = [];
 
 const headCells = [
   {
@@ -220,30 +232,160 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-function EnhancedTable() {
+function EnhancedTable(props) {
+  const { user } = props;
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [totalResults, setTotalResults] = React.useState(0);
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories"); ///change by other thing
   const [selected, setSelected] = React.useState([]);
+  const [reload, setReload] = React.useState(false);
+  const [viewProgress, setViewProgress] = React.useState(false);
   const [dense, setDense] = React.useState(true);
+  const [myCourses, setMyCourses] = React.useState([]);
   //Store all student
-  const [students, setStudents] = React.useState([
-    {
-      id: 1,
-      name: "vocales",
-      curso: "2A",
-      limitdate: "20/11/2021",
-    },
-    {
-      id: 2,
-      name: "numeros",
-      curso: "1B",
-      limitdate: "20/10/2021",
-    },
-  ]);
+  const [tasks, setTasks] = React.useState([]);
+  const [taskSelected, setTaskSelected] = React.useState([]);
+
+  const [open, setOpen] = React.useState(false);
+
+  function deleteTask() {
+    setViewProgress(true);
+
+    axios
+      .delete(`/homework/${taskSelected.id}`, {
+        headers: {
+          "x-access-token": props.token,
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          let sendmessage = {
+            errorMsg: "Tarea borrada con éxito",
+            errorType: "success",
+          };
+          setReload(!reload);
+          setViewProgress(false);
+          setOpen(false);
+          dispatch(showMessage(sendmessage));
+        } else {
+          setOpen(false);
+          setViewProgress(false);
+          console.log("hubo un error");
+        }
+      })
+      .catch((error) => {
+        setOpen(false);
+        setViewProgress(false);
+        let message1 = "mensaje";
+        switch (error.response.data.message) {
+          case "The id needs to be specified": {
+            message1 = "Selecciona una tarea";
+            break;
+          }
+          case "Homework probably to have any course": {
+            message1 = "Fue imposible borrar la tarea. Inténtalo de nuevo";
+            break;
+          }
+          default: {
+            message1 = "Algo salió mal. No fue posible borrar el estudiante";
+          }
+        }
+        let message = {
+          errorMsg: message1,
+          errorType: "error",
+        };
+        dispatch(showMessage(message));
+      });
+  }
+
+  const handleClickOpen = (row) => {
+    setTaskSelected(row);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleReload = () => {
+    setReload(!reload);
+  };
+
+  const getTasks = () => {
+    setViewProgress(true);
+    axios
+      .get(`homework/${user}?page=${page}&&limit=${rowsPerPage}`, {
+        headers: {
+          "x-access-token": props.token,
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setTasks(res.data);
+          setViewProgress(false);
+        }
+      })
+      .catch(() => {
+        setViewProgress(false);
+        let message = {
+          errorMsg:
+            "Hubo un error al cargar las tareas, por favor intente más tarde.",
+          errorType: "error",
+        };
+        dispatch(showMessage(message));
+      });
+  };
+  const getNumOfTasks = () => {
+    let route = `/homework/count/${user}`;
+    axios
+      .get(route, {
+        headers: {
+          "x-access-token": props.token,
+        },
+      })
+      .then((response) => {
+        setTotalResults(response.data.total);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+  useEffect(() => {
+    getNumOfTasks();
+    getTasks();
+  }, [page, rowsPerPage]);
+
+  useEffect(() => {
+    getNumOfTasks();
+    getTasks();
+  }, [reload]);
+
+  useEffect(async () => {
+    let route = `/course/teacher/${user}`;
+    await axios
+      .get(route, {
+        headers: {
+          "x-access-token": props.token,
+        },
+      })
+      .then((result) => {
+        console.log(result.data);
+        setMyCourses(result.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [reload]);
+
+  const nameCourse = (id) => {
+    if (myCourses.length > 0) {
+      return myCourses.find((ew) => ew.id === id).name;
+    }
+  };
 
   const numOfPages = () => {
     return Math.ceil(totalResults / rowsPerPage);
@@ -257,7 +399,7 @@ function EnhancedTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = tasks.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -317,20 +459,21 @@ function EnhancedTable() {
                 orderBy={orderBy}
                 onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                rowCount={tasks.length}
               />
               <TableBody onChangePage={handleChangePage}>
-                {stableSort(students, getComparator(order, orderBy)).map(
+                {stableSort(tasks, getComparator(order, orderBy)).map(
                   (row, index) => {
-                    const isItemSelected = isSelected(students.name);
+                    const isItemSelected = isSelected(tasks.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                       <TableRow
                         hover
                         role="checkbox"
+                        onClick={(event) => handleClick(event, row.id)}
                         tabIndex={-1}
-                        key={row.name}
+                        key={row.id}
                         aria-checked={isItemSelected}
                       >
                         <TableCell padding="checkbox"></TableCell>
@@ -342,12 +485,18 @@ function EnhancedTable() {
                         >
                           {row.id}
                         </TableCell>
-                        <TableCell align="left">{row.name}</TableCell>
-                        <TableCell align="left">{row.curso}</TableCell>
-                        <TableCell align="left">{row.limitdate}</TableCell>
+                        <TableCell align="left">{row.title}</TableCell>
+                        <TableCell align="left">
+                          {nameCourse(row.courseId)}
+                        </TableCell>
+                        <TableCell align="left">{row.endDate}</TableCell>
                         <TableCell align="left">
                           <IconButton>
-                            <DeleteForeverIcon></DeleteForeverIcon>
+                            <DeleteForeverIcon
+                              onClick={() => {
+                                handleClickOpen(row);
+                              }}
+                            ></DeleteForeverIcon>
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -380,15 +529,45 @@ function EnhancedTable() {
           control={<Switch checked={dense} onChange={handleChangeDense} />}
           label="Ajustar tabla"
         />
+        {/* Dialog for delete a homework */}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Advertencia"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              ¿Está seguro que desea borrar esta tarea?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleClose} color="primary">
+              NO
+            </Button>
+            <Button onClick={deleteTask} color="primary" autoFocus>
+              SÍ
+            </Button>
+          </DialogActions>
+        </Dialog>
+        {viewProgress ? (
+          <CircularProgress className={classes.progress}></CircularProgress>
+        ) : (
+          <></>
+        )}
       </div>
     </Grid>
   );
 }
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  user: state.login.id,
+  token: state.login.accessToken,
 });
 
 EnhancedTable.propTypes = {
-  // instid: PropTypes.any,
+  user: PropTypes.number,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(EnhancedTable);

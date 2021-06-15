@@ -11,6 +11,7 @@ import validate from "validate.js";
 import axios from "../../utils/axios";
 import PersonIcon from "@material-ui/icons/Person";
 import { showMessage } from "../../actions/actionMessage";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -149,11 +150,16 @@ const CreateMessageParent = (props) => {
       message: messageState.values.message,
       roleReceiver: "parent",
       receiver: receiver.id,
-      teacher: user.id, //como obtener el Id del teacher
+      teacher: user, //como obtener el Id del teacher
+      parent: receiver.id,
     };
 
     axios
-      .post("/message/", data)
+      .post("/message/", data, {
+        headers: {
+          "x-access-token": props.token,
+        },
+      })
       .then((res) => {
         if (res.status === 200) {
           let message = {
@@ -165,7 +171,7 @@ const CreateMessageParent = (props) => {
       })
       .catch((error) => {
         let message2 = {
-          errorMsg: "Ha ocurrido un error",
+          errorMsg: "Ha ocurrido un error. Inténtalo de nuevo",
           errorType: "error",
         };
         dispatch(showMessage(message2));
@@ -316,9 +322,11 @@ const CreateMessageParent = (props) => {
 
 const mapStateToProps = (state) => ({
   user: state.login.id,
+  token: state.login.accessToken,
 });
 
 CreateMessageParent.propTypes = {
-  // instid: PropTypes.any,
+  user: PropTypes.number,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(CreateMessageParent);
