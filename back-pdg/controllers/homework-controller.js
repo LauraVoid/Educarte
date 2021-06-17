@@ -17,6 +17,8 @@ exports.create = async function (req, res, next) {
     courseId: req.body.courseId,
     teacherId: req.body.teacherId,
   });
+
+  return res.status(200).json({ result });
 };
 exports.findHomeWorksByTeacher = async function (req, res, next) {
   const page = parseInt(req.query.page);
