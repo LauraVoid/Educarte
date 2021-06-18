@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { Grid, IconButton, Typography, Badge } from "@material-ui/core";
 import ForumIcon from "@material-ui/icons/Forum";
@@ -6,6 +6,8 @@ import EventNoteIcon from "@material-ui/icons/EventNote";
 import PeopleIcon from "@material-ui/icons/People";
 import SchoolIcon from "@material-ui/icons/School";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import axios from "../../../utils/axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,8 +24,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MenuTeacher = () => {
+const MenuTeacher = (props) => {
   const classes = useStyles();
+  const [numberMessages, setNumberMessages] = useState(0);
+  const { user, token } = props;
+
+  useEffect(() => {
+    axios
+      .get(`/message/teacher/${user}`, {
+        headers: {
+          "x-access-token": token,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          setNumberMessages(res.data.total);
+        }
+      });
+  }, []);
 
   return (
     <div>
@@ -34,7 +53,7 @@ const MenuTeacher = () => {
             color="primary"
             href="/messagesteacher"
           >
-            <Badge color="error" badgeContent={999}>
+            <Badge color="error" badgeContent={numberMessages}>
               <ForumIcon className={classes.icon} color="action" />
             </Badge>
           </IconButton>
@@ -96,10 +115,12 @@ const MenuTeacher = () => {
 };
 
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  user: state.login.id,
+  token: state.login.accessToken,
 });
 
 MenuTeacher.propTypes = {
-  // instid: PropTypes.any,
+  user: PropTypes.number,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(MenuTeacher);

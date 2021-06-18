@@ -24,17 +24,15 @@ exports.index = async function (req, res) {
     return res.status(200).send(result);
   });
 };
-exports.all = async function(req,res){
-  
+exports.all = async function (req, res) {
   await Teacher.findAll({
     where: {
-      institutionId: req.params.id
-    }
+      institutionId: req.params.id,
+    },
   }).then((result) => {
     return res.status(200).send(result);
   });
-
-}
+};
 
 exports.count = async function (req, res) {
   await Teacher.findAll().then((result) => {
@@ -187,6 +185,35 @@ exports.findCoursesByTeacher = async function (req, res, next) {
       })
     );
     res.status(200).send(courses);
+  } else {
+    res
+      .status(406)
+      .send({ message: "This teacher doesn't have a course assigned" });
+  }
+};
+
+exports.findStudentsByTeacher = async function (req, res, next) {
+  const students = [];
+  const coursesFound = await TeacherCourse.findAll({
+    where: {
+      teacherId: req.params.teacherId,
+      courseId: {
+        [op.ne]: null,
+      },
+    },
+  });
+
+  if (coursesFound !== 0) {
+    await Promise.all(
+      coursesFound.map(async (course) => {
+        await Student.findAll({
+          where: {
+            courseId: course.courseId,
+          },
+        }).then((crs) => students.push(crs));
+      })
+    );
+    res.status(200).send(students);
   } else {
     res
       .status(406)

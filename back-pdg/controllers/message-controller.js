@@ -1,4 +1,5 @@
 const Message = require("../model/Message");
+const Parent = require("../model/Parent");
 var bcrypt = require("bcryptjs");
 const seq = require("sequelize");
 const op = seq.Op;
@@ -24,5 +25,50 @@ exports.create = async function (req, res, next) {
     return res
       .status(406) //NOT ACCEPTABLE SINCE THE BODY IS WRONG
       .send({ error: "Ha ocurrido un error, intentalo de nuevo" });
+  }
+};
+
+exports.countMessagesTeacher = async function (req, res, next) {
+  try {
+    await Message.findAll({
+      where: {
+        roleReceiver: "teacher",
+        receiver: req.params.teacherId,
+      },
+    }).then((result) => {
+      const total = result.length;
+      return res.status(200).json({
+        total,
+      });
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+exports.findAllMessagesTeacher = async function (req, res, next) {
+  const messagesTotal = [];
+  try {
+    await Message.findAll({
+      where: {
+        roleReceiver: "teacher",
+        receiver: req.params.teacherId,
+      },
+    }).then(async (result) => {
+      await Promise.all(
+        await result.map(async (message) => {
+          if (message.parentId !== null) {
+            const objP = await Parent.findByPk(message.parentId);
+            const union = { message, ...objP };
+            messagesTotal.push(union);
+          }
+        })
+      );
+      return res.status(200).json({
+        messagesTotal,
+      });
+    });
+  } catch (err) {
+    console.log(err);
   }
 };

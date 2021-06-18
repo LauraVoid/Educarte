@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import {
   Grid,
   Typography,
@@ -18,6 +19,8 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import CommentIcon from "@material-ui/icons/Comment";
 import ForumIcon from "@material-ui/icons/Forum";
 import AddIcon from "@material-ui/icons/Add";
+import axios from "../../../utils/axios";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,6 +35,12 @@ const useStyles = makeStyles((theme) => ({
     justifyItems: "center",
     marginBottom: "2%",
   },
+  progress: {
+    position: "fixed",
+    zIndex: 50,
+    top: "50%",
+    left: "50%",
+  },
 }));
 
 const studentTest = [
@@ -43,8 +52,35 @@ const studentTest = [
   { id: "6", name: "David Fides", lastname: "Obando" },
 ];
 
-const StudentsTeacher = () => {
+const StudentsTeacher = (props) => {
   const classes = useStyles();
+  const [students, setStudents] = useState([]);
+  const [viewProgress, setViewProgress] = useState(false);
+  const { user, token } = props;
+
+  useEffect(() => {
+    console.log("Entre al useEffect");
+    setViewProgress(true);
+    if (students.length === 0) {
+      axios
+        .get(`/teacher/students/${user}`, {
+          headers: {
+            "x-access-token": token,
+          },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res.data[0]);
+            setStudents(res.data[0]);
+            setViewProgress(false);
+          }
+        })
+        .catch(() => {
+          setViewProgress(false);
+        });
+    }
+  }, []);
+
   return (
     <div>
       <Paper>
@@ -61,7 +97,7 @@ const StudentsTeacher = () => {
           </Grid>
           <Grid item xs={12}>
             <List className={classes.root}>
-              {studentTest.map((stud) => {
+              {students.map((stud) => {
                 return (
                   <ListItem key={`${stud.id}`} button alignItems="center">
                     <Grid container>
@@ -109,16 +145,23 @@ const StudentsTeacher = () => {
             </Button>
           </Grid>
         </Grid>
+        {viewProgress ? (
+          <CircularProgress className={classes.progress}></CircularProgress>
+        ) : (
+          <></>
+        )}
       </Paper>
     </div>
   );
 };
 
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  user: state.login.id,
+  token: state.login.accessToken,
 });
 
 StudentsTeacher.propTypes = {
-  // instid: PropTypes.any,
+  user: PropTypes.number,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(StudentsTeacher);

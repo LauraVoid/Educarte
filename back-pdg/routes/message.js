@@ -9,4 +9,17 @@ router.post(
   [authJwt.verifyToken, authJwt.isAdmin],
   message_controller.create
 );
+
+router.get(
+  "/teacher/:teacherId",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  message_controller.countMessagesTeacher
+);
+
+router.get(
+  "/teacher/messages/:teacherId",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  message_controller.findAllMessagesTeacher
+);
+
 module.exports = router;

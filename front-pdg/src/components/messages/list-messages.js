@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import {
@@ -19,6 +19,8 @@ import EmailIcon from "@material-ui/icons/Email";
 import DoneOutlineIcon from "@material-ui/icons/DoneOutline";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
+import axios from "../../utils/axios";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,19 +37,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const messagesTest = [
-  {
-    id: "1",
-    sender: "Pepito Alfonso Gutierrez Payares",
-    description: "Asistencia",
-  },
-  { id: "2", sender: "Laura Eustaquia", description: "Nuevo Correo" },
-  { id: "3", sender: "David Pancrasio", description: "Clase presencial" },
-  { id: "4", sender: "Douglas", description: "Tarea pendiente" },
-];
-
-const MessagesExplorer = () => {
+const MessagesExplorer = (props) => {
   const classes = useStyles();
+  const { user, token } = props;
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`/message/teacher/messages/${user}`, {
+        headers: {
+          "x-access-token": token,
+        },
+      })
+      .then((result) => {
+        setMessages(result.data.messagesTotal);
+        console.log(messages);
+        console.log(messages[0].dataValues);
+      });
+  }, []);
+
   return (
     <div>
       <Paper>
@@ -64,9 +72,13 @@ const MessagesExplorer = () => {
           </Grid>
           <Grid item xs={12}>
             <List className={classes.root}>
-              {messagesTest.map((msg) => {
+              {messages.map((msg) => {
                 return (
-                  <ListItem key={`${msg.id}`} button alignItems="center">
+                  <ListItem
+                    key={`${msg.message.id}`}
+                    button
+                    alignItems="center"
+                  >
                     <Grid container>
                       <Grid container sm={4} xs={4}>
                         <Grid item sm={3} xs={12}>
@@ -76,15 +88,19 @@ const MessagesExplorer = () => {
                         </Grid>
                         <Grid item sm={8} xs={12}>
                           <ListItemText
-                            id={`${msg.id}`}
-                            primary={`${msg.sender}`}
+                            id={`${msg.message.id}`}
+                            primary={
+                              `${msg.dataValues.name}` +
+                              ` ` +
+                              `${msg.dataValues.lastname}`
+                            }
                           />
                         </Grid>
                       </Grid>
                       <Grid item sm={4} xs={4} className={classes.centrado}>
                         <ListItemText
-                          id={`${msg.id}`}
-                          primary={`${msg.description}`}
+                          id={`${msg.message.id}`}
+                          primary={`${msg.message.title}`}
                         />
                       </Grid>
                       <Grid item sm={4} xs={4}>
@@ -124,10 +140,12 @@ const MessagesExplorer = () => {
 };
 
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  user: state.login.id,
+  token: state.login.accessToken,
 });
 
 MessagesExplorer.propTypes = {
-  // instid: PropTypes.any,
+  user: PropTypes.number,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(MessagesExplorer);
