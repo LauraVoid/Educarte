@@ -14,7 +14,7 @@ import MainLayout from "./layouts/Main/Main";
 
 //pages for main view
 import Home from "./pages/Home/Home";
-import Content from "./pages/Home/Content"
+import Content from "./pages/Home/Content";
 //pages for institution
 import MainInstitution from "./pages/Institution/home";
 
@@ -29,6 +29,7 @@ import TeacherExplorer from "./pages/teacher/list-teacher";
 import CreateTeacher from "./pages/teacher/add-teacher";
 import MessageTeacher from "./pages/messages/message-teacher";
 import Feedback from "./components/teacher/feedback";
+import CreateMeeting from "./pages/meeting/create-meeting";
 
 //pages for tasks
 import TaskExplorer from "./pages/task/list-task";
@@ -39,7 +40,7 @@ import CreateMessageParent from "./pages/messages/create-message-parent";
 import CreateMessageCourse from "./pages/messages/create-message-course";
 
 //pages for parents
-import MainParent from "./pages/parent/main"
+import MainParent from "./pages/parent/main";
 import FeedExplorer from "./pages/parent/list-feedbacks";
 
 import { store } from "./store/store";
@@ -48,47 +49,54 @@ export default (
   <Provider store={store}>
     <BrowserRouter basename="/">
       <Switch>
-        <Route path="/login"
-          component={Login} />
+        <Route path="/login" component={Login} />
         <RouteWithLayout
           path="/feedback"
           layout={MainLayout}
-          component={Feedback} />
+          component={Feedback}
+        />
 
         <RouteWithLayout
           path="/feed"
           layout={MainLayout}
-          component={FeedExplorer} />
+          component={FeedExplorer}
+        />
 
         <RouteWithLayout
           path="/parent"
           layout={MainLayout}
-          component={MainParent} />
+          component={MainParent}
+        />
 
         <RouteWithLayout
           path="/student"
           layout={MainLayout}
-          component={MainStudent} />
+          component={MainStudent}
+        />
 
         <RouteWithLayout
           path="/institution"
           layout={MainLayout}
-          component={MainInstitution} />
+          component={MainInstitution}
+        />
 
         <RouteWithLayout
           path="/createcourse"
           layout={MainLayout}
-          component={Createcourse} />
+          component={Createcourse}
+        />
 
         <RouteWithLayout
           path="/editcourse"
           layout={MainLayout}
-          component={EditCourse} />
+          component={EditCourse}
+        />
 
         <RouteWithLayout
           path="/courses"
           layout={MainLayout}
-          component={ListCourse} />
+          component={ListCourse}
+        />
         <RouteWithLayout exact path="/" layout={Minimal} component={Home} />
 
         <RouteWithLayout
@@ -150,6 +158,11 @@ export default (
           path="/createmessagecourse"
           layout={MainLayout}
           component={CreateMessageCourse}
+        />
+        <RouteWithLayout
+          path="/createmeeting"
+          layout={MainLayout}
+          component={CreateMeeting}
         />
       </Switch>
     </BrowserRouter>

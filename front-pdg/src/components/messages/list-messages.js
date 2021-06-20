@@ -20,7 +20,11 @@ import DoneOutlineIcon from "@material-ui/icons/DoneOutline";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
 import axios from "../../utils/axios";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import PropTypes from "prop-types";
+import Tooltip from "@material-ui/core/Tooltip";
+import { useDispatch } from "react-redux";
+import { showMessage } from "../../actions/actionMessage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,14 +39,23 @@ const useStyles = makeStyles((theme) => ({
     justifyItems: "center",
     marginBottom: "2%",
   },
+  progress: {
+    position: "fixed",
+    zIndex: 50,
+    top: "50%",
+    left: "50%",
+  },
 }));
 
 const MessagesExplorer = (props) => {
   const classes = useStyles();
   const { user, token } = props;
   const [messages, setMessages] = useState([]);
+  const [viewProgress, setViewProgress] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    setViewProgress(true);
     axios
       .get(`/message/teacher/messages/${user}`, {
         headers: {
@@ -50,9 +63,16 @@ const MessagesExplorer = (props) => {
         },
       })
       .then((result) => {
+        setViewProgress(false);
         setMessages(result.data.messagesTotal);
-        console.log(messages);
-        console.log(messages[0].dataValues);
+      })
+      .catch(() => {
+        let message2 = {
+          errorMsg: "Ha ocurrido un error. Inténtalo de nuevo",
+          errorType: "error",
+        };
+        dispatch(showMessage(message2));
+        setViewProgress(false);
       });
   }, []);
 
@@ -105,15 +125,21 @@ const MessagesExplorer = (props) => {
                       </Grid>
                       <Grid item sm={4} xs={4}>
                         <ListItemSecondaryAction>
-                          <IconButton edge="end" aria-label="comments">
-                            <EmailIcon />
-                          </IconButton>
-                          <IconButton edge="end" aria-label="comments">
-                            <DoneOutlineIcon />
-                          </IconButton>
-                          <IconButton edge="end" aria-label="comments">
-                            <DeleteIcon />
-                          </IconButton>
+                          <Tooltip title="Responder" aria-label="add">
+                            <IconButton edge="end" aria-label="comments">
+                              <EmailIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Marcar como leído" aria-label="add">
+                            <IconButton edge="end" aria-label="comments">
+                              <DoneOutlineIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Borrar" aria-label="add">
+                            <IconButton edge="end" aria-label="comments">
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
                         </ListItemSecondaryAction>
                       </Grid>
                     </Grid>
@@ -134,6 +160,11 @@ const MessagesExplorer = (props) => {
             </Button>
           </Grid>
         </Grid>
+        {viewProgress ? (
+          <CircularProgress className={classes.progress}></CircularProgress>
+        ) : (
+          <></>
+        )}
       </Paper>
     </div>
   );
