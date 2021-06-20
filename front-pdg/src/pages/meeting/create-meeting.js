@@ -4,7 +4,7 @@ import { Grid, Box } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import bgd from "../../img/backgrounds/B6.png";
-import FormCreateMessage from "../../components/messages/create-message-course";
+import FormCreateMeeting from "../../components/meeting/create-meeting";
 
 // CSS OF THIS TEMPLATE
 const useStyles = makeStyles((theme) => ({
@@ -36,7 +36,7 @@ const CreateMeeting = () => {
     <div className={classes.divContainer}>
       <Grid container>
         <Grid item xs={12}>
-          <h1 className={classes.title}>Crear mensaje</h1>
+          <h1 className={classes.title}>Crear reunión</h1>
         </Grid>
       </Grid>
       <Grid container className={classes.root} justify="center">
@@ -45,7 +45,7 @@ const CreateMeeting = () => {
           color="text.primary"
           justifyContent="center"
         >
-          <FormCreateMessage></FormCreateMessage>
+          <FormCreateMeeting></FormCreateMeeting>
         </Box>
       </Grid>
     </div>

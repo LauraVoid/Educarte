@@ -10,6 +10,7 @@ const Teacher_Course = require("./Teacher_Course");
 const Message = require("./Message");
 const Competence = require("./Competence");
 const Feedback = require("./Feedback");
+const Meeting = require("./Meeting");
 
 //Institution --> Courses
 
@@ -185,4 +186,21 @@ Student.hasMany(Feedback, {
 });
 Feedback.belongsTo(Student, {
   foreignKey: "studentId",
+});
+
+//*************************
+//Association of Meeting
+//*************************
+Teacher.hasMany(Meeting, {
+  foreignKey: "teacherId",
+});
+Meeting.belongsTo(Teacher, {
+  foreignKey: "teacherId",
+});
+
+Course.hasMany(Meeting, {
+  foreignKey: "courseId",
+});
+Meeting.belongsTo(Course, {
+  foreignKey: "courseId",
 });
