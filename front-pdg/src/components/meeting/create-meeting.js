@@ -65,16 +65,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const message = {
-  title: {
+const meeting = {
+  name: {
     presence: { allowEmpty: false, message: "El asunto es requerido" },
   },
-  message: {
+  description: {
     presence: { allowEmpty: false, message: "El mensaje es requerido" },
     length: {
       maximum: 64,
       minimum: 1,
     },
+  },
+  date: {
+    presence: { allowEmpty: false, message: "La fecha de inicio es requerida" },
+  },
+  time: {
+    presence: { allowEmpty: false, message: "La hora de inicio es requerida" },
   },
 };
 
@@ -82,10 +88,8 @@ const CreateMessageCourse = (props) => {
   const { user } = props;
   const classes = useStyles();
   /* Serve for setting select */
-  const [receiver, setReceiver] = React.useState("");
-  const [open, setOpen] = React.useState(false);
   const dispatch = useDispatch();
-  const [messageState, setMessageState] = React.useState({
+  const [meetingState, setMeetingState] = React.useState({
     isValid: false,
     values: {},
     touched: {},
@@ -97,35 +101,35 @@ const CreateMessageCourse = (props) => {
   const handleChange = (event) => {
     event.persist();
 
-    setMessageState((messageState) => ({
-      ...messageState,
+    setMeetingState((meetingState) => ({
+      ...meetingState,
       values: {
-        ...messageState.values,
+        ...meetingState.values,
         [event.target.name]: event.target.value,
       },
       touched: {
-        ...messageState.touched,
+        ...meetingState.touched,
         [event.target.name]: true,
       },
     }));
   };
 
   useEffect(() => {
-    const errors = validate(messageState.values, message);
-    setMessageState((messageState) => ({
-      ...messageState,
+    const errors = validate(meetingState.values, meeting);
+    setMeetingState((meetingState) => ({
+      ...meetingState,
       isValid: errors ? false : true,
       errors: errors || {},
     }));
-  }, [messageState.values]);
+  }, [meetingState.values]);
 
   const hasError = (field) => {
-    return messageState.touched[field] && messageState.errors[field]
+    return meetingState.touched[field] && meetingState.errors[field]
       ? true
       : false;
   };
 
-/*   const handleSubmit = (event) => {
+  /*   const handleSubmit = (event) => {
     var fdate = new Date();
 
     var data = {
@@ -172,21 +176,50 @@ const CreateMessageCourse = (props) => {
               <TextField
                 className={classes.componentsItems}
                 id="standard-basic"
-                label="Asunto"
-                name="title"
+                label="Título"
+                name="name"
                 onChange={handleChange}
-                error={hasError("title")}
+                error={hasError("name")}
                 helperText={
-                  hasError("title") ? "Debes ingresar un asunto" : null
+                  hasError("name") ? "Debes ingresar un título" : null
                 }
               />
             </Grid>
             <Grid item xs={12} className={classes.centrado}>
-              <FormControl className={classes.formControl}>
-              </FormControl>
+              <TextField
+                id="date"
+                label="Fecha de inicio"
+                type="date"
+                //defaultValue="2021-06-30"
+                className={classes.textField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                name="date"
+                onChange={handleChange}
+                error={hasError("date")}
+                helperText={
+                  hasError("date") ? "Debes ingresar una fecha de inicio" : null
+                }
+              />
             </Grid>
             <Grid item xs={12} className={classes.centrado}>
-              
+              <TextField
+                id="date"
+                label="Fecha de inicio"
+                type="time"
+                //defaultValue="2021-06-30"
+                className={classes.textField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                name="time"
+                onChange={handleChange}
+                error={hasError("time")}
+                helperText={
+                  hasError("time") ? "Debes ingresar una hora de inicio" : null
+                }
+              />
             </Grid>
           </form>
         </Grid>
@@ -194,16 +227,18 @@ const CreateMessageCourse = (props) => {
           <form className={classes.root}>
             <Grid item xs={12} className={classes.centrado}>
               <TextField
-                label="Mensaje"
+                label="Descripción"
                 placeholder="Ingresa enlaces y/o descripción"
                 multiline
                 rows={4}
                 rowsMax={6}
-                name="message"
+                name="description"
                 onChange={handleChange}
-                error={hasError("message")}
+                error={hasError("description")}
                 helperText={
-                  hasError("message") ? "Debes ingresar una descripción" : null
+                  hasError("description")
+                    ? "Debes ingresar una descripción"
+                    : null
                 }
               />
             </Grid>
@@ -216,10 +251,7 @@ const CreateMessageCourse = (props) => {
             size="large"
             endIcon={<SendIcon></SendIcon>}
             className={classes.send}
-            disabled={
-              !messageState.isValid || receiver === "" || receiver === null
-            }
-            
+            disabled={!meetingState.isValid}
           >
             Crear reunión
           </Button>
