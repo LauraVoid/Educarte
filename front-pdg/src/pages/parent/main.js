@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import bgd from "../../img/backgrounds/B7.png";
 import BannerParent from "../../components/parent/banner";
-import StudentsTeacher from "../../components/teacher/home/students-teacher";
+import Student from "../../components/parent/student";
 import Meeting from "../../components/parent/meeting";
 
 // CSS OF THIS TEMPLATE
@@ -106,7 +106,7 @@ const HomeParent = () => {
         </Paper>
         <Grid item xs={12} sm={6}>
           <Paper className={classes.paperStudents} elevation={10}>
-            <StudentsTeacher></StudentsTeacher>
+            <Student></Student>
           </Paper>
         </Grid>
         <Grid item xs={12} sm={6}>

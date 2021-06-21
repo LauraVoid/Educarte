@@ -9,5 +9,5 @@ router.post(
   [authJwt.verifyToken, authJwt.isAdmin],
   meeting_controller.create
 );
-
+router.get("/:id",meeting_controller.index);
 module.exports = router;

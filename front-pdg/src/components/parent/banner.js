@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
-import { Grid, IconButton, Typography, Badge } from "@material-ui/core";
+import { Grid, IconButton, Typography } from "@material-ui/core";
 import ForumIcon from "@material-ui/icons/Forum";
 import EventNoteIcon from "@material-ui/icons/EventNote";
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
@@ -33,9 +33,9 @@ const MenuParent = () => {
             color="primary"
             href="/messagesteacher"
           >
-            <Badge color="error" badgeContent={999}>
+            
               <ForumIcon className={classes.icon} color="action" />
-            </Badge>
+           
           </IconButton>
           <Typography
             className="title"

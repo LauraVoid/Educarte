@@ -209,6 +209,8 @@ exports.signin = (req, res) => {
             name: user.name+" "+ user.lastname,
             accessToken: token,
             studentId: stud.id,
+            studentName: stud.name +" "+stud.lastname,
+            courseId: stud.courseId,
           })
         })
 
