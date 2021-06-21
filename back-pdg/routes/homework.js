@@ -9,7 +9,6 @@ router.post(
   [authJwt.verifyToken, authJwt.isAdmin],
   homework_controller.create
 );
-module.exports = router;
 
 /* GET homework. */
 router.get(
@@ -29,3 +28,4 @@ router.delete(
   [authJwt.verifyToken, authJwt.isAdmin],
   homework_controller.delete
 );
+module.exports = router;

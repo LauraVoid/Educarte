@@ -18,6 +18,7 @@ var messageRouter = require("./routes/message");
 var contentRouter = require("./routes/content");
 var feedbackRouter = require("./routes/feedback");
 var homeworkRouter = require("./routes/homework");
+var meetingRouter = require("./routes/meeting");
 
 var app = express();
 
@@ -64,6 +65,7 @@ app.use("/message", messageRouter);
 app.use("/content", contentRouter);
 app.use("/feed", feedbackRouter);
 app.use("/homework", homeworkRouter);
+app.use("/meeting", meetingRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

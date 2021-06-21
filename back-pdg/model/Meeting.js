@@ -25,26 +25,30 @@ module.exports = sequelize.define("Meeting", {
   },
   link: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   password: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+  isVirtual: {
     type: Sequelize.STRING,
     allowNull: false,
   },
   token: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   clientId: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   clientSecret: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   location: {
     type: Sequelize.STRING,
-    allowNull: false,
+    allowNull: true,
   },
 });
