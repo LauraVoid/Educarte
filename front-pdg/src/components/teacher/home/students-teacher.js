@@ -131,6 +131,7 @@ const StudentsTeacher = (props) => {
               color="primary"
               size="small"
               endIcon={<AddIcon />}
+              href="/teacherstudents/"
             >
               Ver más
             </Button>
