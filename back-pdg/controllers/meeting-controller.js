@@ -134,3 +134,74 @@ exports.create = async function (req, res) {
       .send({ error: "Error" });
   }
 };
+
+//Returning all meetins belongs to a teacher which is passed by parameter.
+exports.findMeetingsByTeacher = async function (req, res) {
+  if (req.params.id !== undefined) {
+    await Meeting.findAll({
+      where: {
+        teacherId: req.params.id,
+      },
+    }).then((resp) => {
+      return res.status(200).send(resp);
+    });
+  } else {
+    res.status(406).send({ message: "Error" });
+  }
+};
+
+//Returning the total meetings that have been created by a specific teacher
+exports.count = async function (req, res) {
+  await Meeting.findAll({
+    where: {
+      teacherId: req.params.id,
+    },
+  }).then((result) => {
+    const total = result.length;
+    return res.status(200).json({
+      total,
+    });
+  });
+};
+
+const getPagination = (page, size) => {
+  const limit = size ? +size : 5;
+  const offset = page ? page * limit : 0;
+
+  return { limit, offset };
+};
+
+exports.index = async function (req, res) {
+  const page = parseInt(req.query.page);
+  const size = parseInt(req.query.limit);
+
+  const { limit, offset } = getPagination(page, size);
+
+  await Meeting.findAll({
+    limit,
+    offset,
+    where: {
+      teacherId: req.params.id,
+    },
+  }).then((result) => {
+    return res.status(200).send(result);
+  });
+};
+
+exports.delete = async function (req, res) {
+  await Meeting.destroy({
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then(() => {
+      res.status(200).send("Meeting was success deleted");
+    })
+    .catch((error) => {
+      if (req.params.id === undefined) {
+        res.status(406).send("The id needs to be specified");
+      } else {
+        res.status(406).send("Error");
+      }
+    });
+};

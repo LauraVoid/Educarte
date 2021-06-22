@@ -30,6 +30,7 @@ import CreateTeacher from "./pages/teacher/add-teacher";
 import MessageTeacher from "./pages/messages/message-teacher";
 import Feedback from "./components/teacher/feedback";
 import CreateMeeting from "./pages/meeting/create-meeting";
+import MeetingsTeacherExplorer from "./pages/meeting/list-teacher";
 
 //pages for tasks
 import TaskExplorer from "./pages/task/list-task";
@@ -163,6 +164,11 @@ export default (
           path="/createmeeting"
           layout={MainLayout}
           component={CreateMeeting}
+        />
+        <RouteWithLayout
+          path="/meetingsteacher"
+          layout={MainLayout}
+          component={MeetingsTeacherExplorer}
         />
       </Switch>
     </BrowserRouter>

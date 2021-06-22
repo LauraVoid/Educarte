@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import {
@@ -8,8 +8,18 @@ import {
   Button,
   Card,
   CardContent,
+  IconButton,
+  Tooltip,
 } from "@material-ui/core/";
 import AddIcon from "@material-ui/icons/Add";
+import PropTypes from "prop-types";
+import axios from "../../../utils/axios";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import FileCopyIcon from "@material-ui/icons/FileCopy";
+import PlayCircleFilledWhiteIcon from "@material-ui/icons/PlayCircleFilledWhite";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useDispatch } from "react-redux";
+import { showMessage } from "../../../actions/actionMessage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,16 +42,55 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: "3%",
     marginTop: "2%",
   },
+  progress: {
+    position: "fixed",
+    zIndex: 50,
+    top: "50%",
+    left: "50%",
+  },
 }));
 
-const meetingTest = [
-  { id: "1", title: "Matemáticas", date: "10/10/2021 7:00 am" },
-  { id: "2", title: "Español", date: "10/10/2021 9:00 am" },
-  { id: "3", title: "Naturales", date: "10/10/2021 11:00 am" },
-];
-
-const MeetingTeacher = () => {
+const MeetingTeacher = (props) => {
   const classes = useStyles();
+  const [meetings, setMeetings] = useState([]);
+  const [viewProgress, setViewProgress] = useState(false);
+  const [copy, setCopy] = useState(false);
+  let dispatch = useDispatch();
+  const { user, token } = props;
+
+  useEffect(() => {
+    setViewProgress(true);
+    if (meetings.length === 0) {
+      axios
+        .get(`/meeting/${user}`, {
+          headers: {
+            "x-access-token": token,
+          },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setMeetings(res.data);
+            console.log(res.data);
+            setViewProgress(false);
+          }
+        })
+        .catch(() => {
+          setViewProgress(false);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (copy) {
+      let message = {
+        errorMsg: "Enlace copiado",
+        errorType: "success",
+      };
+      dispatch(showMessage(message));
+      setCopy(false);
+    }
+  }, [copy]);
+
   return (
     <div>
       <Paper>
@@ -57,32 +106,83 @@ const MeetingTeacher = () => {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            {meetingTest.map((meet) => {
+            {meetings.map((meet) => {
               return (
                 <Card className={classes.card}>
                   <Grid container>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={3}>
                       <CardContent>
                         <Typography
                           className={classes.title}
                           color="textSecondary"
                           gutterBottom
                         >
-                          {`${meet.title}`}
+                          {`${meet.name}`}
                         </Typography>
                       </CardContent>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
+                    <Grid item xs={12} sm={4}>
                       <CardContent>
                         <Typography
                           className={classes.title}
                           color="textSecondary"
                           gutterBottom
                         >
-                          {`${meet.date}`}
+                          {`${meet.date}` + " " + `${meet.time}`}
                         </Typography>
                       </CardContent>
                     </Grid>
+                    {meet.isVirtual === "F" ? (
+                      <Grid item xs={12} sm={4}>
+                        <CardContent>
+                          <Typography
+                            className={classes.title}
+                            color="textSecondary"
+                            gutterBottom
+                          >
+                            Presencial
+                          </Typography>
+                        </CardContent>
+                      </Grid>
+                    ) : (
+                      <></>
+                    )}
+                    {meet.isVirtual === "V" ? (
+                      <Grid item xs={12} sm={2}>
+                        <CardContent>
+                          <Tooltip title="Copiar enlace" aria-label="add">
+                            <CopyToClipboard
+                              text={meet.link}
+                              onCopy={() => setCopy(true)}
+                            >
+                              <IconButton edge="end" aria-label="comments">
+                                <FileCopyIcon />
+                              </IconButton>
+                            </CopyToClipboard>
+                          </Tooltip>
+                        </CardContent>
+                      </Grid>
+                    ) : (
+                      <></>
+                    )}
+                    {meet.isVirtual === "V" ? (
+                      <Grid item xs={12} sm={2}>
+                        <CardContent>
+                          <Tooltip title="Iniciar reunión" aria-label="add">
+                            <IconButton
+                              edge="end"
+                              href={meet.link}
+                              target="_blank"
+                              aria-label="comments"
+                            >
+                              <PlayCircleFilledWhiteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </CardContent>
+                      </Grid>
+                    ) : (
+                      <></>
+                    )}
                   </Grid>
                 </Card>
               );
@@ -94,21 +194,29 @@ const MeetingTeacher = () => {
               color="primary"
               size="small"
               endIcon={<AddIcon />}
+              href="/meetingsteacher"
             >
               Ver más
             </Button>
           </Grid>
         </Grid>
+        {viewProgress ? (
+          <CircularProgress className={classes.progress}></CircularProgress>
+        ) : (
+          <></>
+        )}
       </Paper>
     </div>
   );
 };
 
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  user: state.login.id,
+  token: state.login.accessToken,
 });
 
 MeetingTeacher.propTypes = {
-  // instid: PropTypes.any,
+  user: PropTypes.number,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(MeetingTeacher);

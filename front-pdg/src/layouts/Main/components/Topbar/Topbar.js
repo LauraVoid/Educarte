@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { Link as RouterLink } from "react-router-dom";
@@ -19,6 +19,7 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { useDispatch } from "react-redux";
 import logOut from "../../../../actions/singOut";
 import { connect } from "react-redux";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -63,7 +64,6 @@ const Topbar = (props) => {
   const dispatch = useDispatch();
   const { className, ...rest } = props;
   const classes = useStyles();
-  const { redirect, setRedirect } = useState("/");
 
   const [anchorEl, setAnchorEl] = useState(null);
   //const [anchorDesktop, serAnchorDesktop] = useState(null);
@@ -102,6 +102,11 @@ const Topbar = (props) => {
           <AccountCircleIcon fontSize="small" />
         </ListItemIcon>
         Mi perfil
+      </MenuItem>
+      <MenuItem onClick={handleClose} component={RouterLink}>
+        <ListItemIcon>
+          <NotificationsIcon fontSize="small" />
+        </ListItemIcon>
       </MenuItem>
       <MenuItem onClick={handleClose} component={RouterLink} to="/">
         <ListItemIcon>

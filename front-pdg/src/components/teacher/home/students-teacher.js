@@ -43,15 +43,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const studentTest = [
-  { id: "1", name: "Pepito", lastname: "Perez" },
-  { id: "2", name: "Laura Eustaquia", lastname: "Rubio" },
-  { id: "3", name: "David Pancrasio", lastname: "Huertas" },
-  { id: "4", name: "Douglas", lastname: "Lopez" },
-  { id: "5", name: "Juanma", lastname: "Cecilia" },
-  { id: "6", name: "David Fides", lastname: "Obando" },
-];
-
 const StudentsTeacher = (props) => {
   const classes = useStyles();
   const [students, setStudents] = useState([]);
@@ -92,7 +83,7 @@ const StudentsTeacher = (props) => {
               className={classes.title}
               align="center"
             >
-              Mis estudiantes
+              Mis Estudiantes
             </Typography>
           </Grid>
           <Grid item xs={12}>
