@@ -220,3 +220,67 @@ exports.findStudentsByTeacher = async function (req, res, next) {
       .send({ message: "This teacher doesn't have a course assigned" });
   }
 };
+
+exports.countStudentsByTeacher = async function (req, res, next) {
+  const students = [];
+  const coursesFound = await TeacherCourse.findAll({
+    where: {
+      teacherId: req.params.teacherId,
+      courseId: {
+        [op.ne]: null,
+      },
+    },
+  });
+
+  if (coursesFound !== 0) {
+    await Promise.all(
+      coursesFound.map(async (course) => {
+        await Student.findAll({
+          where: {
+            courseId: course.courseId,
+          },
+        }).then((crs) => students.push(crs));
+      })
+    );
+    const total = students[0].length;
+    res.status(200).send({ total });
+  } else {
+    res
+      .status(406)
+      .send({ message: "This teacher doesn't have a course assigned" });
+  }
+};
+
+exports.findStudentsByTeacher2 = async function (req, res, next) {
+  const page = parseInt(req.query.page);
+  const size = parseInt(req.query.limit);
+
+  const { limit, offset } = getPagination(page, size);
+
+  const students = [];
+  const coursesFound = await TeacherCourse.findAll({
+    where: {
+      teacherId: req.params.teacherId,
+      courseId: {
+        [op.ne]: null,
+      },
+    },
+  });
+
+  if (coursesFound !== 0) {
+    await Promise.all(
+      coursesFound.map(async (course) => {
+        await Student.findAll({
+          where: {
+            courseId: course.courseId,
+          },
+        }).then((crs) => students.push(crs));
+      })
+    );
+    res.status(200).send(students[0].slice(offset, limit));
+  } else {
+    res
+      .status(406)
+      .send({ message: "This teacher doesn't have a course assigned" });
+  }
+};

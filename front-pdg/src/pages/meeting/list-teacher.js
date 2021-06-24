@@ -92,7 +92,7 @@ const MeetingTeacherExplorer = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  href="/createteacher"
+                  href="/createmeeting"
                 >
                   Agregar +
                 </Button>

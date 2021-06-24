@@ -20,6 +20,43 @@ import { useDispatch } from "react-redux";
 import logOut from "../../../../actions/singOut";
 import { connect } from "react-redux";
 import NotificationsIcon from "@material-ui/icons/Notifications";
+import ListItemText from "@material-ui/core/ListItemText";
+import InboxIcon from "@material-ui/icons/MoveToInbox";
+import DraftsIcon from "@material-ui/icons/Drafts";
+import SendIcon from "@material-ui/icons/Send";
+import { withStyles } from "@material-ui/core/styles";
+import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
+
+const StyledMenu = withStyles({
+  paper: {
+    border: "1px solid #d3d4d5",
+  },
+})((props) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "center",
+    }}
+    transformOrigin={{
+      vertical: "top",
+      horizontal: "center",
+    }}
+    {...props}
+  />
+));
+
+const StyledMenuItem = withStyles((theme) => ({
+  root: {
+    "&:focus": {
+      backgroundColor: theme.palette.primary.main,
+      "& .MuiListItemIcon-root, & .MuiListItemText-primary": {
+        color: theme.palette.common.white,
+      },
+    },
+  },
+}))(MenuItem);
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -64,6 +101,15 @@ const Topbar = (props) => {
   const dispatch = useDispatch();
   const { className, ...rest } = props;
   const classes = useStyles();
+  const [anchorEl2, setAnchorEl2] = React.useState(null);
+
+  const handleClick2 = (event) => {
+    setAnchorEl2(event.currentTarget);
+  };
+
+  const handleClose2 = () => {
+    setAnchorEl2(null);
+  };
 
   const [anchorEl, setAnchorEl] = useState(null);
   //const [anchorDesktop, serAnchorDesktop] = useState(null);
@@ -107,6 +153,7 @@ const Topbar = (props) => {
         <ListItemIcon>
           <NotificationsIcon fontSize="small" />
         </ListItemIcon>
+        Notificaciones
       </MenuItem>
       <MenuItem onClick={handleClose} component={RouterLink} to="/">
         <ListItemIcon>
@@ -145,6 +192,41 @@ const Topbar = (props) => {
               >
                 Mi perfil
               </Button>
+              <Button
+                startIcon={<NotificationsIcon />}
+                className={classes.menuOption}
+                variant="text"
+                color="inherit"
+                onClick={handleClick2}
+              >
+                Notificaciones
+              </Button>
+              <StyledMenu
+                id="customized-menu"
+                anchorEl={anchorEl2}
+                keepMounted
+                open={Boolean(anchorEl2)}
+                onClose={handleClose2}
+              >
+                <StyledMenuItem>
+                  <ListItemIcon>
+                    <PeopleAltIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="La reunión está por empezar" />
+                </StyledMenuItem>
+                <StyledMenuItem>
+                  <ListItemIcon>
+                    <AccountCircleIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Maria Elena te envió un mensaje." />
+                </StyledMenuItem>
+                <StyledMenuItem>
+                  <ListItemIcon>
+                    <AccountCircleIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Carlos Hoyos te envió un mensaje" />
+                </StyledMenuItem>
+              </StyledMenu>
               <Button
                 startIcon={<ExitToAppIcon />}
                 className={classes.menuOption}

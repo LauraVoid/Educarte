@@ -149,7 +149,7 @@ const MessagesExplorer = (props) => {
               })}
             </List>
           </Grid>
-          <Grid item xs={12} className={classes.centrado}>
+          {/*          <Grid item xs={12} className={classes.centrado}>
             <Button
               variant="contained"
               color="primary"
@@ -158,7 +158,7 @@ const MessagesExplorer = (props) => {
             >
               Ver más
             </Button>
-          </Grid>
+          </Grid> */}
         </Grid>
         {viewProgress ? (
           <CircularProgress className={classes.progress}></CircularProgress>

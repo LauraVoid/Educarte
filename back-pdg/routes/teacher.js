@@ -17,4 +17,15 @@ router.get(
   [authJwt.verifyToken, authJwt.isAdmin],
   teachers_controller.findStudentsByTeacher
 );
+router.get(
+  "/students/count/:teacherId",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  teachers_controller.countStudentsByTeacher
+);
 module.exports = router;
+
+router.get(
+  "/students/alt/:teacherId",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  teachers_controller.findStudentsByTeacher2
+);

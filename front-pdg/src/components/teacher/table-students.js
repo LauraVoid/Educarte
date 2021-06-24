@@ -20,8 +20,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import EditIcon from "@material-ui/icons/Edit";
 import EmailIcon from "@material-ui/icons/Email";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import axios from "../../utils/axios";
@@ -35,6 +33,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import DialogEdit from "./dialog-edit";
+import CommentIcon from "@material-ui/icons/Comment";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -108,16 +107,10 @@ const headCells = [
     label: "Enviar mensaje",
   },
   {
-    id: "editStudent",
+    id: "report",
     numeric: false,
     disablePadding: false,
-    label: "Editar",
-  },
-  {
-    id: "deleteStudent",
-    numeric: false,
-    disablePadding: false,
-    label: "Eliminar",
+    label: "Calificar desempeño",
   },
 ];
 
@@ -259,7 +252,8 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
 
-function EnhancedTable() {
+function EnhancedTable(props) {
+  const { user, token } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const [page, setPage] = React.useState(0);
@@ -304,7 +298,11 @@ function EnhancedTable() {
   const getStudents = () => {
     setViewProgress(true);
     axios
-      .get(`/student?page=${page}&&limit=${rowsPerPage}`)
+      .get(`/teacher/students/alt/${user}?page=${page}&&limit=${rowsPerPage}`, {
+        headers: {
+          "x-access-token": token,
+        },
+      })
       .then((res) => {
         if (res.status === 200) {
           setStudents(res.data);
@@ -323,9 +321,13 @@ function EnhancedTable() {
   };
 
   const getNumOfStudents = () => {
-    let route = `/student/count`;
+    let route = `teacher/students/count/${user}`;
     axios
-      .get(route)
+      .get(route, {
+        headers: {
+          "x-access-token": token,
+        },
+      })
       .then((response) => {
         setTotalResults(response.data.total);
       })
@@ -503,22 +505,9 @@ function EnhancedTable() {
                             <EmailIcon />
                           </IconButton>
                         </TableCell>
-                        <TableCell>
-                          <IconButton>
-                            <EditIcon
-                              onClick={() => {
-                                handleClickOpenEdit(row);
-                              }}
-                            />
-                          </IconButton>
-                        </TableCell>
                         <TableCell align="left">
                           <IconButton>
-                            <DeleteForeverIcon
-                              onClick={() => {
-                                handleClickOpen(row);
-                              }}
-                            ></DeleteForeverIcon>
+                            <CommentIcon />
                           </IconButton>
                         </TableCell>
                       </TableRow>
@@ -604,10 +593,12 @@ function EnhancedTable() {
   );
 }
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  user: state.login.id,
+  token: state.login.accessToken,
 });
 
 EnhancedTable.propTypes = {
-  // instid: PropTypes.any,
+  user: PropTypes.number,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(EnhancedTable);
