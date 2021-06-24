@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import { Grid, IconButton, Typography, Badge } from "@material-ui/core";
-import ForumIcon from "@material-ui/icons/Forum";
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import { connect } from "react-redux";
@@ -32,10 +32,9 @@ const MenuParent = () => {
             variant="contained"
             color="primary"
             href="/messagesteacher"
-          >
-            <Badge color="error" badgeContent={999}>
-              <ForumIcon className={classes.icon} color="action" />
-            </Badge>
+          >           
+            <AccountBoxIcon className={classes.icon} color="action" />
+            
           </IconButton>
           <Typography
             className="title"
@@ -44,11 +43,11 @@ const MenuParent = () => {
             gutterBottom
             align="center"
           >
-            Mensajes
+            Profesor
           </Typography>
         </Grid>
         <Grid item xs={6} sm={3} container direction="column">
-          <IconButton variant="contained" color="primary" href="/feed">
+          <IconButton variant="contained" color="primary" href="/content">
             <SportsEsportsIcon className={classes.icon} color="action" />
           </IconButton>
           <Typography
@@ -72,7 +71,7 @@ const MenuParent = () => {
             gutterBottom
             align="center"
           >
-            Ver tareas
+            Mi información
           </Typography>
         </Grid>        
       </Grid>

@@ -28,4 +28,9 @@ router.delete(
   [authJwt.verifyToken, authJwt.isAdmin],
   homework_controller.delete
 );
+
+router.get(
+  "/course/:id",homework_controller.findTaskByCourseId
+);
+
 module.exports = router;

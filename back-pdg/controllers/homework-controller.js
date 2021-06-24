@@ -68,3 +68,14 @@ exports.delete = async function (req, res) {
       }
     });
 };
+
+exports.findTaskByCourseId = async function (req, res, next) {
+  await Homework.findAll({
+    where:{
+      courseId: req.params.id
+    }
+  }).then((result) => {
+    res.status(200).send(result);
+  });
+};
+

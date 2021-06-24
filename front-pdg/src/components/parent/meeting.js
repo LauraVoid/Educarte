@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core/";
 import PropTypes from "prop-types";
 import axios from '../../utils/axios';
-import AddIcon from "@material-ui/icons/Add";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,11 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const meetingTest = [
-  { id: "1", title: "Matemáticas", date: "10/10/2021 7:00 am", presencial:true },
-  { id: "2", title: "Español", date: "10/10/2021 9:00 am",presencial:true },
-  { id: "3", title: "Naturales", date: "10/10/2021 11:00 am",presencial:false },
-];
+
 
 const MeetingStudent = (props) => {
   const [meeting, setMeeting] = useState([]);

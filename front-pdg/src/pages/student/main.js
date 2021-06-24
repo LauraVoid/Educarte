@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import bgd from "../../img/backgrounds/B7.png";
 import BannerStudent from "../../components/student/main/banner";
 import Meeting from "../../components/student/main/meeting";
+import Task from "../../components/student/main/tasks"
 
 // CSS OF THIS TEMPLATE
 const useStyles = makeStyles((theme) => ({
@@ -106,6 +107,12 @@ const HomeParent = () => {
         <Grid item xs={12} sm={6}>
           <Paper className={classes.paperMeeting} elevation={10}>
             <Meeting></Meeting>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <Paper className={classes.paperStudents} elevation={10}>
+            <Task></Task>
           </Paper>
         </Grid>
       </Grid>

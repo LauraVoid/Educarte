@@ -127,6 +127,7 @@ exports.signin = (req, res) => {
           username: user.username,
           roles: user.roleId,
           accessToken: token,
+          courseId: user.courseId,
         });
       })
       .catch((err) => {
