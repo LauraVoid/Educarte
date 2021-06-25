@@ -1,5 +1,6 @@
 const Message = require("../model/Message");
 const Parent = require("../model/Parent");
+const Teacher = require("../model/Teacher");
 var bcrypt = require("bcryptjs");
 const seq = require("sequelize");
 const op = seq.Op;
@@ -46,6 +47,24 @@ exports.countMessagesTeacher = async function (req, res, next) {
   }
 };
 
+exports.countMessagesParent = async function (req, res, next) {
+  try {
+    await Message.findAll({
+      where: {
+        roleReceiver: "parent",
+        receiver: req.params.parentId,
+      },
+    }).then((result) => {
+      const total = result.length;
+      return res.status(200).json({
+        total,
+      });
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 exports.findAllMessagesTeacher = async function (req, res, next) {
   const messagesTotal = [];
   try {
@@ -59,6 +78,33 @@ exports.findAllMessagesTeacher = async function (req, res, next) {
         await result.map(async (message) => {
           if (message.parentId !== null) {
             const objP = await Parent.findByPk(message.parentId);
+            const union = { message, ...objP };
+            messagesTotal.push(union);
+          }
+        })
+      );
+      return res.status(200).json({
+        messagesTotal,
+      });
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+exports.findAllMessagesParent = async function (req, res, next) {
+  const messagesTotal = [];
+  try {
+    await Message.findAll({
+      where: {
+        roleReceiver: "parent",
+        receiver: req.params.parentId,
+      },
+    }).then(async (result) => {
+      await Promise.all(
+        await result.map(async (message) => {
+          if (message.teacherId !== null) {
+            const objP = await Teacher.findByPk(message.teacherId);
             const union = { message, ...objP };
             messagesTotal.push(union);
           }

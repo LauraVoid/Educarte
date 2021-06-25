@@ -4,11 +4,7 @@ const authJwt = require("../middleware/authJws");
 var message_controller = require("../controllers/message-controller");
 
 /* GET home page. */
-router.post(
-  "/",
-  [authJwt.verifyToken, authJwt.isAdmin],
-  message_controller.create
-);
+router.post("/", message_controller.create);
 
 router.get(
   "/teacher/:teacherId",
@@ -17,9 +13,21 @@ router.get(
 );
 
 router.get(
+  "/parent/:parentId",
+  [authJwt.verifyToken, authJwt.isParent],
+  message_controller.countMessagesParent
+);
+
+router.get(
   "/teacher/messages/:teacherId",
   [authJwt.verifyToken, authJwt.isAdmin],
   message_controller.findAllMessagesTeacher
+);
+
+router.get(
+  "/parent/messages/:parentId",
+  [authJwt.verifyToken, authJwt.isParent],
+  message_controller.findAllMessagesParent
 );
 
 module.exports = router;

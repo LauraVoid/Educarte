@@ -28,4 +28,17 @@ router.delete(
   [authJwt.verifyToken, authJwt.isAdmin],
   homework_controller.delete
 );
+
+router.get(
+  "/parent/:id",
+  [authJwt.verifyToken, authJwt.isParent],
+  homework_controller.findHomeWorksByParent
+);
+
+router.get(
+  "/parent/count/:id",
+  [authJwt.verifyToken, authJwt.isParent],
+  homework_controller.countforParent
+);
+
 module.exports = router;

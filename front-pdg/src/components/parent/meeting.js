@@ -35,9 +35,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const meetingTest = [
-  { id: "1", title: "Matemáticas", date: "10/10/2021 7:00 am", presencial:true },
-  { id: "2", title: "Español", date: "10/10/2021 9:00 am",presencial:true },
-  { id: "3", title: "Naturales", date: "10/10/2021 11:00 am",presencial:false },
+  {
+    id: "1",
+    title: "Matemáticas",
+    date: "03/07/2021 7:00 am",
+    presencial: true,
+  },
+  { id: "2", title: "Español", date: "04/07/2021 9:00 am", presencial: true },
 ];
 
 const MeetingStudent = () => {
@@ -53,7 +57,7 @@ const MeetingStudent = () => {
               className={classes.title}
               align="center"
             >
-              Reuniones 
+              Reuniones
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -86,17 +90,16 @@ const MeetingStudent = () => {
                           color="textSecondary"
                           gutterBottom
                         >
-                          {(meet.presencial)?("Presencial"):("Virtual")}
+                          {meet.presencial ? "Presencial" : "Virtual"}
                         </Typography>
                       </CardContent>
                     </Grid>
-                    
                   </Grid>
                 </Card>
               );
             })}
           </Grid>
-          <Grid item xs={12} className={classes.centrado}>
+          {/*           <Grid item xs={12} className={classes.centrado}>
             <Button
               variant="contained"
               color="primary"
@@ -105,7 +108,7 @@ const MeetingStudent = () => {
             >
               Ver más
             </Button>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Paper>
     </div>

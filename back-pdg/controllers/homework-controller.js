@@ -1,4 +1,5 @@
 const Homework = require("../model/Homework");
+const Student = require("../model/Student");
 
 const getPagination = (page, size) => {
   const limit = size ? +size : 5;
@@ -67,4 +68,46 @@ exports.delete = async function (req, res) {
         res.status(406).send("Homework probably to have any course");
       }
     });
+};
+
+exports.findHomeWorksByParent = async function (req, res, next) {
+  const page = parseInt(req.query.page);
+  const size = parseInt(req.query.limit);
+
+  const { limit, offset } = getPagination(page, size);
+
+  const student = await Student.findOne({
+    where: {
+      parentId: req.params.id,
+    },
+  });
+
+  await Homework.findAll({
+    limit,
+    offset,
+    where: {
+      courseId: student.courseId,
+    },
+  }).then((result) => {
+    return res.status(200).send(result);
+  });
+};
+
+exports.countforParent = async function (req, res, next) {
+  const student = await Student.findOne({
+    where: {
+      parentId: req.params.id,
+    },
+  });
+
+  await Homework.findAll({
+    where: {
+      courseId: student.courseId,
+    },
+  }).then((result) => {
+    const total = result.length;
+    return res.status(200).send({
+      total,
+    });
+  });
 };

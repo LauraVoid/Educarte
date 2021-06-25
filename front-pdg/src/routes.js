@@ -40,10 +40,13 @@ import CreateTask from "./pages/task/add-task";
 //pages for messages
 import CreateMessageParent from "./pages/messages/create-message-parent";
 import CreateMessageCourse from "./pages/messages/create-message-course";
+import CreateMessageTeacher from "./pages/messages/create-message-teacher";
 
 //pages for parents
 import MainParent from "./pages/parent/main";
 import FeedExplorer from "./pages/parent/list-feedbacks";
+import TaskExplorerParent from "./pages/parent/list-task";
+import MessageParent from "./pages/messages/message-parent";
 
 import { store } from "./store/store";
 
@@ -175,6 +178,21 @@ export default (
           path="/teacherstudents"
           layout={MainLayout}
           component={TeacherStudentExplorer}
+        />
+        <RouteWithLayout
+          path="/tasksparent"
+          layout={MainLayout}
+          component={TaskExplorerParent}
+        />
+        <RouteWithLayout
+          path="/messagesparent"
+          layout={MainLayout}
+          component={MessageParent}
+        />
+        <RouteWithLayout
+          path="/createmessageteacher"
+          layout={MainLayout}
+          component={CreateMessageTeacher}
         />
       </Switch>
     </BrowserRouter>

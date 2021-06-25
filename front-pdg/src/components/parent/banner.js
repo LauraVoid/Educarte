@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { Grid, IconButton, Typography, Badge } from "@material-ui/core";
 import ForumIcon from "@material-ui/icons/Forum";
 import EventNoteIcon from "@material-ui/icons/EventNote";
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
+import FormatListBulletedIcon from "@material-ui/icons/FormatListBulleted";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import axios from "../../utils/axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,8 +23,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MenuParent = () => {
+const MenuParent = (props) => {
+  const { user, token } = props;
   const classes = useStyles();
+  const [numberMessages, setNumberMessages] = useState(0);
+
+  useEffect(() => {
+    axios
+      .get(`/message/parent/${user}`, {
+        headers: {
+          "x-access-token": token,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          setNumberMessages(res.data.total);
+        }
+      });
+  }, []);
 
   return (
     <div>
@@ -31,9 +50,9 @@ const MenuParent = () => {
           <IconButton
             variant="contained"
             color="primary"
-            href="/messagesteacher"
+            href="/messagesparent"
           >
-            <Badge color="error" badgeContent={999}>
+            <Badge color="error" badgeContent={numberMessages}>
               <ForumIcon className={classes.icon} color="action" />
             </Badge>
           </IconButton>
@@ -62,7 +81,7 @@ const MenuParent = () => {
           </Typography>
         </Grid>
         <Grid item xs={6} sm={3} container direction="column">
-          <IconButton variant="contained" color="primary" href="/teacher">
+          <IconButton variant="contained" color="primary" href="/tasksparent">
             <FormatListBulletedIcon color="action" className={classes.icon} />
           </IconButton>
           <Typography
@@ -74,17 +93,19 @@ const MenuParent = () => {
           >
             Ver tareas
           </Typography>
-        </Grid>        
+        </Grid>
       </Grid>
     </div>
   );
 };
 
 const mapStateToProps = (state) => ({
-  // instid: state.auth.instId,
+  user: state.login.id,
+  token: state.login.accessToken,
 });
 
 MenuParent.propTypes = {
-  // instid: PropTypes.any,
+  user: PropTypes.number,
+  token: PropTypes.string,
 };
 export default connect(mapStateToProps)(MenuParent);
