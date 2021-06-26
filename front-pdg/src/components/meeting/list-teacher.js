@@ -251,6 +251,7 @@ const MeetingAccordionTeacher = (props) => {
         },
       })
       .then((res) => {
+        console.log("Meetings", res);
         if (res.status === 200) {
           setMeetings(res.data);
           setViewProgress(false);

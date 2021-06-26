@@ -35,5 +35,5 @@ router.delete(
   meeting_controller.delete
 );
 
-router.get("/find/:id", meeting_controller.index);
+router.get("/find/:id", meeting_controller.index2);
 module.exports = router;

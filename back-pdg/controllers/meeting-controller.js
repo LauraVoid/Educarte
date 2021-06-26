@@ -211,7 +211,7 @@ exports.delete = async function (req, res) {
  * @param {*} res
  */
 
-exports.index = async function (req, res, next) {
+exports.index2 = async function (req, res, next) {
   await Meeting.findAll({
     where: {
       courseId: req.params.id,

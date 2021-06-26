@@ -96,7 +96,7 @@ const MenuTeacher = (props) => {
           </Typography>
         </Grid>
         <Grid item xs={6} sm={3} container direction="column">
-          <IconButton variant="contained" color="primary" href="/teacher">
+          <IconButton variant="contained" color="primary" href="/content">
             <SchoolIcon className={classes.icon} color="action" />
           </IconButton>
           <Typography
