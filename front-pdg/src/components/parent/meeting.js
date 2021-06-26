@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
 import {
@@ -9,7 +9,8 @@ import {
   Card,
   CardContent,
 } from "@material-ui/core/";
-import AddIcon from "@material-ui/icons/Add";
+import PropTypes from "prop-types";
+import axios from "../../utils/axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +45,21 @@ const meetingTest = [
   { id: "2", title: "Español", date: "04/07/2021 9:00 am", presencial: true },
 ];
 
-const MeetingStudent = () => {
+const MeetingStudent = (props) => {
+  const [meeting, setMeeting] = useState([]);
+  const [reload, setReload] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get(`meeting/find/` + props.courseId)
+      .then((res) => {
+        if (res.status >= 200 && res.status < 300) {
+          setMeeting(res.data);
+        } else console.log(res.status);
+      })
+      .catch((err) => console.log(err));
+  }, [reload]);
+
   const classes = useStyles();
   return (
     <div>
@@ -61,7 +76,7 @@ const MeetingStudent = () => {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            {meetingTest.map((meet) => {
+            {meeting.map((meet) => {
               return (
                 <Card className={classes.card}>
                   <Grid container>
@@ -72,7 +87,7 @@ const MeetingStudent = () => {
                           color="textSecondary"
                           gutterBottom
                         >
-                          {`${meet.title}`}
+                          {`${meet.name}`}
                         </Typography>
                       </CardContent>
                     </Grid>
@@ -83,7 +98,7 @@ const MeetingStudent = () => {
                           color="textSecondary"
                           gutterBottom
                         >
-                          {`${meet.date}`}
+                          {`${meet.date + " - " + meet.time}`}
                         </Typography>
                         <Typography
                           className={classes.title}
@@ -117,9 +132,22 @@ const MeetingStudent = () => {
 
 const mapStateToProps = (state) => ({
   // instid: state.auth.instId,
+  id: state.login.id,
+  name: state.login.name,
+  email: state.login.email,
+  token: state.login.accessToken,
+  studentId: state.login.studentId,
+  studentName: state.login.studentName,
+  courseId: state.login.courseId,
 });
 
 MeetingStudent.propTypes = {
-  // instid: PropTypes.any,
+  id: PropTypes.number,
+  name: PropTypes.string,
+  email: PropTypes.string,
+  token: PropTypes.string,
+  studentId: PropTypes.number,
+  studentName: PropTypes.string,
+  courseId: PropTypes.number,
 };
 export default connect(mapStateToProps)(MeetingStudent);

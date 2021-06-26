@@ -205,3 +205,18 @@ exports.delete = async function (req, res) {
       }
     });
 };
+/**
+ * Retornar las reuniones de un curso especifico
+ * @param {*} req id del curso que se desea obtener las reuniones
+ * @param {*} res
+ */
+
+exports.index = async function (req, res, next) {
+  await Meeting.findAll({
+    where: {
+      courseId: req.params.id,
+    },
+  }).then((result) => {
+    res.status(200).send(result);
+  });
+};

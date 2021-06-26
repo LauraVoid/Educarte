@@ -41,4 +41,5 @@ router.get(
   homework_controller.countforParent
 );
 
+router.get("/course/:id", homework_controller.findTaskByCourseId);
 module.exports = router;

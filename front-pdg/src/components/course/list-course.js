@@ -335,7 +335,7 @@ const ListCourse = (props) => {
                 }
             })
             .then((res) => {
-                if (res.status === 200) {
+                if (res.status >= 200 && res.status <300) {
 
                     setCourses(res.data)
                     setError("No error")

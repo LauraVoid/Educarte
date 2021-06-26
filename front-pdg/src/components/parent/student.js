@@ -1,10 +1,13 @@
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import {
   Grid,
   Typography,
   Paper,
+  Card,
+  CardContent,
 } from "@material-ui/core/";
 
 
@@ -25,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const Student = () => {
+const Student = (props) => {
   const classes = useStyles();
   return (
     <div>
@@ -51,7 +54,7 @@ const Student = () => {
                           color="textSecondary"
                           gutterBottom
                         >
-                          Titulo
+                          Estudiante
                         </Typography>
                       </CardContent>
                     </Grid>
@@ -62,7 +65,7 @@ const Student = () => {
                           color="textSecondary"
                           gutterBottom
                         >
-                          Nombre
+                          {props.studentName}
                         </Typography>
                       
                       </CardContent>
@@ -85,6 +88,7 @@ const mapStateToProps = (state) => ({
     email: state.login.email,
     token: state.login.accessToken,
     studentId: state.login.studentId,
+    studentName: state.login.studentName,
 });
 
 Student.propTypes = {
@@ -93,5 +97,6 @@ Student.propTypes = {
   email: PropTypes.string,
   token: PropTypes.string,
   studentId: PropTypes.number,
+  studentName: PropTypes.string,
 };
 export default connect(mapStateToProps)(Student);

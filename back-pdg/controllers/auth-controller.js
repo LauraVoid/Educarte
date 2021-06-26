@@ -127,6 +127,7 @@ exports.signin = (req, res) => {
           username: user.username,
           roles: user.roleId,
           accessToken: token,
+          courseId: user.courseId,
         });
       })
       .catch((err) => {
@@ -209,6 +210,8 @@ exports.signin = (req, res) => {
             name: user.name+" "+ user.lastname,
             accessToken: token,
             studentId: stud.id,
+            studentName: stud.name +" "+stud.lastname,
+            courseId: stud.courseId,
           })
         })
 
