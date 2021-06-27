@@ -43,7 +43,7 @@ import CreateMessageParent from "./pages/messages/create-message-parent";
 import CreateMessageCourse from "./pages/messages/create-message-course";
 import CreateMessageTeacher from "./pages/messages/create-message-teacher";
 
-//pages for parents
+//pages for parents.
 import MainParent from "./pages/parent/main";
 import FeedExplorer from "./pages/parent/list-feedbacks";
 import TaskExplorerParent from "./pages/parent/list-task";

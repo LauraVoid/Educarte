@@ -111,7 +111,7 @@ export default function Home() {
         <Grid item xs={12} sm={6}>
           <Box p={9}>
             <Typography variant="h4" align="center">
-              Plataforma para el aprendizaje continuo
+              Plataforma para el aprendizaje continuo.
             </Typography>
             <br></br>
             <Typography variant="subtitle1" align="left">
@@ -202,7 +202,7 @@ export default function Home() {
                     Facilidad para mantener constante comunicación con el
                     estudiante, asignar actividades con contenido personalizado
                     o recomendado por Educarte según la competencia a
-                    desarrollar
+                    desarrollar.
                   </Typography>
                 </CardContent>
               </CardActionArea>
@@ -306,7 +306,7 @@ export default function Home() {
           ></img>
         </Grid>
       </Grid>
-      {/* Here init the 6 section */}
+      {/* Here init the 6 section. */}
       <Grid container className={classes.root} justify="center">
         <Grid item xs={12}>
           <img
