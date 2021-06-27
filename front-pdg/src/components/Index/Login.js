@@ -24,6 +24,8 @@ import validate from "validate.js";
 import loginUser from "../../actions/auth";
 import bgd from "../../img/backgrounds/paisaje-login-edit.png";
 import logoTitle from "../../img/logos/logo-login.png";
+import { showMessage } from "../../actions/actionMessage";
+import ShowMessage from "../../components/StatusMessage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -128,12 +130,36 @@ const Login = () => {
           let dataLogin = res.data;
           dispatch(loginUser(dataLogin));
           if (data.is === "teacher") {
+            dispatch(
+              showMessage({
+                errorMsg: "Has ingresado con éxito",
+                errorType: "success",
+              })
+            );
             history.push(`/teacher`);
           } else if (data.is === "institution") {
+            dispatch(
+              showMessage({
+                errorMsg: "Has ingresado con éxito",
+                errorType: "success",
+              })
+            );
             history.push(`/institution`);
-          }else if (data.is === "parent") {
+          } else if (data.is === "parent") {
+            dispatch(
+              showMessage({
+                errorMsg: "Has ingresado con éxito",
+                errorType: "success",
+              })
+            );
             history.push(`/parent`);
-          }else if(data.is === "student"){
+          } else if (data.is === "student") {
+            dispatch(
+              showMessage({
+                errorMsg: "Has ingresado con éxito",
+                errorType: "success",
+              })
+            );
             history.push(`/student`);
           }
         } else {
@@ -141,6 +167,7 @@ const Login = () => {
         }
       })
       .catch((error) => {
+        console.log("Soy login", error);
         let message1 = "Error";
         switch (error.response.data.message) {
           case "Invalid Password!": {
@@ -155,7 +182,11 @@ const Login = () => {
             message1 = "Algo salió mal. No fue posible acceder";
           }
         }
-        console.log(message1);
+        let message3 = {
+          errorMsg: message1,
+          errorType: "error",
+        };
+        dispatch(showMessage(message3));
       });
 
     event.preventDefault();
@@ -323,6 +354,7 @@ const Login = () => {
           </Grid>
         </div>
       </div>
+      <ShowMessage></ShowMessage>
     </div>
   );
 };

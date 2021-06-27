@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import Login from "./components/Index/Login";
+import Profile from "./pages/user/account-profile";
 import Createcourse from "./pages/courses/create";
 import ListCourse from "./pages/courses/list-courses";
 import EditCourse from "./components/course/edit-course";
@@ -193,6 +194,11 @@ export default (
           path="/createmessageteacher"
           layout={MainLayout}
           component={CreateMessageTeacher}
+        />
+        <RouteWithLayout
+          path="/profile"
+          layout={MainLayout}
+          component={Profile}
         />
       </Switch>
     </BrowserRouter>

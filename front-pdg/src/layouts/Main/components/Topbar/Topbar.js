@@ -26,6 +26,7 @@ import DraftsIcon from "@material-ui/icons/Drafts";
 import SendIcon from "@material-ui/icons/Send";
 import { withStyles } from "@material-ui/core/styles";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
+import { showMessage } from "../../../../actions/actionMessage";
 
 const StyledMenu = withStyles({
   paper: {
@@ -123,6 +124,12 @@ const Topbar = (props) => {
   };
   const singOut = (event) => {
     dispatch(logOut());
+    dispatch(
+      showMessage({
+        errorMsg: "Has salido con éxito",
+        errorType: "success",
+      })
+    );
   };
 
   //Queda pendiente roleId de parent y admin
@@ -143,7 +150,7 @@ const Topbar = (props) => {
       open={Boolean(anchorEl)}
       onClose={handleClose}
     >
-      <MenuItem onClick={handleClose} component={RouterLink}>
+      <MenuItem onClick={handleClose} component={RouterLink} to="/profile">
         <ListItemIcon>
           <AccountCircleIcon fontSize="small" />
         </ListItemIcon>
@@ -189,6 +196,7 @@ const Topbar = (props) => {
                 variant="text"
                 color="inherit"
                 component={RouterLink}
+                to="/profile"
               >
                 Mi perfil
               </Button>
