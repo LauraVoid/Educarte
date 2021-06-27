@@ -9,7 +9,7 @@ import BannerInstitution from "../../components/Institution/main";
 import Teachers from "../../components/Institution/meetings";
 import StudentTeacher from "../../components/Institution/students-teacher";
 
-// CSS OF THIS TEMPLATE
+// CSS OF THIS TEMPLATE BUT ALSO IN CSS FOLDER
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,

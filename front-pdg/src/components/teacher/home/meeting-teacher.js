@@ -68,6 +68,8 @@ const MeetingTeacher = (props) => {
           },
         })
         .then((res) => {
+          console.log("Soy todo el res de meeting", res);
+          console.log("Soy el data en prod", res.data);
           if (res.status === 200) {
             setMeetings(res.data);
             console.log(res.data);
